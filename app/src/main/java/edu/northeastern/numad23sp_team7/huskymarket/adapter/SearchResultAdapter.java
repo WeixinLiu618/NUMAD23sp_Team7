@@ -13,10 +13,10 @@ import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.SearchResultViewHolder> {
 
-    private ArrayList<Product> arr = new ArrayList<>();
+    private ArrayList<Product> products = new ArrayList<>();
 
     public SearchResultAdapter(ArrayList<Product> arr) {
-        this.arr = arr;
+        this.products = arr;
     }
 
     @NonNull
@@ -29,12 +29,12 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
     @Override
     public void onBindViewHolder(@NonNull SearchResultViewHolder holder, int position) {
-        holder.binding.setProduct(arr.get(position));
+        holder.binding.setProduct(products.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return arr.size();
+        return products.size();
     }
 
     static class SearchResultViewHolder extends RecyclerView.ViewHolder {
@@ -44,5 +44,9 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             super(binding.getRoot());
             this.binding = binding;
         }
+    }
+
+    public void setProducts(ArrayList<Product> products) {
+        this.products = products;
     }
 }

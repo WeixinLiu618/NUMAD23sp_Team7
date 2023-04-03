@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.FragmentMessagesBinding;
 import edu.northeastern.numad23sp_team7.databinding.FragmentProfileBinding;
+import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
@@ -31,6 +32,8 @@ public class MessagesFragment extends Fragment {
     private PreferenceManager preferenceManager;
     private FirebaseAuth mAuth;
     private FirebaseFirestore database;
+
+    private static final UserDao userDao = new UserDao();
 
     public MessagesFragment() {
         // Required empty public constructor
@@ -47,31 +50,13 @@ public class MessagesFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentMessagesBinding.inflate(getLayoutInflater());
 
+
+        // hard code
         binding.buttonChat.setOnClickListener(v -> {
-
-            DocumentReference docRef = database
-                    .collection(Constants.KEY_COLLECTION_USERS)
-                    .document("D9gtlUubrMYR9UZyCQlc18uAr7r2"); // change to receiverID
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            User receiver = document.toObject(User.class);
-                            assert receiver != null;
-                            Log.d("message", "onComplete: "+ receiver.getUsername());
-                            Intent intent = new Intent(getActivity(), ChatActivity.class);
-                            intent.putExtra(Constants.KEY_USER, receiver);
-                            startActivity(intent);
-
-                        } else {
-                            Log.d("TAG", "No such document");
-                        }
-                    } else {
-                        Log.d("TAG", "get failed with ", task.getException());
-                    }
-                }
+            userDao.getUserById("D9gtlUubrMYR9UZyCQlc18uAr7r2", receiver -> {
+                Intent intent = new Intent(getActivity(), ChatActivity.class);
+                intent.putExtra(Constants.KEY_USER, receiver);
+                startActivity(intent);
             });
 
         });

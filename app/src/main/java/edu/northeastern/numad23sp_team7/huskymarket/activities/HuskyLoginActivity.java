@@ -20,6 +20,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import edu.northeastern.numad23sp_team7.databinding.ActivityHuskyLoginBinding;
+import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
@@ -29,7 +30,9 @@ public class HuskyLoginActivity extends AppCompatActivity {
     private ActivityHuskyLoginBinding binding;
     private PreferenceManager preferenceManager;
     private FirebaseAuth mAuth;
-    private User currentUser;
+
+
+    private static final UserDao userDao = new UserDao();
     private static final String TAG = "husky-login";
 
     @Override
@@ -79,32 +82,16 @@ public class HuskyLoginActivity extends AppCompatActivity {
     }
 
     private void login(String userId) {
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
-        DocumentReference docRef = database
-                .collection(Constants.KEY_COLLECTION_USERS)
-                .document(userId);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        currentUser = document.toObject(User.class);
-                        preferenceManager.putString(Constants.KEY_USER_ID, userId);
-                        preferenceManager.putString(Constants.KEY_USERNAME, currentUser.getUsername());
-                        preferenceManager.putString(Constants.KEY_EMAIL, currentUser.getEmail());
-                        preferenceManager.putString(Constants.KEY_PROFILE_IMAGE, currentUser.getProfileImage());
-                        preferenceManager.putBoolean(Constants.KEY_IS_LOGGED_IN, true);
-                        Intent intent = new Intent(getApplicationContext(), HuskyMainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
+        userDao.getUserById(userId, currentUser -> {
+            preferenceManager.putString(Constants.KEY_USER_ID, userId);
+            preferenceManager.putString(Constants.KEY_USERNAME, currentUser.getUsername());
+            preferenceManager.putString(Constants.KEY_EMAIL, currentUser.getEmail());
+            preferenceManager.putString(Constants.KEY_PROFILE_IMAGE, currentUser.getProfileImage());
+            preferenceManager.putBoolean(Constants.KEY_IS_LOGGED_IN, true);
+            Intent intent = new Intent(getApplicationContext(), HuskyMainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+
         });
     }
 
@@ -147,6 +134,4 @@ public class HuskyLoginActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
-
-
 }

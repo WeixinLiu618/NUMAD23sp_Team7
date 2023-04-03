@@ -17,11 +17,8 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -30,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import edu.northeastern.numad23sp_team7.databinding.FragmentProfileBinding;
+import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
 
@@ -40,6 +38,7 @@ public class ProfileFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseFirestore database;
     private PreferenceManager preferenceManager;
+    private static final UserDao userDao = new UserDao();
 
     private static final String TAG = "profile fragment";
 
@@ -70,7 +69,6 @@ public class ProfileFragment extends Fragment {
         });
 
 
-
         return binding.getRoot();
     }
 
@@ -92,8 +90,6 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         }
     }
-
-
 
 
     // string -> bitmap
@@ -126,8 +122,7 @@ public class ProfileFragment extends Fragment {
                             binding.imageProfile.setImageBitmap(bitmap);
                             String encodedImage = getEncodedImage(bitmap);
                             preferenceManager.putString(Constants.KEY_PROFILE_IMAGE, encodedImage);
-                            changeProfileImageInDB(encodedImage);
-
+                            userDao.updateUserProfileImage(preferenceManager.getString(Constants.KEY_USER_ID), encodedImage);
                             Log.d(TAG, "image: " + preferenceManager.getString(Constants.KEY_PROFILE_IMAGE));
 
                         } catch (FileNotFoundException e) {
@@ -138,26 +133,7 @@ public class ProfileFragment extends Fragment {
             }
     );
 
-    private void changeProfileImageInDB(String encodedImage) {
 
-        database.collection(Constants.KEY_COLLECTION_USERS)
-                .document(preferenceManager.getString(Constants.KEY_USER_ID))
-                .update(Constants.KEY_PROFILE_IMAGE, encodedImage)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        showToast("Successfully change profile image!");
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        showToast("Fail to change profile image!");
-                        Log.w(TAG, "Error updating document", e);
-                    }
-                });
-    }
 
     private void showToast(String text) {
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();

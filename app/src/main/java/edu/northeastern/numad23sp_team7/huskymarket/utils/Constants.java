@@ -19,4 +19,9 @@ public class Constants {
     public static final String KEY_RECEIVER_ID = "receiverId";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_TIMESTAMP = "timestamp";
+
+    public static final String KEY_PRODUCT_LOCATION = "location";
+    public static final String KEY_PRODUCT_CATEGORY = "category";
+    public static final String KEY_PRODUCT_LOCATION_ARRAY = "locations";
+    public static final String KEY_PRODUCT_CATEGORY_ARRAY = "categories";
 }
