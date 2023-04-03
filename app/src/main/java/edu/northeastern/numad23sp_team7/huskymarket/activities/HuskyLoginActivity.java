@@ -52,10 +52,11 @@ public class HuskyLoginActivity extends AppCompatActivity {
 
         // log in
         binding.buttonLogin.setOnClickListener(v -> {
-            loading(true);
+
             String email = binding.inputEmail.getText().toString().trim();
             String password = binding.inputPassword.getText().toString();
             if (isValidLoginInfo()) {
+                loading(true);
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
