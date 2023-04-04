@@ -4,17 +4,7 @@ import java.util.Date;
 
 public class RecentMessageCard {
 
-//    private String recentMessageId;
     private String lastMessage;
-
-    public String getDisplayedUserId() {
-        return displayedUserId;
-    }
-
-    public void setDisplayedUserId(String displayedUserId) {
-        this.displayedUserId = displayedUserId;
-    }
-
     private Date timestamp;
     private String displayedUserId;
     private String displayedUsername;
@@ -25,6 +15,14 @@ public class RecentMessageCard {
     }
 
 
+    public String getDisplayedUserId() {
+        return displayedUserId;
+    }
+
+    public void setDisplayedUserId(String displayedUserId) {
+        this.displayedUserId = displayedUserId;
+    }
+
 
     public String getLastMessage() {
         return lastMessage;
@@ -33,7 +31,6 @@ public class RecentMessageCard {
     public void setLastMessage(String lastMessage) {
         this.lastMessage = lastMessage;
     }
-
 
 
     public Date getTimestamp() {
@@ -62,11 +59,4 @@ public class RecentMessageCard {
     }
 
 
-//    public String getRecentMessageId() {
-//        return recentMessageId;
-//    }
-//
-//    public void setRecentMessageId(String recentMessageId) {
-//        this.recentMessageId = recentMessageId;
-//    }
 }

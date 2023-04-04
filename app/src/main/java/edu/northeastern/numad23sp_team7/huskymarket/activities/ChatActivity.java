@@ -99,12 +99,12 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessage() {
         ChatMessage chatMessage = new ChatMessage(senderId, receiver.getId(), binding.inputMessage.getText().toString(), new Date());
         database.collection(Constants.KEY_COLLECTION_CHAT).add(chatMessage);
+        RecentMessage recentMessage = new RecentMessage(
+                senderId, senderName, senderProfileImage,
+                receiver.getId(), receiver.getUsername(), receiver.getProfileImage(),
+                binding.inputMessage.getText().toString(), new Date());
 
         if (recentMessageId == null) {
-            RecentMessage recentMessage = new RecentMessage(
-                    senderId,senderName,senderProfileImage,
-                    receiver.getId(), receiver.getUsername(),receiver.getProfileImage(),
-                    binding.inputMessage.getText().toString(), new Date());
             database.collection(Constants.KEY_COLLECTION_RECENT_MESSAGE)
                     .add(recentMessage)
                     .addOnSuccessListener(documentReference -> recentMessageId = documentReference.getId())

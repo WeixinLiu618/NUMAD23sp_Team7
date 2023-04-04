@@ -66,7 +66,7 @@ public class RecentMessagesAdapter extends RecyclerView.Adapter<RecentMessagesAd
             binding.textRecentMessage.setText(recentMessageCard.getLastMessage());
             binding.textDateTime.setText(getDateTimeText(recentMessageCard.getTimestamp()));
             binding.getRoot().setOnClickListener(v -> {
-                userDao.getUserById(recentMessageCard.getDisplayedUserId(), recentMessageCardClickListener::onDisplayedUserClick);
+                userDao.getUserById(recentMessageCard.getDisplayedUserId(), recentMessageCardClickListener::onItemClick);
             });
         }
 
