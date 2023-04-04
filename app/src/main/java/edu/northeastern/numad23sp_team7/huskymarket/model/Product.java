@@ -1,5 +1,7 @@
 package edu.northeastern.numad23sp_team7.huskymarket.model;
 
+import com.google.firebase.firestore.ServerTimestamp;
+import java.util.Date;
 import java.util.List;
 
 public class Product {
@@ -14,6 +16,7 @@ public class Product {
     private String material;
     private String status;
     private float price;
+    private @ServerTimestamp Date timestamp;
 
     public Product() {
     }
@@ -118,5 +121,13 @@ public class Product {
 
     public void setPrice(float price) {
         this.price = price;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

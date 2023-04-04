@@ -14,6 +14,7 @@ public class Constants {
 
 
     public static final String KEY_USER = "user";
+    public static final String KEY_USER_FAVORITES = "favorites";
 
     public static final String KEY_SENDER_ID = "senderId";
     public static final String KEY_RECEIVER_ID = "receiverId";
@@ -24,4 +25,9 @@ public class Constants {
     public static final String KEY_PRODUCT_CATEGORY = "category";
     public static final String KEY_PRODUCT_LOCATION_ARRAY = "locations";
     public static final String KEY_PRODUCT_CATEGORY_ARRAY = "categories";
+    public static final String KEY_PRODUCT_TIMESTAMP = "timestamp";
+    public static final String KEY_PRODUCT_STATUS = "status";
+    public static final String VALUE_PRODUCT_STATUS_SOLD = "sold";
+    public static final String VALUE_PRODUCT_STATUS_AVAILABLE = "available";
+
 }
