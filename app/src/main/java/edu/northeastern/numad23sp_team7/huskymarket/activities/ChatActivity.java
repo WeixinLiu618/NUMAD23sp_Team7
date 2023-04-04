@@ -4,11 +4,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -16,11 +19,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.northeastern.numad23sp_team7.databinding.ActivityChatBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.adapter.ChatAdapter;
 import edu.northeastern.numad23sp_team7.huskymarket.model.ChatMessage;
+import edu.northeastern.numad23sp_team7.huskymarket.model.RecentMessage;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
@@ -31,6 +36,7 @@ public class ChatActivity extends AppCompatActivity {
     private ActivityChatBinding binding;
     private User receiver;
     private String senderId;
+    private String senderName;
     private String senderProfileImage;
 
     private List<ChatMessage> chatMessages;
@@ -38,6 +44,8 @@ public class ChatActivity extends AppCompatActivity {
     private PreferenceManager preferenceManager;
 
     private FirebaseFirestore database;
+
+    private String recentMessageId = null;
 
     private static final String TAG = "chat-activity";
 
@@ -57,7 +65,9 @@ public class ChatActivity extends AppCompatActivity {
         database = FirebaseFirestore.getInstance();
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatMessages = new ArrayList<>();
+
         senderId = preferenceManager.getString(Constants.KEY_USER_ID);
+        senderName = preferenceManager.getString(Constants.KEY_USERNAME);
         senderProfileImage = preferenceManager.getString(Constants.KEY_PROFILE_IMAGE);
         chatAdapter = new ChatAdapter(
                 chatMessages,
@@ -65,8 +75,6 @@ public class ChatActivity extends AppCompatActivity {
                 decodeProfileImageString(receiver.getProfileImage()),
                 senderId);
         binding.chatRecyclerView.setAdapter(chatAdapter);
-
-
 
 
         // click back and go back to message fragment
@@ -91,7 +99,27 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessage() {
         ChatMessage chatMessage = new ChatMessage(senderId, receiver.getId(), binding.inputMessage.getText().toString(), new Date());
         database.collection(Constants.KEY_COLLECTION_CHAT).add(chatMessage);
+
+        if (recentMessageId == null) {
+            RecentMessage recentMessage = new RecentMessage(
+                    senderId,senderName,senderProfileImage,
+                    receiver.getId(), receiver.getUsername(),receiver.getProfileImage(),
+                    binding.inputMessage.getText().toString(), new Date());
+            database.collection(Constants.KEY_COLLECTION_RECENT_MESSAGE)
+                    .add(recentMessage)
+                    .addOnSuccessListener(documentReference -> recentMessageId = documentReference.getId())
+                    .addOnFailureListener(e -> Log.w("Fail to add recent message.", e));
+        } else {
+            DocumentReference documentReference =
+                    database.collection(Constants.KEY_COLLECTION_RECENT_MESSAGE).document(recentMessageId);
+            documentReference.update(
+                    Constants.KEY_LAST_MESSAGE, binding.inputMessage.getText().toString(),
+                    Constants.KEY_TIMESTAMP, new Date()
+            );
+        }
         binding.inputMessage.setText(null);
+
+
     }
 
 
@@ -122,6 +150,10 @@ public class ChatActivity extends AppCompatActivity {
             binding.chatRecyclerView.setVisibility(View.VISIBLE);
         }
         binding.progressBar.setVisibility(View.GONE);
+        if (recentMessageId == null) {
+            checkRecentMessage(senderId, receiver.getId());
+            checkRecentMessage(receiver.getId(), senderId);
+        }
 
     };
 
@@ -130,6 +162,24 @@ public class ChatActivity extends AppCompatActivity {
     private Bitmap decodeProfileImageString(String encodedImage) {
         byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+    }
+
+
+    // check if recentMessage collection has had a recent conversation
+    private void checkRecentMessage(String senderId, String receiverId) {
+        database.collection(Constants.KEY_COLLECTION_RECENT_MESSAGE)
+                .whereEqualTo(Constants.KEY_SENDER_ID, senderId)
+                .whereEqualTo(Constants.KEY_RECEIVER_ID, receiverId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (task.getResult() != null && task.getResult().getDocuments().size() > 0) {
+                            recentMessageId = task.getResult().getDocuments().get(0).getId();
+                        }
+                    } else {
+                        Log.d(TAG, "cannot find a recent message");
+                    }
+                });
     }
 
 

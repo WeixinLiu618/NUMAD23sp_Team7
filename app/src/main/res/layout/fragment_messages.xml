@@ -64,7 +64,7 @@
         app:layout_constraintTop_toBottomOf="@+id/search_plate">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/conversationsRecyclerView"
+            android:id="@+id/recentMessagesRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
