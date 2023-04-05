@@ -19,10 +19,15 @@ public class Constants {
 
     public static final String KEY_SENDER_ID = "senderId";
     public static final String KEY_RECEIVER_ID = "receiverId";
-    public static final String KEY_SENDER_NAME = "senderName";
-    public static final String KEY_RECEIVER_NAME = "receiverName";
-    public static final String KEY_SENDER_IMAGE = "senderImage";
-    public static final String KEY_RECEIVER_IMAGE = "receiverImage";
+
+    public static final String KEY_USER1_ID = "user1Id";
+    public static final String KEY_USER2_ID = "user2Id";
+
+
+    public static final String KEY_USER1_NAME = "user1Name";
+    public static final String KEY_USER2_NAME = "user2Name";
+    public static final String KEY_USER1_IMAGE = "user1Image";
+    public static final String KEY_USER2_IMAGE = "user2Image";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_LAST_MESSAGE = "lastMessage";
     public static final String KEY_TIMESTAMP = "timestamp";

@@ -168,8 +168,8 @@ public class ChatActivity extends AppCompatActivity {
     // check if recentMessage collection has had a recent conversation
     private void checkRecentMessage(String senderId, String receiverId) {
         database.collection(Constants.KEY_COLLECTION_RECENT_MESSAGE)
-                .whereEqualTo(Constants.KEY_SENDER_ID, senderId)
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, receiverId)
+                .whereEqualTo(Constants.KEY_USER1_ID, senderId)
+                .whereEqualTo(Constants.KEY_USER2_ID, receiverId)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {

@@ -63,22 +63,22 @@ public class MessagesFragment extends Fragment implements RecentMessageCardClick
 
 
         database.collection(Constants.KEY_COLLECTION_RECENT_MESSAGE)
-                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_USER1_ID, preferenceManager.getString(Constants.KEY_USER_ID))
                 .addSnapshotListener(eventListener);
         database.collection(Constants.KEY_COLLECTION_RECENT_MESSAGE)
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_USER2_ID, preferenceManager.getString(Constants.KEY_USER_ID))
                 .addSnapshotListener(eventListener);
 
 
         // hard code
-//        binding.buttonChat.setOnClickListener(v -> {
-//            userDao.getUserById("D9gtlUubrMYR9UZyCQlc18uAr7r2", receiver -> {
-//                Intent intent = new Intent(getActivity(), ChatActivity.class);
-//                intent.putExtra(Constants.KEY_USER, receiver);
-//                startActivity(intent);
-//            });
-//
-//        });
+        binding.buttonChat.setOnClickListener(v -> {
+            userDao.getUserById("D9gtlUubrMYR9UZyCQlc18uAr7r2", receiver -> {
+                Intent intent = new Intent(getActivity(), ChatActivity.class);
+                intent.putExtra(Constants.KEY_USER, receiver);
+                startActivity(intent);
+            });
+
+        });
 
         return binding.getRoot();
     }
@@ -106,22 +106,22 @@ public class MessagesFragment extends Fragment implements RecentMessageCardClick
                     recentMessageCard.setLastMessage(recentMessage.getLastMessage());
                     recentMessageCard.setTimestamp(recentMessage.getTimestamp());
 
-                    if (preferenceManager.getString(Constants.KEY_USER_ID).equals(recentMessage.getSenderId())) {
-                        recentMessageCard.setDisplayedUserId(recentMessage.getReceiverId());
-                        recentMessageCard.setDisplayedUsername(recentMessage.getReceiverName());
-                        recentMessageCard.setDisplayedUserImage(recentMessage.getReceiverImage());
+                    if (preferenceManager.getString(Constants.KEY_USER_ID).equals(recentMessage.getUser1Id())) {
+                        recentMessageCard.setDisplayedUserId(recentMessage.getUser2Id());
+                        recentMessageCard.setDisplayedUsername(recentMessage.getUser2Name());
+                        recentMessageCard.setDisplayedUserImage(recentMessage.getUser2Image());
                     } else {
-                        recentMessageCard.setDisplayedUserId(recentMessage.getSenderId());
-                        recentMessageCard.setDisplayedUsername(recentMessage.getSenderName());
-                        recentMessageCard.setDisplayedUserImage(recentMessage.getSenderImage());
+                        recentMessageCard.setDisplayedUserId(recentMessage.getUser1Id());
+                        recentMessageCard.setDisplayedUsername(recentMessage.getUser1Name());
+                        recentMessageCard.setDisplayedUserImage(recentMessage.getUser1Image());
                     }
                     recentMessageCards.add(recentMessageCard);
 
                 } else if (documentChange.getType() == DocumentChange.Type.MODIFIED) {
                     for (RecentMessageCard recentMessageCard : recentMessageCards) {
                         RecentMessage recentMessage = documentChange.getDocument().toObject(RecentMessage.class);
-                        if (recentMessageCard.getDisplayedUserId().equals(recentMessage.getSenderId())
-                                || recentMessageCard.getDisplayedUserId().equals(recentMessage.getReceiverId())) {
+                        if (recentMessageCard.getDisplayedUserId().equals(recentMessage.getUser1Id())
+                                || recentMessageCard.getDisplayedUserId().equals(recentMessage.getUser2Id())) {
                             recentMessageCard.setLastMessage(recentMessage.getLastMessage());
                             recentMessageCard.setTimestamp(recentMessage.getTimestamp());
                             break;
