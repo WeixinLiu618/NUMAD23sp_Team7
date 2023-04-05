@@ -122,6 +122,13 @@ public class MessagesFragment extends Fragment implements RecentMessageCardClick
                         RecentMessage recentMessage = documentChange.getDocument().toObject(RecentMessage.class);
                         if (recentMessageCard.getDisplayedUserId().equals(recentMessage.getUser1Id())
                                 || recentMessageCard.getDisplayedUserId().equals(recentMessage.getUser2Id())) {
+                            if (preferenceManager.getString(Constants.KEY_USER_ID).equals(recentMessage.getUser1Id())) {
+//                                recentMessageCard.setDisplayedUsername(recentMessage.getUser2Name()); // can delete if not change username
+                                recentMessageCard.setDisplayedUserImage(recentMessage.getUser2Image());
+                            } else {
+//                                recentMessageCard.setDisplayedUsername(recentMessage.getUser1Name()); // can delete if not change username
+                                recentMessageCard.setDisplayedUserImage(recentMessage.getUser1Image());
+                            }
                             recentMessageCard.setLastMessage(recentMessage.getLastMessage());
                             recentMessageCard.setTimestamp(recentMessage.getTimestamp());
                             break;
