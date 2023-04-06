@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="@dimen/_16sdp"
-        android:background="@drawable/background_content"
+        android:background="@color/secondary"
         app:layout_constraintBottom_toTopOf="@id/layoutSend"
         app:layout_constraintTop_toBottomOf="@id/viewSupporter" />
 
@@ -72,7 +72,7 @@
         android:clipToPadding="false"
         android:orientation="vertical"
         android:overScrollMode="never"
-        android:padding="@dimen/_20sdp"
+        android:padding="@dimen/_7sdp"
         android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="@id/viewChatBackground"

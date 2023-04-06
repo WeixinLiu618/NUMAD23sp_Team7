@@ -6,7 +6,6 @@
         <variable
             name="product"
             type="edu.northeastern.numad23sp_team7.huskymarket.model.Product" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -50,10 +49,10 @@
                         app:srcCompat="@drawable/sample" />
 
                         <ImageView
+                            android:id="@+id/iconHuskySearchResultBookmark"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="@dimen/_5ssp"
-                            android:background="@drawable/circle_bg"
                             android:layout_gravity="bottom|right" />
 
                     </FrameLayout>

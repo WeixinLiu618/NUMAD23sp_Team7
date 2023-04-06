@@ -1,8 +1,5 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,13 +7,15 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-
+import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import edu.northeastern.numad23sp_team7.databinding.ActivitySearchBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.adapter.SearchResultAdapter;
 import edu.northeastern.numad23sp_team7.huskymarket.database.ProductDao;
+import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 
@@ -31,16 +30,26 @@ public class SearchActivity extends AppCompatActivity {
     private String category = CATEGORY_FILTER;
     private String location = LOCATION_FILTER;
     private String searchTerm = "";
+    private UserDao userDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        searchResultAdapter = new SearchResultAdapter(products);
+        searchResultAdapter = new SearchResultAdapter(products, binding.getRoot().getContext());
         binding.recyclerViewHuskySearchResult.setAdapter(searchResultAdapter);
+
+        // Initialize products
+//        getProducts();
 //        initializeData();
 //        dbClient.addProducts(products);
+
+        userDao = new UserDao();
+        userDao.getUserById("D9gtlUubrMYR9UZyCQlc18uAr7r2", user -> {
+            searchResultAdapter.updateLoggedInUser(user);
+            searchResultAdapter.notifyDataSetChanged();
+        });
 
         // Search bar
         binding.editTextHuskySearchBox.setOnEditorActionListener((textView, actionId, keyEvent) -> {
@@ -85,12 +94,12 @@ public class SearchActivity extends AppCompatActivity {
                 // Do nothing
             }
         });
-
     }
 
     private void initializeData() {
         String[] locations = getResources().getStringArray(binding.getRoot().getResources().getIdentifier(Constants.KEY_PRODUCT_LOCATION_ARRAY, "array", getPackageName()));
         String[] categories = getResources().getStringArray(binding.getRoot().getResources().getIdentifier(Constants.KEY_PRODUCT_CATEGORY_ARRAY, "array", getPackageName()));
+        String[] statuses = {Constants.VALUE_PRODUCT_STATUS_AVAILABLE, Constants.VALUE_PRODUCT_STATUS_SOLD};
         for (int i = 0; i < 10; i++) {
             Product product = new Product();
             product.setDescription("Product " + i);
@@ -101,7 +110,7 @@ public class SearchActivity extends AppCompatActivity {
             product.setColor("Color " + i);
             product.setImages(Arrays.asList("image1", "image2", "image3"));
             product.setMaterial("Material " + i);
-            product.setStatus("Status " + i);
+            product.setStatus(statuses[(new Random()).nextInt(statuses.length)]);
             product.setPrice((float) (Math.random() * 100));
             products.add(product);
         }
@@ -112,14 +121,14 @@ public class SearchActivity extends AppCompatActivity {
         imm.hideSoftInputFromWindow(binding.editTextHuskySearchBox.getWindowToken(), 0);
         searchTerm = binding.editTextHuskySearchBox.getText().toString();
         searchTerm.trim();
-        Log.d(TAG, "term:" + searchTerm);
+        Log.d(TAG, "search term:" + searchTerm);
         getProducts();
     }
 
     private void getProducts() {
         String categoryForQuery = category.equals(CATEGORY_FILTER) ? "" : category;
         String locationForQuery = location.equals(LOCATION_FILTER) ? "" : location;
-        dbClient.getProducts(searchTerm, categoryForQuery, locationForQuery, productsList -> {
+        dbClient.getProductsBySearch(searchTerm, categoryForQuery, locationForQuery, productsList -> {
             searchResultAdapter.setProducts(productsList);
             searchResultAdapter.notifyDataSetChanged();
         });

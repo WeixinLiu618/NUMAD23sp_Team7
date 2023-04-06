@@ -22,7 +22,6 @@ public class User implements Serializable {
         this.email = email;
         this.profileImage = profileImage;
         this.favorites= favorites;
-
     }
 
 

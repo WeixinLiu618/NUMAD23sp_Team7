@@ -26,16 +26,18 @@
         android:id="@+id/buttonChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/tertiary"
         android:text="chat"
-        app:layout_constraintBottom_toBottomOf="@+id/titleMessage"
+        android:backgroundTint="@color/gray"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/titleMessage" />
+        app:layout_constraintStart_toEndOf="@+id/titleMessage"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
 
     <EditText
         android:id="@+id/search_plate"
         android:layout_width="0dp"
-        android:layout_height="@dimen/_32sdp"
+        android:layout_height="@dimen/_40sdp"
         android:layout_marginStart="@dimen/_20sdp"
         android:layout_marginEnd="@dimen/_40sdp"
         android:layout_marginBottom="@dimen/_20sdp"
@@ -48,7 +50,7 @@
         android:paddingStart="@dimen/_12sdp"
         android:paddingTop="@dimen/_3sdp"
         android:paddingBottom="@dimen/_3sdp"
-        android:textSize="@dimen/_10ssp"
+        android:textSize="@dimen/_11ssp"
         app:layout_constraintBottom_toTopOf="@id/frameLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -64,13 +66,13 @@
         app:layout_constraintTop_toBottomOf="@+id/search_plate">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/conversationsRecyclerView"
+            android:id="@+id/recentMessagesRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:orientation="vertical"
             android:overScrollMode="never"
-            android:padding="@dimen/_20sdp"
+            android:padding="@dimen/_12sdp"
             android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 

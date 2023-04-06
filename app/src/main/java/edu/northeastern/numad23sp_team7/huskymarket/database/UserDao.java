@@ -10,6 +10,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.function.Consumer;
@@ -58,6 +59,28 @@ public class UserDao {
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error updating profile image.", e);
                     }
+                });
+    }
+
+    public void removeItemFromFavorites(String userId, String productId) {
+        usersRef.document(userId)
+                .update("favorites", FieldValue.arrayRemove(productId))
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Item removed from favorites successfully.");
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Error removing item from favorites", e);
+                });
+    }
+
+    public void addItemToFavorites(String userId, String productId) {
+        usersRef.document(userId)
+                .update("favorites", FieldValue.arrayUnion(productId))
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Item added favorites successfully.");
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Error adding item to favorites", e);
                 });
     }
 }

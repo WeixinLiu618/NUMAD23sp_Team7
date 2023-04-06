@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import edu.northeastern.numad23sp_team7.databinding.FragmentProfileBinding;
+import edu.northeastern.numad23sp_team7.huskymarket.database.RecentMessageDao;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
@@ -39,6 +40,7 @@ public class ProfileFragment extends Fragment {
     private FirebaseFirestore database;
     private PreferenceManager preferenceManager;
     private static final UserDao userDao = new UserDao();
+    private static final RecentMessageDao recentMessageDao = new RecentMessageDao();
 
     private static final String TAG = "profile fragment";
 
@@ -124,6 +126,9 @@ public class ProfileFragment extends Fragment {
                             preferenceManager.putString(Constants.KEY_PROFILE_IMAGE, encodedImage);
                             userDao.updateUserProfileImage(preferenceManager.getString(Constants.KEY_USER_ID), encodedImage);
                             Log.d(TAG, "image: " + preferenceManager.getString(Constants.KEY_PROFILE_IMAGE));
+                            recentMessageDao.updateProfileImage(preferenceManager.getString(Constants.KEY_USER_ID),
+                                    encodedImage);
+
 
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();

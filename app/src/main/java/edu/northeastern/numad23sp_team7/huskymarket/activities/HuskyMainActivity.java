@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import edu.northeastern.numad23sp_team7.R;
@@ -35,7 +36,8 @@ public class HuskyMainActivity extends AppCompatActivity {
                     break;
                 case R.id.navPost:
                     // not on fragment
-
+                    Intent intent = new Intent(HuskyMainActivity.this, CreatePostActivity.class);
+                    startActivity(intent);
                     break;
                 case R.id.navMessages:
                     changeFragment(new MessagesFragment());

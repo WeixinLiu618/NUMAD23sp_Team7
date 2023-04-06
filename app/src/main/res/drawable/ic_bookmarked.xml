@@ -1,10 +1,10 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="oval">
-            <solid android:color="#96FFFFFF"/>
+            <solid android:color="#C8FFFFFF"/>
             <size android:width="30dp" android:height="30dp"/>
         </shape>
     </item>
-    <item android:drawable="@drawable/ic_bookmark_hollow"
+    <item android:drawable="@drawable/ic_solid_bookmark_24"
         android:gravity="center"/>
 </layer-list>

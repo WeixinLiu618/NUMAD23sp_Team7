@@ -1,0 +1,10 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#C8FFFFFF"/>
+            <size android:width="30dp" android:height="30dp"/>
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_bookmark_hollow"
+        android:gravity="center"/>
+</layer-list>
