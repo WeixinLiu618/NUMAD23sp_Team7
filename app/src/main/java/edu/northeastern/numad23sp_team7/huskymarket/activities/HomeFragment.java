@@ -43,17 +43,13 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private Activity context;
-    private static final int REQUEST_LOCATION_PERMISSION = 100;
-    private FusedLocationProviderClient mFusedLocationClient;
-    private LocationManager locationManager;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    public HomeFragment(Activity myContext) {
+    public HomeFragment() {
         // Required empty public constructor
-        context = myContext;
     }
 
     /**
@@ -65,8 +61,8 @@ public class HomeFragment extends Fragment {
      * @return A new instance of fragment HomeFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2, Activity myContext) {
-        HomeFragment fragment = new HomeFragment(myContext);
+    public static HomeFragment newInstance(String param1, String param2) {
+        HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -81,73 +77,6 @@ public class HomeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context);
-        getLocation();
-    }
-
-
-    LocationListener locationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-            double latitude = location.getLatitude();
-            double longitude = location.getLongitude();
-            String cityName = "";
-
-            Geocoder geocoder = new Geocoder(context.getApplicationContext(), Locale.getDefault());
-            List<Address> addresses = null;
-
-            try {
-                addresses = geocoder.getFromLocation(latitude, longitude, 1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            if (addresses != null && addresses.size() > 0) {
-                cityName = addresses.get(0).getLocality();
-            }
-
-            // Do something with cityName
-        }
-    };
-
-    private void getLocation() {
-
-        if (ContextCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this.context,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION_PERMISSION);
-        }
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            double latitude = location.getLatitude();
-                            double longitude = location.getLongitude();
-//                          Update UI with latitude and longitude
-                            String cityName = "";
-
-                            Geocoder geocoder = new Geocoder(context.getApplicationContext(), Locale.getDefault());
-                            List<Address> addresses = null;
-
-                            try {
-                                addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            if (addresses != null && addresses.size() > 0) {
-                                cityName = addresses.get(0).getLocality();
-                            }
-                            // Do something with cityName
-                        }
-                    }
-                });
-        locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER,
-                5000,
-                0, locationListener);
     }
 
 
