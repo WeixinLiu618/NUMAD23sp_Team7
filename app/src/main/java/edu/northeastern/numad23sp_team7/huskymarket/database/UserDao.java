@@ -29,11 +29,10 @@ public class UserDao {
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        User user;
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
-                                user = document.toObject(User.class);
+                                User user = document.toObject(User.class);
                                 callback.accept(user);
                             } else {
                                 Log.d(TAG, "No such document");
