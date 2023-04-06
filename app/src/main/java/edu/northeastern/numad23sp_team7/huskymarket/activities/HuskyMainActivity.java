@@ -22,14 +22,14 @@ public class HuskyMainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         if(savedInstanceState == null) {
-            changeFragment(new HomeFragment());
+            changeFragment(new HomeFragment(this));
         }
 
 
         binding.bottomMenu.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.navHome:
-                    changeFragment(new HomeFragment());
+                    changeFragment(new HomeFragment(this));
                     break;
                 case R.id.navSellings:
                     changeFragment(new SellingsFragment());

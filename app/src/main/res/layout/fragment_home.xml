@@ -30,7 +30,7 @@
         android:layout_marginTop="37dp"
         android:layout_marginEnd="50dp"
         android:layout_marginBottom="93dp"
-        android:src="@tools:sample/avatars"
+        android:src="@drawable/ic_outline_location_on_20"
         app:layout_constraintBottom_toTopOf="@+id/frameLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/titleMessage"
