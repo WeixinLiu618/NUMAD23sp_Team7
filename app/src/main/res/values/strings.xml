@@ -19,11 +19,12 @@
 
     <string-array name="categories">
         <item>Category</item>
-        <item>book</item>
-        <item>furniture</item>
-        <item>clothing</item>
-        <item>stationery</item>
-        <item>electronics</item>
+        <item>Electronics</item>
+        <item>Books</item>
+        <item>Furniture</item>
+        <item>Clothing</item>
+        <item>Stationery</item>
+        <item>Electronics</item>
     </string-array>
 
     <string-array name="locations">
