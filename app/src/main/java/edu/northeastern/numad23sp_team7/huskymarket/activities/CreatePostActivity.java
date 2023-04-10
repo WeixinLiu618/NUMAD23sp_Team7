@@ -171,11 +171,15 @@ public class CreatePostActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && data != null) {
             if (requestCode == REQUEST_CAMERA) {
-                Log.d("TAG", "selectedImageUri: " + imageUri);
+
+                Picasso.get().load(imageUri).resize(500, 500)
+                        .centerCrop().into(imageUploadClick); // Set the new bitmap
+
                 selectedImageText.setText("Image selected");
             } else if (requestCode == REQUEST_GALLERY) {
                 imageUri = data.getData();
                 if (imageUri != null) {
+                    Picasso.get().load(imageUri).into(imageUploadClick);
                     Log.d("TAG", "selectedImageUri: " + imageUri);
                     selectedImageText.setText("Image selected");
                 }
