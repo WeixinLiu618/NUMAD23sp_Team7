@@ -6,8 +6,9 @@ import java.util.List;
 
 public class Product {
     private String productId;
+    private String title;
     private String description;
-    private String postUderId;
+    private String postUserId;
     private String location;
     private float condition;
     private String category;
@@ -21,10 +22,11 @@ public class Product {
     public Product() {
     }
 
-    public Product(String productId, String description, String postUderId, String location, float condition, String category, String color, List<String> images, String material, String status, float price) {
+    public Product(String productId, String title, String description, String postUserId, String location, float condition, String category, String color, List<String> images, String material, String status, float price) {
         this.productId = productId;
+        this.title = title;
         this.description = description;
-        this.postUderId = postUderId;
+        this.postUserId = postUserId;
         this.location = location;
         this.condition = condition;
         this.category = category;
@@ -51,12 +53,12 @@ public class Product {
         this.description = description;
     }
 
-    public String getPostUderId() {
-        return postUderId;
+    public String getPostUserId() {
+        return postUserId;
     }
 
-    public void setPostUderId(String postUderId) {
-        this.postUderId = postUderId;
+    public void setPostUserId(String postUserId) {
+        this.postUserId = postUserId;
     }
 
     public String getLocation() {
@@ -129,5 +131,13 @@ public class Product {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
