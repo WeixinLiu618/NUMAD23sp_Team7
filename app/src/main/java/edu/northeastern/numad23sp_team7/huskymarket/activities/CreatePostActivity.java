@@ -10,12 +10,11 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -27,23 +26,21 @@ import android.Manifest;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 
 import edu.northeastern.numad23sp_team7.R;
+import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
 
@@ -62,7 +59,6 @@ public class CreatePostActivity extends AppCompatActivity {
     private EditText price;
     private NumberPicker condition;
     private ImageView imageUploadClick;
-    private DatabaseReference mDataBase;
     private Spinner locationSpinner;
     private Spinner categorySpinner;
     private ImageView sendButton;
@@ -70,13 +66,19 @@ public class CreatePostActivity extends AppCompatActivity {
     private String postUderId;
     private TextView selectedImageText;
     private String currentPhotoPath;
+    private DocumentReference newProductRef;
     @SuppressLint("DefaultLocale")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_post);
 
-        mDataBase = FirebaseDatabase.getInstance().getReference();
+        // Get a reference to the products collection and create a new document with a generated ID
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference productsRef = db.collection("products");
+        newProductRef = productsRef.document();
+
+
         preferenceManager = new PreferenceManager(getApplicationContext());
         postUderId = preferenceManager.getString(Constants.KEY_USER_ID);
         selectedImageText = findViewById(R.id.select_image);
@@ -106,6 +108,7 @@ public class CreatePostActivity extends AppCompatActivity {
         // default category
         categorySpinner.setSelection(0);
 
+        price = findViewById(R.id.edit_text_price);
         //Set OnClick Activity for send button
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,6 +192,7 @@ public class CreatePostActivity extends AppCompatActivity {
         }
     }
 
+
     private void uploadPostData() {
         String itemTitle = title.getText().toString().trim();
         String itemDescription = description.getText().toString().trim();
@@ -197,10 +201,7 @@ public class CreatePostActivity extends AppCompatActivity {
         Float itemCondition = condition.getValue() / 10.0f;
         String priceString = price.getText().toString();
         Float itemPrice = null;
-        checkFieldValid(itemTitle, itemDescription, priceString, itemPrice);
-    }
 
-    private void checkFieldValid(String itemTitle, String itemDescription, String priceString, Float itemPrice) {
         if (itemTitle.isEmpty()) {
             title.setError("Title is required");
             title.requestFocus();
@@ -225,6 +226,29 @@ public class CreatePostActivity extends AppCompatActivity {
                 return;
             }
         }
+
+        Product product = new Product();
+        product.setPrice(itemPrice);
+        product.setDescription(itemDescription);
+        product.setCondition(itemCondition);
+        product.setCategory(itemCategory);
+        product.setLocation(itemLocation);
+        product.setPostUderId(postUderId);
+        product.setImages(Collections.singletonList(imageUri.toString()));
+
+        newProductRef.set(product).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(getApplicationContext(), "Product added successfully", Toast.LENGTH_SHORT).show();
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Handle errors
+            }
+        })
+        ;
     }
 
     private File createImageFile() throws IOException {
