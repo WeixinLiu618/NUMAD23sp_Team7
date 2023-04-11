@@ -31,6 +31,7 @@ public class SearchActivity extends AppCompatActivity {
     private String location = LOCATION_FILTER;
     private String searchTerm = "";
     private UserDao userDao;
+    private int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +104,7 @@ public class SearchActivity extends AppCompatActivity {
         for (int i = 0; i < 10; i++) {
             Product product = new Product();
             product.setDescription("Product " + i);
-            product.setPostUderId("User " + i);
+            product.setPostUserId("User " + i);
             product.setLocation(locations[(int) (Math.random() * (locations.length - 1)) + 1]);
             product.setCondition((float) (Math.random() * 5));
             product.setCategory(categories[(int) (Math.random() * (categories.length - 1)) + 1]);
@@ -129,8 +130,10 @@ public class SearchActivity extends AppCompatActivity {
         String categoryForQuery = category.equals(CATEGORY_FILTER) ? "" : category;
         String locationForQuery = location.equals(LOCATION_FILTER) ? "" : location;
         dbClient.getProductsBySearch(searchTerm, categoryForQuery, locationForQuery, productsList -> {
+            this.products = productsList;
             searchResultAdapter.setProducts(productsList);
             searchResultAdapter.notifyDataSetChanged();
+            binding.textViewSearchResultCount.setText("Results: " + this.products.size());
         });
     }
 

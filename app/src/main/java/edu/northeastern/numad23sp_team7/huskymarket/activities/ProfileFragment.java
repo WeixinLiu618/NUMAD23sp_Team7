@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +21,6 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -30,6 +28,7 @@ import edu.northeastern.numad23sp_team7.databinding.FragmentProfileBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.database.RecentMessageDao;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.ImageCodec;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
 
 
@@ -75,7 +74,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void showUserInfo() {
-        binding.imageProfile.setImageBitmap(decodeProfileImageString(preferenceManager.getString(Constants.KEY_PROFILE_IMAGE)));
+        binding.imageProfile.setImageBitmap(ImageCodec.getDecodedImage(preferenceManager.getString(Constants.KEY_PROFILE_IMAGE)));
         binding.username.setText(preferenceManager.getString(Constants.KEY_USERNAME));
         binding.email.setText(preferenceManager.getString(Constants.KEY_EMAIL));
         binding.editableUsername.setText(preferenceManager.getString(Constants.KEY_USERNAME));
@@ -95,22 +94,22 @@ public class ProfileFragment extends Fragment {
 
 
     // string -> bitmap
-    private Bitmap decodeProfileImageString(String encodedImage) {
-        byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-    }
+//    private Bitmap decodeProfileImageString(String encodedImage) {
+//        byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
+//        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//    }
 
 
     // bitmap -> string
-    private String getEncodedImage(Bitmap bitmap) {
-        int width = 150;
-        int height = bitmap.getHeight() * width / bitmap.getWidth();
-        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-        byte[] bytes = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
-    }
+//    private String getEncodedImage(Bitmap bitmap) {
+//        int width = 150;
+//        int height = bitmap.getHeight() * width / bitmap.getWidth();
+//        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+//        byte[] bytes = byteArrayOutputStream.toByteArray();
+//        return Base64.encodeToString(bytes, Base64.DEFAULT);
+//    }
 
     private final ActivityResultLauncher<Intent> pickImage = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -122,7 +121,7 @@ public class ProfileFragment extends Fragment {
                             InputStream inputStream = getActivity().getContentResolver().openInputStream(imageUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                             binding.imageProfile.setImageBitmap(bitmap);
-                            String encodedImage = getEncodedImage(bitmap);
+                            String encodedImage = ImageCodec.getEncodedImage(bitmap);
                             preferenceManager.putString(Constants.KEY_PROFILE_IMAGE, encodedImage);
                             userDao.updateUserProfileImage(preferenceManager.getString(Constants.KEY_USER_ID), encodedImage);
                             Log.d(TAG, "image: " + preferenceManager.getString(Constants.KEY_PROFILE_IMAGE));
