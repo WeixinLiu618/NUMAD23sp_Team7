@@ -2,7 +2,6 @@ package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Service;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -11,14 +10,13 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
