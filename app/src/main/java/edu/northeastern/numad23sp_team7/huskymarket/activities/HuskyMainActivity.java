@@ -41,7 +41,7 @@ public class HuskyMainActivity extends AppCompatActivity {
                     break;
                 case R.id.navMessages:
                     changeFragment(new MessagesFragment());
-                    break;
+                break;
                 case R.id.navProfile:
                     changeFragment(new ProfileFragment());
                     break;

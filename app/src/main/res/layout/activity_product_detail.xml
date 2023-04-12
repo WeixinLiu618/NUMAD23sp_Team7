@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".huskymarket.activities.ProductDetailFragment">
+    tools:context=".huskymarket.activities.ProductDetailActivity">
 
     <ScrollView
         android:layout_width="0dp"
@@ -76,6 +76,7 @@
                 tools:text="$1.23" />
 
             <TextView
+                android:id="@+id/productConditionView"
                 android:layout_width="393dp"
                 android:layout_height="252dp"
                 android:layout_margin="16dp"
