@@ -32,6 +32,7 @@ public class Constants {
     public static final String KEY_LAST_MESSAGE = "lastMessage";
     public static final String KEY_TIMESTAMP = "timestamp";
 
+    public static final String KEY_PRODUCT_ID = "productId";
     public static final String KEY_PRODUCT_LOCATION = "location";
     public static final String KEY_PRODUCT_CATEGORY = "category";
     public static final String KEY_PRODUCT_LOCATION_ARRAY = "locations";
@@ -40,6 +41,4 @@ public class Constants {
     public static final String KEY_PRODUCT_STATUS = "status";
     public static final String VALUE_PRODUCT_STATUS_SOLD = "sold";
     public static final String VALUE_PRODUCT_STATUS_AVAILABLE = "available";
-    public static final String INTENT_KEY_PRODUCT_DETAIL_ID = "productId";
-
 }

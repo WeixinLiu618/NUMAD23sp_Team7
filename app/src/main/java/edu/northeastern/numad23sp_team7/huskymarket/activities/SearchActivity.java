@@ -103,6 +103,10 @@ public class SearchActivity extends AppCompatActivity {
                 // Do nothing
             }
         });
+
+        binding.backButtonHuskySearchBar.setOnClickListener(view -> {
+            onBackPressed();
+        });
     }
 
     private void initializeData() {
@@ -117,7 +121,7 @@ public class SearchActivity extends AppCompatActivity {
             product.setCondition((float) (Math.random() * 5));
             product.setCategory(categories[(int) (Math.random() * (categories.length - 1)) + 1]);
             product.setColor("Color " + i);
-            product.setImages(Arrays.asList(IMAGE_BIT_STRING));
+            product.setImages(Arrays.asList("image1", "image2"));
             product.setMaterial("Material " + i);
             product.setStatus(statuses[(new Random()).nextInt(statuses.length)]);
             product.setPrice((float) (Math.random() * 100));
@@ -137,11 +141,16 @@ public class SearchActivity extends AppCompatActivity {
     private void getProducts() {
         String categoryForQuery = category.equals(CATEGORY_FILTER) ? "" : category;
         String locationForQuery = location.equals(LOCATION_FILTER) ? "" : location;
+
+        binding.recyclerViewHuskySearchResult.setVisibility(View.INVISIBLE);
+        binding.progressBarHuskySearch.setVisibility(View.VISIBLE);
         dbClient.getProductsBySearch(searchTerm, categoryForQuery, locationForQuery, productsList -> {
             this.products = productsList;
             searchResultAdapter.setProducts(productsList);
             searchResultAdapter.notifyDataSetChanged();
             binding.textViewSearchResultCount.setText("Results: " + this.products.size());
+            binding.progressBarHuskySearch.setVisibility(View.INVISIBLE);
+            binding.recyclerViewHuskySearchResult.setVisibility(View.VISIBLE);
         });
     }
 

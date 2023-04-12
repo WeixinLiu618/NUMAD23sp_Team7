@@ -1,11 +1,9 @@
 package edu.northeastern.numad23sp_team7.huskymarket.adapter;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -13,19 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ItemSearchResultCardBinding;
+import edu.northeastern.numad23sp_team7.huskymarket.activities.ProductDetailActivity;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
@@ -53,28 +44,16 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         return new SearchResultViewHolder(binding);
     }
 
-    public Bitmap downloadImage(String imageUrl) throws IOException {
-        URL url = new URL(imageUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setDoInput(true);
-        connection.connect();
-        InputStream input = connection.getInputStream();
-        Bitmap bitmap = BitmapFactory.decodeStream(input);
-        return bitmap;
-    }
-
     @Override
     public void onBindViewHolder(@NonNull SearchResultViewHolder holder, int position) {
         holder.binding.setProduct(products.get(position));
 
-        // Display image
-        String imageUrl = "content://com.google.android.apps.photos.contentprovider/-1/1/content%3A%2F%2Fmedia%2Fexternal%2Fimages%2Fmedia%2F15/ORIGINAL/NONE/image%2Fjpeg/57271938";
-        Picasso.get().load(Uri.parse(imageUrl)).into(holder.binding.imageViewHuskySearchResult);
+        // TODO: Display image
 
         // Redirect to product detail
         holder.binding.layoutHuskySearchResultContainer.setOnClickListener(view -> {
-            Intent intent = new Intent(context, HuskyMainActivity.class);
-            intent.putExtra(Constants.INTENT_KEY_PRODUCT_DETAIL_ID, products.get(position).getProductId());
+            Intent intent = new Intent(context, ProductDetailActivity.class);
+            intent.putExtra(Constants.KEY_PRODUCT_ID, products.get(position).getProductId());
             context.startActivity(intent);
         });
 

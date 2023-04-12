@@ -21,6 +21,7 @@ import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 public class ProductDetailActivity extends AppCompatActivity {
     ActivityProductDetailBinding binding;
     private FirebaseFirestore database;
+    private String productId;
     private Product product;
 
     @Override
@@ -29,8 +30,13 @@ public class ProductDetailActivity extends AppCompatActivity {
         binding = ActivityProductDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         database = FirebaseFirestore.getInstance();
+
+        // Get product Id
+        Intent intentFromSearch = getIntent();
+        productId = intentFromSearch.getStringExtra(Constants.KEY_PRODUCT_ID);
+
         //load product detail from database
-        database.collection(Constants.KEY_COLLECTION_PRODUCTS).document(product.getProductId()).get()
+        database.collection(Constants.KEY_COLLECTION_PRODUCTS).document(productId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         product = documentSnapshot.toObject(Product.class);
