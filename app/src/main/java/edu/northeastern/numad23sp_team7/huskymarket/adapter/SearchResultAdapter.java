@@ -1,7 +1,9 @@
 package edu.northeastern.numad23sp_team7.huskymarket.adapter;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -14,9 +16,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ItemSearchResultCardBinding;
+import edu.northeastern.numad23sp_team7.huskymarket.activities.ProductDetailActivity;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
+import edu.northeastern.numad23sp_team7.huskymarket.activities.HuskyMainActivity;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.SearchResultViewHolder> {
 
@@ -42,6 +47,15 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     @Override
     public void onBindViewHolder(@NonNull SearchResultViewHolder holder, int position) {
         holder.binding.setProduct(products.get(position));
+
+        // TODO: Display image
+
+        // Redirect to product detail
+        holder.binding.layoutHuskySearchResultContainer.setOnClickListener(view -> {
+            Intent intent = new Intent(context, ProductDetailActivity.class);
+            intent.putExtra(Constants.KEY_PRODUCT_ID, products.get(position).getProductId());
+            context.startActivity(intent);
+        });
 
         // Set bookmark icon
         String productId = products.get(position).getProductId();

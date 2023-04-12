@@ -5,16 +5,13 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,12 +39,11 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private Activity context;
+    private EditText searchPlate;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
-    private EditText searchPlate;
 
     private ArrayList<Product> products = new ArrayList<>();
 
@@ -162,11 +158,21 @@ public class HomeFragment extends Fragment {
         });
 
         // direct search bar to search page
-        binding.searchPlate.setOnClickListener(new View.OnClickListener() {
+//        binding.searchPlate.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(getActivity(), SearchActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+
+        binding.searchPlate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SearchActivity.class);
-                startActivity(intent);
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    Intent intent = new Intent(getActivity(), SearchActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -233,6 +239,18 @@ public class HomeFragment extends Fragment {
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        binding.searchPlate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
+                startActivity(intent);
             }
         });
     }

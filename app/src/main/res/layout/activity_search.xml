@@ -19,9 +19,9 @@
 
             <ImageView
                 android:id="@+id/backButtonHuskySearchBar"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="10dp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginStart="@dimen/_10sdp"
                 app:layout_constraintTop_toTopOf="@id/editTextHuskySearchBox"
                 app:layout_constraintBottom_toBottomOf="@id/editTextHuskySearchBox"
                 app:layout_constraintStart_toStartOf="parent"
@@ -90,6 +90,43 @@
 
         </LinearLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/secondary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutSearchPageFilterBar">
+
+            <ProgressBar
+                android:id="@+id/progressBarHuskySearch"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.4" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/textViewSearchResultCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/secondary"
+            android:textSize="@dimen/_10ssp"
+            android:paddingStart="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/layoutSearchPageFilterBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+        </TextView>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewHuskySearchResult"
             android:layout_width="match_parent"
@@ -99,7 +136,7 @@
             android:padding="5dp"
             app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layoutSearchPageFilterBar"
+            app:layout_constraintTop_toBottomOf="@id/textViewSearchResultCount"
             app:layout_constraintVertical_bias="0.0"
             app:spanCount="2"
             tools:layout_editor_absoluteX="16dp"

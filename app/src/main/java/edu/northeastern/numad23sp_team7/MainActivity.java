@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     public void goToGroupProject() {
         Intent intent = new Intent(this, HuskyLoginActivity.class);
         startActivity(intent);
-//        Intent intent = new Intent(this, SearchActivity.class);
+//        Intent intent = new Intent(this, TestActivity.class);
 //        startActivity(intent);
     }
 }
