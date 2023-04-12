@@ -120,11 +120,12 @@
         android:hint="@string/type_a_message"
         android:imeOptions="actionDone"
         android:importantForAutofill="no"
-        android:inputType="text"
+        android:inputType="text|textMultiLine|textAutoCorrect|textCapSentences|textCapWords"
         android:paddingStart="@dimen/_16sdp"
         android:paddingEnd="@dimen/_16sdp"
         android:textColor="@color/black"
         android:textColorHint="@color/tertiary"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/layoutSend"
         app:layout_constraintStart_toStartOf="parent" />

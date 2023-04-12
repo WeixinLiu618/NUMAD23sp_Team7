@@ -2,6 +2,8 @@ package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -83,13 +85,26 @@ public class ProfileFragment extends Fragment {
 
 
     private void logout() {
-        if (mAuth.getCurrentUser() != null) {
-            mAuth.signOut();
-            preferenceManager.clear();
-            Intent intent = new Intent(getActivity(), HuskyLoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Log out Confirmation")
+                .setMessage("Are you sure to log out?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAuth.signOut();
+                        preferenceManager.clear();
+                        Intent intent = new Intent(getActivity(), HuskyLoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
     }
 
 
@@ -138,10 +153,8 @@ public class ProfileFragment extends Fragment {
     );
 
 
-
     private void showToast(String text) {
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
-
 
 }
