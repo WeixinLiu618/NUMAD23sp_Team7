@@ -44,7 +44,11 @@ public class ProductDao {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Product product = document.toObject(Product.class);
-                        if (!searchTerm.isEmpty() && product.getDescription().toLowerCase().contains(searchTerm.toLowerCase())) {
+                        if (
+                                !searchTerm.isEmpty()
+                                && (product.getDescription().toLowerCase().contains(searchTerm.toLowerCase())
+                                || product.getTitle().toLowerCase().contains(searchTerm.toLowerCase()))
+                        ) {
                             products.add(product);
                         }
                     }
