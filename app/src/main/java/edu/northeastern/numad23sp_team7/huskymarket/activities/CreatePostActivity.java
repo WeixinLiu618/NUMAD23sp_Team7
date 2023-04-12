@@ -63,7 +63,7 @@ public class CreatePostActivity extends AppCompatActivity {
     private Spinner categorySpinner;
     private ImageView sendButton;
     private Uri imageUri;
-    private String postUderId;
+    private String postUserId;
     private TextView selectedImageText;
     private String currentPhotoPath;
     private DocumentReference newProductRef;
@@ -75,12 +75,12 @@ public class CreatePostActivity extends AppCompatActivity {
 
         // Get a reference to the products collection and create a new document with a generated ID
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference productsRef = db.collection("products");
+        CollectionReference productsRef = db.collection(Constants.KEY_COLLECTION_PRODUCTS);
         newProductRef = productsRef.document();
 
 
         preferenceManager = new PreferenceManager(getApplicationContext());
-        postUderId = preferenceManager.getString(Constants.KEY_USER_ID);
+        postUserId = preferenceManager.getString(Constants.KEY_USER_ID);
         selectedImageText = findViewById(R.id.select_image);
 
         sendButton = findViewById(R.id.send_post_btn);
@@ -233,7 +233,7 @@ public class CreatePostActivity extends AppCompatActivity {
         product.setCondition(itemCondition);
         product.setCategory(itemCategory);
         product.setLocation(itemLocation);
-        product.setPostUderId(postUderId);
+        product.setPostUserId(postUserId);
         product.setImages(Collections.singletonList(imageUri.toString()));
 
         newProductRef.set(product).addOnSuccessListener(new OnSuccessListener<Void>() {
