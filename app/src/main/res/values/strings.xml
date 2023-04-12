@@ -16,6 +16,7 @@
     <string name="type_a_message">Type a message</string>
     <string name="choose_a_category">Choose A Category</string>
     <string name="search">Search</string>
+    <string name="choose_a_location">Choose A Location</string>
 
     <string-array name="categories">
         <item>Category</item>
@@ -28,7 +29,7 @@
     </string-array>
 
     <string-array name="locations">
-        <item>Location</item>
+<!--        <item>Location</item>-->
         <item>Seattle</item>
         <item>Boston</item>
         <item>San Jose</item>

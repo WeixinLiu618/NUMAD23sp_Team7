@@ -14,6 +14,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.function.Consumer;
 
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
@@ -56,6 +57,115 @@ public class ProductDao {
             }
         });
     }
+
+    public void getLatestProductsForUser(String currentUserId, Date currentTimestamp, Date latestTimeStamp, final Consumer<ArrayList<Product>> callback) {
+        ArrayList<Product> products = new ArrayList<>();
+        Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
+
+        productsQuery = productsQuery.whereLessThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, currentTimestamp);
+        productsQuery = productsQuery.whereGreaterThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, latestTimeStamp);
+
+        productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
+        productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Product product = document.toObject(Product.class);
+                        if (!currentUserId.isEmpty()) {
+                            products.add(product);
+                        }
+                    }
+
+                    callback.accept(products);
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    public void getLocalProductsForUser(String currentUserId, String selectedLocation, final Consumer<ArrayList<Product>> callback) {
+        ArrayList<Product> products = new ArrayList<>();
+        Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
+
+        productsQuery = productsQuery.whereEqualTo(Constants.KEY_PRODUCT_LOCATION, selectedLocation);
+
+        productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
+        productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Product product = document.toObject(Product.class);
+                        if (!currentUserId.isEmpty() && !selectedLocation.isEmpty()) {
+                            products.add(product);
+                        }
+                    }
+
+                    callback.accept(products);
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    public void getMyFavoritesProductsForUser(String currentUserId, Date currentTimestamp, Date latestTimeStamp, final Consumer<ArrayList<Product>> callback) {
+        ArrayList<Product> products = new ArrayList<>();
+        Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
+
+        productsQuery = productsQuery.whereLessThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, currentTimestamp);
+        productsQuery = productsQuery.whereGreaterThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, latestTimeStamp);
+
+        productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
+        productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Product product = document.toObject(Product.class);
+                        if (!currentUserId.isEmpty()) {
+                            products.add(product);
+                        }
+                    }
+
+                    callback.accept(products);
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+
+    public void getMyPostsProductsForUser(String currentUserId, Date currentTimestamp, Date latestTimeStamp, final Consumer<ArrayList<Product>> callback) {
+        ArrayList<Product> products = new ArrayList<>();
+        Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
+
+        productsQuery = productsQuery.whereLessThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, currentTimestamp);
+        productsQuery = productsQuery.whereGreaterThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, latestTimeStamp);
+
+        productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
+        productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Product product = document.toObject(Product.class);
+                        if (!currentUserId.isEmpty()) {
+                            products.add(product);
+                        }
+                    }
+
+                    callback.accept(products);
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
 
     public void addProducts(ArrayList<Product> products) {
         for (Product product : products) {

@@ -56,7 +56,7 @@ public class HuskyMainActivity extends AppCompatActivity {
     private void changeFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frameLayout, fragment);
+        fragmentTransaction.replace(R.id.LinearLayout, fragment);
         fragmentTransaction.commit();
     }
 
