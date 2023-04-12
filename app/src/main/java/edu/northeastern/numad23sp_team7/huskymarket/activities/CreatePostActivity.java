@@ -234,6 +234,10 @@ public class CreatePostActivity extends AppCompatActivity {
         product.setCategory(itemCategory);
         product.setLocation(itemLocation);
         product.setPostUserId(postUserId);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5f588cf99a4e478d6ee0d632cee004607d2940d7
         product.setImages(Collections.singletonList(imageUri.toString()));
 
         newProductRef.set(product).addOnSuccessListener(new OnSuccessListener<Void>() {

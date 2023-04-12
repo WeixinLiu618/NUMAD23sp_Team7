@@ -5,6 +5,6 @@
             <size android:width="30dp" android:height="30dp"/>
         </shape>
     </item>
-    <item android:drawable="@drawable/ic_solid_bookmark_24"
+    <item android:drawable="@drawable/ic_favorite_solid_22"
         android:gravity="center"/>
 </layer-list>
