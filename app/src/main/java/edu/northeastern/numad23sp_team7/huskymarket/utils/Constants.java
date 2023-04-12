@@ -40,5 +40,6 @@ public class Constants {
     public static final String KEY_PRODUCT_STATUS = "status";
     public static final String VALUE_PRODUCT_STATUS_SOLD = "sold";
     public static final String VALUE_PRODUCT_STATUS_AVAILABLE = "available";
+    public static final String INTENT_KEY_PRODUCT_DETAIL_ID = "productId";
 
 }

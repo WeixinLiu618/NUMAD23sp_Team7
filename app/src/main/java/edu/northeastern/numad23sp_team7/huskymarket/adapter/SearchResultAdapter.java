@@ -2,6 +2,8 @@ package edu.northeastern.numad23sp_team7.huskymarket.adapter;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -9,7 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.northeastern.numad23sp_team7.R;
@@ -17,6 +22,8 @@ import edu.northeastern.numad23sp_team7.databinding.ItemSearchResultCardBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
+import edu.northeastern.numad23sp_team7.huskymarket.activities.HuskyMainActivity;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.SearchResultViewHolder> {
 
@@ -24,6 +31,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     private User loggedInUser;
     private Context context;
     private UserDao userDao;
+    private String imageUrl = "content://com.google.android.apps.photos.contentprovider/-1/1/content%3A%2F%2Fmedia%2Fexternal%2Fimages%2Fmedia%2F15/ORIGINAL/NONE/image%2Fjpeg/57271938";
 
     public SearchResultAdapter(ArrayList<Product> arr, Context context) {
         this.products = arr;
@@ -42,6 +50,15 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     @Override
     public void onBindViewHolder(@NonNull SearchResultViewHolder holder, int position) {
         holder.binding.setProduct(products.get(position));
+//        Picasso.get().load(Uri.parse(imageUrl)).into(holder.binding.imageViewHuskySearchResult);
+        holder.binding.imageViewHuskySearchResult.setImageResource(R.drawable.sample);
+
+        // Redirect to product detail
+        holder.binding.layoutHuskySearchResultContainer.setOnClickListener(view -> {
+            Intent intent = new Intent(context, HuskyMainActivity.class);
+            intent.putExtra(Constants.INTENT_KEY_PRODUCT_DETAIL_ID, products.get(position).getProductId());
+            context.startActivity(intent);
+        });
 
         // Set bookmark icon
         String productId = products.get(position).getProductId();

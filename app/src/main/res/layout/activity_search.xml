@@ -90,6 +90,20 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/textViewSearchResultCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/secondary"
+            android:textSize="@dimen/_10ssp"
+            android:paddingStart="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/layoutSearchPageFilterBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+        </TextView>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewHuskySearchResult"
             android:layout_width="match_parent"
@@ -99,7 +113,7 @@
             android:padding="5dp"
             app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layoutSearchPageFilterBar"
+            app:layout_constraintTop_toBottomOf="@id/textViewSearchResultCount"
             app:layout_constraintVertical_bias="0.0"
             app:spanCount="2"
             tools:layout_editor_absoluteX="16dp"
