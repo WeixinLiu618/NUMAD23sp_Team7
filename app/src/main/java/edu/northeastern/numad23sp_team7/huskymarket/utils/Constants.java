@@ -30,6 +30,8 @@ public class Constants {
     public static final String KEY_USER2_IMAGE = "user2Image";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_LAST_MESSAGE = "lastMessage";
+    public static final String KEY_DELETED_BY_USER1 = "deletedByUser1";
+    public static final String KEY_DELETED_BY_USER2 = "deletedByUser2";
     public static final String KEY_TIMESTAMP = "timestamp";
 
     public static final String KEY_PRODUCT_ID = "productId";

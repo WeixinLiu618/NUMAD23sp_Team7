@@ -3,6 +3,7 @@ package edu.northeastern.numad23sp_team7.huskymarket.database;
 import android.util.Log;
 
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -19,13 +20,13 @@ public class RecentMessageDao {
         Query q1 = recentMessageRef.whereEqualTo(Constants.KEY_USER1_ID, userId);
         q1.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                for(QueryDocumentSnapshot documentSnapshot: task.getResult()) {
+                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                     recentMessageRef.document(documentSnapshot.getId())
                             .update(Constants.KEY_USER1_IMAGE, encodedImage)
                             .addOnSuccessListener(aVoid -> Log.d(TAG, "User1 Image successfully updated!"))
                             .addOnFailureListener(e -> Log.w(TAG, "updateProfileImage: ", e));
                 }
-            }else {
+            } else {
                 Log.d(TAG, "updateProfileImage: ", task.getException());
             }
         });
@@ -33,16 +34,48 @@ public class RecentMessageDao {
         Query q2 = recentMessageRef.whereEqualTo(Constants.KEY_USER2_ID, userId);
         q2.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                for(QueryDocumentSnapshot documentSnapshot: task.getResult()) {
+                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                     recentMessageRef.document(documentSnapshot.getId())
                             .update(Constants.KEY_USER2_IMAGE, encodedImage)
                             .addOnSuccessListener(aVoid -> Log.d(TAG, "User2 Image successfully updated!"))
                             .addOnFailureListener(e -> Log.w(TAG, "updateProfileImage: ", e));
                 }
-            }else {
+            } else {
                 Log.d(TAG, "updateProfileImage: ", task.getException());
             }
         });
+    }
+
+    public void updateDeletedStatus(String messageId, String userId, boolean isDeleted) {
+        Query q1 = recentMessageRef
+                .whereEqualTo(Constants.KEY_USER1_ID, userId)
+                .whereEqualTo(FieldPath.documentId(), messageId);
+        q1.get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                    recentMessageRef.document(documentSnapshot.getId())
+                            .update(Constants.KEY_DELETED_BY_USER1, isDeleted)
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "User1 successfully deleted recent message!"))
+                            .addOnFailureListener(e -> Log.w(TAG, "User1 failed to delete recent message: ", e));
+                }
+            }
+        });
+
+        Query q2 = recentMessageRef
+                .whereEqualTo(Constants.KEY_USER2_ID, userId)
+                .whereEqualTo(FieldPath.documentId(), messageId);
+        q2.get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                    recentMessageRef.document(documentSnapshot.getId())
+                            .update(Constants.KEY_DELETED_BY_USER2, isDeleted)
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "User2 successfully deleted recent message!"))
+                            .addOnFailureListener(e -> Log.w(TAG, "User2 failed to delete recent message: ", e));
+                }
+            }
+        });
+
+
     }
 
 
