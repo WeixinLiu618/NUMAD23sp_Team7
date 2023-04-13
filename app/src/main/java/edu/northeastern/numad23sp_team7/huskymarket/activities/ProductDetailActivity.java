@@ -48,7 +48,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                         binding.photo.setImageURI((Uri) product.getImages());
                     }
                 });
-        binding.layoutSend.setOnClickListener(v -> {
+        binding.layoutSendMessage.setOnClickListener(v -> {
             //start chat with seller
             Intent intent = new Intent(ProductDetailActivity.this, CreatePostActivity.class);
             startActivity(intent);
