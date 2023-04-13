@@ -52,5 +52,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             Intent intent = new Intent(ProductDetailActivity.this, CreatePostActivity.class);
             startActivity(intent);
         });
+        // back button
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
     }
 }
