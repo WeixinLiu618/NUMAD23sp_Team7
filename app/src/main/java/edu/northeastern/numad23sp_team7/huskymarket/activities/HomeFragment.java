@@ -171,6 +171,7 @@ public class HomeFragment extends Fragment {
             public void onFocusChange(View view, boolean hasFocus) {
                 if (hasFocus) {
                     Intent intent = new Intent(getActivity(), SearchActivity.class);
+                    intent.putExtra(Constants.KEY_PRODUCT_LOCATION, selectedLocation);
                     startActivity(intent);
                 }
             }

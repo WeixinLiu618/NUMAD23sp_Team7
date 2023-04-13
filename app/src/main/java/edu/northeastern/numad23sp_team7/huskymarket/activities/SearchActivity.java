@@ -1,6 +1,8 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -56,6 +58,18 @@ public class SearchActivity extends AppCompatActivity {
             searchResultAdapter.updateLoggedInUser(user);
             searchResultAdapter.notifyDataSetChanged();
         });
+
+        // Get location
+        Intent intent = getIntent();
+        String userLocation = intent.getStringExtra(Constants.KEY_PRODUCT_LOCATION);
+        if (userLocation != null) {
+            location = userLocation;
+            Resources resources = binding.getRoot().getContext().getResources();
+            String packageName = binding.getRoot().getContext().getPackageName();
+            String[] locations = resources.getStringArray(resources.getIdentifier("locations2", "array", packageName));
+            binding.spinnerHuskySearchFilterLocation.setSelection(Arrays.asList(locations).indexOf(location));
+
+        }
 
         // Search bar
         binding.editTextHuskySearchBox.requestFocus();
@@ -156,8 +170,8 @@ public class SearchActivity extends AppCompatActivity {
 
     private void initializeFilters() {
         binding.spinnerHuskySearchFilterCategory.setSelection(0);
-        binding.spinnerHuskySearchFilterLocation.setSelection(0);
+//        binding.spinnerHuskySearchFilterLocation.setSelection(0);
         category = CATEGORY_FILTER;
-        location = LOCATION_FILTER;
+//        location = LOCATION_FILTER;
     }
 }
