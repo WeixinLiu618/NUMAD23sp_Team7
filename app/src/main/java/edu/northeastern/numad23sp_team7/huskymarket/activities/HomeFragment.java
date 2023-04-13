@@ -157,26 +157,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // direct search bar to search page
-//        binding.searchPlate.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(getActivity(), SearchActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-
-        binding.searchPlate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (hasFocus) {
-                    Intent intent = new Intent(getActivity(), SearchActivity.class);
-                    intent.putExtra(Constants.KEY_PRODUCT_LOCATION, selectedLocation);
-                    startActivity(intent);
-                }
-            }
-        });
-
         // Filters
         binding.latestFilter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -247,12 +227,19 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        binding.searchPlate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), SearchActivity.class);
-                startActivity(intent);
+
+        binding.searchPlate.setOnClickListener(v -> startSearchPage());
+        binding.searchPlate.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                startSearchPage();
             }
         });
+
+    }
+
+    private void startSearchPage() {
+        Intent intent = new Intent(getActivity(), SearchActivity.class);
+        intent.putExtra(Constants.KEY_PRODUCT_LOCATION, selectedLocation);
+        startActivity(intent);
     }
 }
