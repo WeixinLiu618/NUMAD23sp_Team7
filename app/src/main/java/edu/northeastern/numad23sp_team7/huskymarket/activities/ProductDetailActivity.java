@@ -50,6 +50,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                 });
         binding.layoutSendMessage.setOnClickListener(v -> {
             //start chat with seller
+            // TODO: go to ChatActivity, passing post user (not post user id)
             Intent intent = new Intent(ProductDetailActivity.this, CreatePostActivity.class);
             startActivity(intent);
         });
