@@ -1,11 +1,6 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -22,14 +16,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
-import android.Manifest;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
@@ -40,6 +34,7 @@ import java.util.Collections;
 import java.util.Date;
 
 import edu.northeastern.numad23sp_team7.R;
+import edu.northeastern.numad23sp_team7.huskymarket.database.ProductDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
@@ -66,7 +61,13 @@ public class CreatePostActivity extends AppCompatActivity {
     private String postUserId;
     private TextView selectedImageText;
     private String currentPhotoPath;
-    private DocumentReference newProductRef;
+
+    private FirebaseFirestore database;
+    private static final ProductDao productDao = new ProductDao();
+    private final static String TAG = "create post";
+
+
+
     @SuppressLint("DefaultLocale")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +75,7 @@ public class CreatePostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_post);
 
         // Get a reference to the products collection and create a new document with a generated ID
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference productsRef = db.collection(Constants.KEY_COLLECTION_PRODUCTS);
-        newProductRef = productsRef.document();
+        database = FirebaseFirestore.getInstance();
 
 
         preferenceManager = new PreferenceManager(getApplicationContext());
@@ -91,9 +90,9 @@ public class CreatePostActivity extends AppCompatActivity {
         condition.setMinValue(10);
         condition.setMaxValue(100);
         condition.setWrapSelectorWheel(false);
-        condition.setFormatter(value -> String.format("%.1f", value/10.0));
+        condition.setFormatter(value -> String.format("%.1f", value / 10.0));
         condition.setValue(100);
-        
+
         // Create the location spinner and set its options
         locationSpinner = findViewById(R.id.spinner_location);
         ArrayAdapter<String> locationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, LOCATION_OPTIONS);
@@ -119,7 +118,7 @@ public class CreatePostActivity extends AppCompatActivity {
     }
 
     public void onClickMyImageView(View view) {
-        final CharSequence[] options = { "Take Photo", "Choose from Gallery", "Cancel" };
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add Photo");
@@ -130,7 +129,7 @@ public class CreatePostActivity extends AppCompatActivity {
                     // Check camera permission
                     if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 
-                    // Create a file to store the captured image
+                        // Create a file to store the captured image
                         File photoFile = null;
                         try {
                             photoFile = createImageFile();
@@ -228,6 +227,8 @@ public class CreatePostActivity extends AppCompatActivity {
         }
 
         Product product = new Product();
+        product.setTitle(itemTitle);
+        product.setStatus(Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
         product.setPrice(itemPrice);
         product.setDescription(itemDescription);
         product.setCondition(itemCondition);
@@ -236,19 +237,15 @@ public class CreatePostActivity extends AppCompatActivity {
         product.setPostUserId(postUserId);
         product.setImages(Collections.singletonList(imageUri.toString()));
 
-        newProductRef.set(product).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(getApplicationContext(), "Product added successfully", Toast.LENGTH_SHORT).show();
-            }
-        })
-        .addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // Handle errors
-            }
-        })
-        ;
+        database.collection(Constants.KEY_COLLECTION_PRODUCTS)
+                .add(product)
+                .addOnSuccessListener(documentReference -> {
+                    product.setProductId(documentReference.getId());
+                    productDao.updateProductId(documentReference.getId());
+                })
+                .addOnFailureListener(e -> {
+                    Log.d(TAG, "uploadPostData: " + e);
+                });
     }
 
     private File createImageFile() throws IOException {

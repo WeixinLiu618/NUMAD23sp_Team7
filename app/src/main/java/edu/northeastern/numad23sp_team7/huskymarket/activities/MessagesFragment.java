@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -37,7 +36,6 @@ public class MessagesFragment extends Fragment implements RecentMessageCardClick
 
     private List<RecentMessageCard> recentMessageCards;
     private RecentMessagesAdapter recentMessagesAdapter;
-    private FirebaseAuth mAuth;
     private FirebaseFirestore database;
 
     private static final UserDao userDao = new UserDao();
@@ -53,7 +51,6 @@ public class MessagesFragment extends Fragment implements RecentMessageCardClick
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mAuth = FirebaseAuth.getInstance();
         database = FirebaseFirestore.getInstance();
         preferenceManager = new PreferenceManager(requireContext());
         // Inflate the layout for this fragment
