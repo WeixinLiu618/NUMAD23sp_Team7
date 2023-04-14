@@ -41,6 +41,7 @@ public class Constants {
     public static final String KEY_PRODUCT_CATEGORY_ARRAY = "categories";
     public static final String KEY_PRODUCT_TIMESTAMP = "timestamp";
     public static final String KEY_PRODUCT_STATUS = "status";
+    public static final String KEY_POST_USER_ID = "postUserId";
     public static final String VALUE_PRODUCT_STATUS_SOLD = "sold";
     public static final String VALUE_PRODUCT_STATUS_AVAILABLE = "available";
 }

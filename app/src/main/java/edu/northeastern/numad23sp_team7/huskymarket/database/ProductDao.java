@@ -5,6 +5,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FieldValue;
@@ -47,8 +49,8 @@ public class ProductDao {
                         Product product = document.toObject(Product.class);
                         if (
                                 !searchTerm.isEmpty()
-                                && (product.getDescription().toLowerCase().contains(searchTerm.toLowerCase())
-                                || product.getTitle().toLowerCase().contains(searchTerm.toLowerCase()))
+                                        && (product.getDescription().toLowerCase().contains(searchTerm.toLowerCase())
+                                        || product.getTitle().toLowerCase().contains(searchTerm.toLowerCase()))
                         ) {
                             products.add(product);
                         }
@@ -143,14 +145,12 @@ public class ProductDao {
     }
 
 
-    public void getMyPostsProductsForUser(String currentUserId, Date currentTimestamp, Date latestTimeStamp, final Consumer<ArrayList<Product>> callback) {
+    public void getMyPostsProductsForUser(String currentUserId, final Consumer<ArrayList<Product>> callback) {
         ArrayList<Product> products = new ArrayList<>();
-        Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
+        Query productsQuery = productsRef
+                .whereEqualTo(Constants.KEY_POST_USER_ID, currentUserId)
+                .orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
 
-        productsQuery = productsQuery.whereLessThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, currentTimestamp);
-        productsQuery = productsQuery.whereGreaterThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, latestTimeStamp);
-
-        productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
         productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -183,4 +183,27 @@ public class ProductDao {
                     .addOnFailureListener(e -> Log.w(TAG, "Error updating timestamp", e));
         }
     }
+
+    public void updateProductStatus(String productId, String status) {
+        productsRef.document(productId)
+                .update(Constants.KEY_PRODUCT_STATUS, status)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Product status successfully updated!" + status);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Error updating product status.", e);
+                });
+    }
+
+    public void updateProductId(String productId) {
+        productsRef.document(productId)
+                .update(Constants.KEY_PRODUCT_ID, productId)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "ProductId successfully updated!" + productId);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Error updating productId.", e);
+                });
+    }
+
 }

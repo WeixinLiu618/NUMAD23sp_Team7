@@ -23,8 +23,8 @@ public class UserDao {
     private final CollectionReference usersRef = db.collection(Constants.KEY_COLLECTION_USERS);
     private final static String TAG = "userDao";
 
-    public void getUserById(String id, final Consumer<User> callback) {
-        usersRef.document(id)
+    public void getUserById(String userId, final Consumer<User> callback) {
+        usersRef.document(userId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -44,8 +44,8 @@ public class UserDao {
                 });
     }
 
-    public void updateUserProfileImage(String id, String encodedImage) {
-        usersRef.document(id)
+    public void updateUserProfileImage(String userId, String encodedImage) {
+        usersRef.document(userId)
                 .update(Constants.KEY_PROFILE_IMAGE, encodedImage)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
