@@ -1,6 +1,9 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -10,6 +13,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ActivityProductDetailBinding;
@@ -42,17 +48,21 @@ public class ProductDetailActivity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         product = documentSnapshot.toObject(Product.class);
                         binding.productName.setText(product.getTitle());
-                        binding.productConditionView.setText((int) product.getCondition());
-                        binding.thePriceOfProduct.setText(getString((int) product.getPrice()));
+                        binding.productConditionView.setText(String.valueOf(product.getCondition()));
+                        binding.thePriceOfProduct.setText(String.valueOf(product.getPrice()));
                         binding.location.setText(product.getLocation());
-                        binding.photo.setImageURI((Uri) product.getImages());
+                        //TODO: get Image
                     }
                 });
         binding.layoutSendMessage.setOnClickListener(v -> {
             //start chat with seller
             // TODO: go to ChatActivity, passing post user (not post user id)
-            Intent intent = new Intent(ProductDetailActivity.this, CreatePostActivity.class);
-            startActivity(intent);
+            UserDao userDao = new UserDao();
+            userDao.getUserById(product.getPostUserId(), receiver -> {
+                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                intent.putExtra(Constants.KEY_USER, receiver);
+                startActivity(intent);
+            });
         });
         // back button
         binding.backBtn.setOnClickListener(v -> onBackPressed());
