@@ -1,9 +1,6 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -11,7 +8,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -29,18 +25,17 @@ import java.util.List;
 
 import edu.northeastern.numad23sp_team7.databinding.ActivityChatBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.adapter.ChatAdapter;
-import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.ChatMessage;
 import edu.northeastern.numad23sp_team7.huskymarket.model.RecentMessage;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.FCMApiClient;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.FCMApiService;
-import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.ImageCodec;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -84,8 +79,8 @@ public class ChatActivity extends AppCompatActivity {
         senderProfileImage = preferenceManager.getString(Constants.KEY_PROFILE_IMAGE);
         chatAdapter = new ChatAdapter(
                 chatMessages,
-                decodeProfileImageString(senderProfileImage), // TODO change
-                decodeProfileImageString(receiver.getProfileImage()), // TODO change
+                ImageCodec.getDecodedImage(senderProfileImage), // TODO change
+                ImageCodec.getDecodedImage(receiver.getProfileImage()), // TODO change
                 senderId);
         binding.chatRecyclerView.setAdapter(chatAdapter);
 
@@ -217,15 +212,7 @@ public class ChatActivity extends AppCompatActivity {
             checkRecentMessage(senderId, receiver.getId());
             checkRecentMessage(receiver.getId(), senderId);
         }
-
     };
-
-
-    // string -> bitmap
-    private Bitmap decodeProfileImageString(String encodedImage) {
-        byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-    }
 
 
     // check if recentMessage collection has had a recent conversation

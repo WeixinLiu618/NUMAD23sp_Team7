@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.util.Log;
 
@@ -58,9 +59,10 @@ public class FCMService extends FirebaseMessagingService {
             Log.d(TAG, "onMessageReceived: "+ user.getUsername());
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
-            builder.setSmallIcon(R.drawable.ic_launcher_husky_foreground)
+            builder.setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(username)
                     .setContentText(messageText)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.husky_logo))
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true);
