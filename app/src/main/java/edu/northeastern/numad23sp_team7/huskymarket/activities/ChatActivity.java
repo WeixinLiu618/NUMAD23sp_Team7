@@ -1,20 +1,35 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,19 +37,28 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ActivityChatBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.adapter.ChatAdapter;
+import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.ChatMessage;
 import edu.northeastern.numad23sp_team7.huskymarket.model.RecentMessage;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.ApiClient;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.ApiService;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.NotificationUtil;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ChatActivity extends AppCompatActivity {
 
     private ActivityChatBinding binding;
     private User receiver;
+    private String receiverToken = null;
     private String senderId;
     private String senderName;
     private String senderProfileImage;
@@ -44,6 +68,9 @@ public class ChatActivity extends AppCompatActivity {
     private PreferenceManager preferenceManager;
 
     private FirebaseFirestore database;
+    private static final UserDao userDao = new UserDao();
+    FirebaseAuth mAuth;
+
 
     private String recentMessageId = null;
 
@@ -63,6 +90,7 @@ public class ChatActivity extends AppCompatActivity {
 
         // init
         database = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatMessages = new ArrayList<>();
 
@@ -117,9 +145,64 @@ public class ChatActivity extends AppCompatActivity {
                     Constants.KEY_TIMESTAMP, new Date()
             );
         }
+        try {
+            JSONObject data = new JSONObject();
+            data.put(Constants.KEY_USER_ID, senderId);
+            data.put(Constants.KEY_USERNAME, senderName);
+            data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
+
+            JSONObject body = new JSONObject();
+            body.put(Constants.MSG_DATA, data);
+            sendNotification(body.toString());
+
+        } catch (Exception e) {
+            showToast(e.getMessage());
+        }
+
+
         binding.inputMessage.setText(null);
 
 
+    }
+
+    private void showToast(String message) { // can delete later
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void sendNotification(String message) {
+        ApiClient.getClient()
+                .create(ApiService.class)
+                .sendMessage(NotificationUtil.getMsg(), message)
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+                        if (response.isSuccessful()) {
+                            try {
+                                if (response.body() != null) {
+                                    JSONObject responseJson = new JSONObject(response.body());
+                                    JSONArray results = responseJson.getJSONArray("results");
+                                    if (responseJson.getInt("failure") == 1) {
+                                        JSONObject error = (JSONObject) results.get(0);
+                                        showToast(error.getString("error"));
+                                        return;
+                                    }
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            showToast("Notification sent successful");
+
+                        } else {
+                            showToast("Error: " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                        showToast(t.getMessage());
+                    }
+                });
     }
 
 

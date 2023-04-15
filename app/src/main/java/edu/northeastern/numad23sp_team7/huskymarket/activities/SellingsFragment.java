@@ -52,6 +52,8 @@ public class SellingsFragment extends Fragment implements MySellingsCardClickLis
 
         String userId = preferenceManager.getString(Constants.KEY_USER_ID);
 
+
+        // TODO
         productDao.getMyPostsProductsForUser(userId, mySellings -> {
             mySellingsAdapter.notifyDataSetChanged();
             Log.d(TAG, "onCreateView: "+mySellings.size());

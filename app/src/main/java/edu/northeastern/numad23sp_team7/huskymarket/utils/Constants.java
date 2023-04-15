@@ -44,4 +44,12 @@ public class Constants {
     public static final String KEY_POST_USER_ID = "postUserId";
     public static final String VALUE_PRODUCT_STATUS_SOLD = "sold";
     public static final String VALUE_PRODUCT_STATUS_AVAILABLE = "available";
+
+
+    // notifications
+    public static final String MSG_AUTHORIZATION = "Authorization";
+    public static final String MSG_CONTENT_TYPE = "Content-Type";
+    public static final String MSG_DATA = "data";
+    public static final String MSG_REGISTRATION_IDS = "registration_ids";
+    public static final String KEY_FCM_TOKEN = "fcmToken";
 }
