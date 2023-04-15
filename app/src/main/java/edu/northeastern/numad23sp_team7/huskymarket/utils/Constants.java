@@ -47,9 +47,12 @@ public class Constants {
 
 
     // notifications
-    public static final String MSG_AUTHORIZATION = "Authorization";
-    public static final String MSG_CONTENT_TYPE = "Content-Type";
-    public static final String MSG_DATA = "data";
-    public static final String MSG_REGISTRATION_IDS = "registration_ids";
+    public static final String KEY_AUTHORIZATION = "Authorization";
+    public static final String VALUE_AUTHORIZATION = "key=AAAAt0ALpps:APA91bEpuagOjLQ2j3OjMXCMWmRAbZOpmUAMq2aoulPfxASMpMfWTcVUQu-5IlDm2wvCVKOlRZqGb4QasybMRrjBQ81FOz1HpzsclA0U8bFJ1BCGaD79PVeUIFzSFbfn8EWYtvqnfoWa";
+
+    public static final String KEY_CONTENT_TYPE = "Content-Type";
+    public static final String VALUE_CONTENT_TYPE = "application/json";
+    public static final String KEY_DATA = "data";
+    public static final String KEY_REGISTRATION_IDS = "registration_ids";
     public static final String KEY_FCM_TOKEN = "fcmToken";
 }

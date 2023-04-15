@@ -26,7 +26,7 @@ import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 
 public class FCMService extends FirebaseMessagingService {
 
-    private final static String TAG = "FCM";
+    private final static String TAG = "FCM Service";
     private final static UserDao userDao = new UserDao();
     private static final int MY_PERMISSIONS_REQUEST_NOTIFICATION = 123;
     private static final int NOTIFICATION_ID = 123123;
@@ -44,8 +44,10 @@ public class FCMService extends FirebaseMessagingService {
 
         String userId = data.get(Constants.KEY_USER_ID);
         String username = data.get(Constants.KEY_USERNAME);
-        String fcmToken = data.get(Constants.KEY_FCM_TOKEN);
+        String messageText = data.get(Constants.KEY_MESSAGE);
 
+
+        Log.d(TAG, "onMessageReceived: " + username);
 
         String channelId = "chat_message";
 
@@ -53,36 +55,36 @@ public class FCMService extends FirebaseMessagingService {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         userDao.getUserById(userId, user -> {
             intent.putExtra(Constants.KEY_USER, user);
+            Log.d(TAG, "onMessageReceived: "+ user.getUsername());
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
+            builder.setSmallIcon(R.drawable.ic_launcher_husky_foreground)
+                    .setContentTitle(username)
+                    .setContentText(messageText)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                CharSequence channelName = "Chat Message";
+                String channelDescription = "Chat Message Notification";
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
+                channel.setDescription(channelDescription);
+                NotificationManager notificationManager = getSystemService(NotificationManager.class);
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            // show notification
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions((Activity) getApplicationContext(),
+                        new String[]{Manifest.permission.ACCESS_NOTIFICATION_POLICY},
+                        MY_PERMISSIONS_REQUEST_NOTIFICATION);
+            }
+            notificationManagerCompat.notify(NOTIFICATION_ID, builder.build());
         });
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
-        builder.setSmallIcon(R.drawable.ic_launcher_husky_foreground)
-                .setContentTitle(username)
-                .setContentText(data.get(Constants.KEY_MESSAGE))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence channelName = "Chat Message";
-            String channelDescription = "Chat Message Notification";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
-            channel.setDescription(channelDescription);
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-
-        // show notification
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions((Activity) getApplicationContext(),
-                    new String[]{Manifest.permission.ACCESS_NOTIFICATION_POLICY},
-                    MY_PERMISSIONS_REQUEST_NOTIFICATION);
-        }
-        notificationManagerCompat.notify(NOTIFICATION_ID, builder.build());
 
 
     }

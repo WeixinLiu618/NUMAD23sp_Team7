@@ -3,7 +3,7 @@ package edu.northeastern.numad23sp_team7.huskymarket.utils;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-public class ApiClient {
+public class FCMApiClient {
     private static Retrofit retrofit = null;
 
     public static Retrofit getClient() {
