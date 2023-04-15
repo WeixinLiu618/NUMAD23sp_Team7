@@ -105,8 +105,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/productDetail" />
 
-            <FrameLayout
-                android:id="@+id/bookmark"
+            <ImageView
+                android:id="@+id/bookmarkProductDetail"
                 android:layout_width="55dp"
                 android:layout_height="62dp"
                 android:layout_marginLeft="320dp"
@@ -116,7 +116,7 @@
                 app:layout_constraintTop_toBottomOf="@id/photo">
 
 
-            </FrameLayout>
+            </ImageView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
