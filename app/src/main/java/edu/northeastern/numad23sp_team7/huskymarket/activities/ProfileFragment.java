@@ -92,6 +92,7 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mAuth.signOut();
+                        userDao.updateFCMToken(preferenceManager.getString(Constants.KEY_USER_ID), null);
                         preferenceManager.clear();
                         Intent intent = new Intent(getActivity(), HuskyLoginActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

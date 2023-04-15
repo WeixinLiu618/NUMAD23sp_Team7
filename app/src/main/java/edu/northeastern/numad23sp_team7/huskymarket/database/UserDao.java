@@ -82,4 +82,15 @@ public class UserDao {
                     Log.w(TAG, "Error adding item to favorites", e);
                 });
     }
+
+    public void updateFCMToken(String userId, String token) {
+        usersRef.document(userId)
+                .update(Constants.KEY_FCM_TOKEN, token)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "updateFCMToken: " + token);
+                })
+                .addOnFailureListener(e -> {
+                    Log.d(TAG, "updateFCMToken: " + e);
+                });
+    }
 }

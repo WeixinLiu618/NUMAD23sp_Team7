@@ -25,6 +25,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 
 import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ActivityHuskySignupBinding;
+import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
@@ -43,6 +45,7 @@ public class HuskySignupActivity extends AppCompatActivity {
     private ActivityHuskySignupBinding binding;
     private FirebaseAuth mAuth;
     private PreferenceManager preferenceManager;
+    private static final UserDao userDao = new UserDao();
     private String encodedImage;
 
     @Override
@@ -82,7 +85,7 @@ public class HuskySignupActivity extends AppCompatActivity {
                                     if (encodedImage == null) {
                                         setDefaultProfileImage();
                                     }
-                                    User user = new User(userUid,username, email, encodedImage, new ArrayList<>());
+                                    User user = new User(userUid, username, email, encodedImage, new ArrayList<>());
                                     FirebaseFirestore database = FirebaseFirestore.getInstance();
                                     database.collection(Constants.KEY_COLLECTION_USERS)
                                             .document(userUid)
@@ -95,6 +98,7 @@ public class HuskySignupActivity extends AppCompatActivity {
                                                 preferenceManager.putString(Constants.KEY_USERNAME, username);
                                                 preferenceManager.putString(Constants.KEY_EMAIL, email);
                                                 preferenceManager.putString(Constants.KEY_PROFILE_IMAGE, encodedImage);
+                                                updateFCMToken();
                                                 Intent intent = new Intent(getApplicationContext(), HuskyMainActivity.class);
                                                 // ensures that the activity is started in a new task and any existing tasks are cleared.
                                                 // effectively creating a new task stack for the activity to be launched into.
@@ -196,5 +200,17 @@ public class HuskySignupActivity extends AppCompatActivity {
             binding.progressBar.setVisibility(View.INVISIBLE);
             binding.buttonSignUp.setVisibility(View.VISIBLE);
         }
+    }
+
+
+    //  use the Firebase Cloud Messaging (FCM) library to retrieve the FCM registration token for the current app instance,
+    //  and then calls the updateToken method with the token as a parameter.
+    private void updateFCMToken() {
+        FirebaseMessaging.getInstance()
+                .getToken()
+                .addOnSuccessListener(token -> {
+                    preferenceManager.putString(Constants.KEY_FCM_TOKEN, token);
+                    userDao.updateFCMToken(preferenceManager.getString(Constants.KEY_USER_ID), token);
+                });
     }
 }

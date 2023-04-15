@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import edu.northeastern.numad23sp_team7.databinding.ActivityHuskyLoginBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
@@ -89,6 +90,7 @@ public class HuskyLoginActivity extends AppCompatActivity {
             preferenceManager.putString(Constants.KEY_EMAIL, currentUser.getEmail());
             preferenceManager.putString(Constants.KEY_PROFILE_IMAGE, currentUser.getProfileImage());
             preferenceManager.putBoolean(Constants.KEY_IS_LOGGED_IN, true);
+            updateFCMToken();
             Intent intent = new Intent(getApplicationContext(), HuskyMainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -135,4 +137,17 @@ public class HuskyLoginActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
+
+
+    //  use the Firebase Cloud Messaging (FCM) library to retrieve the FCM registration token for the current app instance,
+    //  and then calls the updateToken method with the token as a parameter.
+    private void updateFCMToken() {
+        FirebaseMessaging.getInstance()
+                .getToken()
+                .addOnSuccessListener(token -> {
+                    preferenceManager.putString(Constants.KEY_FCM_TOKEN, token);
+                    userDao.updateFCMToken(preferenceManager.getString(Constants.KEY_USER_ID), token);
+                });
+    }
+
 }
