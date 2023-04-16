@@ -1,5 +1,7 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
+import static edu.northeastern.numad23sp_team7.huskymarket.utils.ImageCodec.getEncodedImageFromUri;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -63,6 +65,7 @@ public class CreatePostActivity extends AppCompatActivity {
     private String postUserId;
     private TextView selectedImageText;
     private String currentPhotoPath;
+    private String encodedImageString;
 
     private FirebaseFirestore database;
     private static final ProductDao productDao = new ProductDao();
@@ -187,7 +190,7 @@ public class CreatePostActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && data != null) {
             if (requestCode == REQUEST_CAMERA) {
-
+                encodedImageString = getEncodedImageFromUri(this, imageUri);
                 Picasso.get().load(imageUri).resize(500, 500)
                         .centerCrop().into(imageUploadClick); // Set the new bitmap
 
@@ -195,6 +198,7 @@ public class CreatePostActivity extends AppCompatActivity {
             } else if (requestCode == REQUEST_GALLERY) {
                 imageUri = data.getData();
                 if (imageUri != null) {
+                    encodedImageString = getEncodedImageFromUri(this, imageUri);
                     Picasso.get().load(imageUri).into(imageUploadClick);
                     Log.d("TAG", "selectedImageUri: " + imageUri);
                     selectedImageText.setText("Image selected");
@@ -249,7 +253,7 @@ public class CreatePostActivity extends AppCompatActivity {
         product.setCategory(itemCategory);
         product.setLocation(itemLocation);
         product.setPostUserId(postUserId);
-        product.setImages(Collections.singletonList(imageUri.toString()));
+        product.setImages(Collections.singletonList(encodedImageString));
 
         database.collection(Constants.KEY_COLLECTION_PRODUCTS)
                 .add(product)
