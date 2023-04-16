@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,6 +58,7 @@ public class CreatePostActivity extends AppCompatActivity {
     private Spinner locationSpinner;
     private Spinner categorySpinner;
     private ImageView sendButton;
+    private ImageView backButton;
     private Uri imageUri;
     private String postUserId;
     private TextView selectedImageText;
@@ -83,6 +85,7 @@ public class CreatePostActivity extends AppCompatActivity {
         selectedImageText = findViewById(R.id.select_image);
 
         sendButton = findViewById(R.id.send_post_btn);
+        backButton = findViewById(R.id.back_btn);
         imageUploadClick = findViewById(R.id.image_view_post);
         title = findViewById(R.id.edit_text_title);
         description = findViewById(R.id.edit_text_description);
@@ -113,6 +116,17 @@ public class CreatePostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 uploadPostData();
+                Toast.makeText(getApplicationContext(), "Post Sent Successfully", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), HuskyMainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), HuskyMainActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -195,9 +209,9 @@ public class CreatePostActivity extends AppCompatActivity {
     private void uploadPostData() {
         String itemTitle = title.getText().toString().trim();
         String itemDescription = description.getText().toString().trim();
-        String itemLocation = locationSpinner.toString();
-        String itemCategory = categorySpinner.toString();
-        Float itemCondition = condition.getValue() / 10.0f;
+        String itemLocation = locationSpinner.getSelectedItem().toString();
+        String itemCategory = categorySpinner.getSelectedItem().toString();
+        float itemCondition = condition.getValue() / 10.0f;
         String priceString = price.getText().toString();
         Float itemPrice = null;
 
