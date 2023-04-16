@@ -86,7 +86,7 @@
             android:id="@+id/noMessagePrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No message received yet."
+            android:text="No message found yet."
             android:layout_gravity="center"
             android:visibility="gone"/>
 

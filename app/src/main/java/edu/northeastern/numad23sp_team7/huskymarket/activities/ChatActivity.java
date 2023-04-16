@@ -64,8 +64,8 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
 
-        // TODO connect with other fragments here: message fragment, as well as product detail
-        // get receiver from former activity
+        // TODO connect with other fragments here:
+        // get receiver from former activity: message fragment, product detail, notification
         receiver = (User) getIntent().getSerializableExtra("user");
         binding.textReceiverName.setText(receiver.getUsername());
 
@@ -79,8 +79,8 @@ public class ChatActivity extends AppCompatActivity {
         senderProfileImage = preferenceManager.getString(Constants.KEY_PROFILE_IMAGE);
         chatAdapter = new ChatAdapter(
                 chatMessages,
-                ImageCodec.getDecodedImage(senderProfileImage), // TODO change
-                ImageCodec.getDecodedImage(receiver.getProfileImage()), // TODO change
+                ImageCodec.getDecodedImage(senderProfileImage),
+                ImageCodec.getDecodedImage(receiver.getProfileImage()),
                 senderId);
         binding.chatRecyclerView.setAdapter(chatAdapter);
 
