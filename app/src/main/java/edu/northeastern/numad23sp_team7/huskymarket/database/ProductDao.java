@@ -25,7 +25,7 @@ import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 public class ProductDao {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final CollectionReference productsRef = db.collection(Constants.KEY_COLLECTION_PRODUCTS);
-    private final static String TAG = "Database Client";
+    private final static String TAG = "Product Dao";
 
     public void getProductsBySearch(String searchTerm, String category, String location, final Consumer<ArrayList<Product>> callback) {
         ArrayList<Product> products = new ArrayList<>();
@@ -148,8 +148,33 @@ public class ProductDao {
     public void getMyPostsProductsForUser(String currentUserId, final Consumer<ArrayList<Product>> callback) {
         ArrayList<Product> products = new ArrayList<>();
         Query productsQuery = productsRef
+                .whereEqualTo(Constants.KEY_POST_USER_ID, currentUserId);
+
+        productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Product product = document.toObject(Product.class);
+                        if (!currentUserId.isEmpty()) {
+                            products.add(product);
+                        }
+                    }
+                    Log.d(TAG, "onComplete: " + products.size());
+
+                    callback.accept(products);
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    public void getMySoldProductsForUser(String currentUserId, final Consumer<ArrayList<Product>> callback) {
+        ArrayList<Product> products = new ArrayList<>();
+        Query productsQuery = productsRef
                 .whereEqualTo(Constants.KEY_POST_USER_ID, currentUserId)
-                .orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
+                .whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_SOLD);
 
         productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

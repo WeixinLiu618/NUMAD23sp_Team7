@@ -114,7 +114,6 @@
                             android:ellipsize="end"
                             android:fontFamily="@font/alkatra_medium"
                             android:maxLines="1"
-                            android:text="10"
                             android:textAlignment="center"
                             android:textColor="@color/primary_dark"
                             android:textSize="@dimen/_18ssp"
@@ -149,7 +148,6 @@
                             android:ellipsize="end"
                             android:fontFamily="@font/alkatra_medium"
                             android:maxLines="1"
-                            android:text="6"
                             android:textAlignment="center"
                             android:textColor="@color/primary_dark"
                             android:textSize="@dimen/_18ssp"
@@ -177,14 +175,13 @@
                         android:padding="@dimen/_8sdp">
 
                         <TextView
-                            android:id="@+id/textEarningNumber"
+                            android:id="@+id/textFavoritesNumber"
                             android:layout_width="@dimen/_60sdp"
                             android:layout_height="@dimen/_36sdp"
                             android:layout_gravity="center"
                             android:ellipsize="end"
                             android:fontFamily="@font/alkatra_medium"
                             android:maxLines="1"
-                            android:text="342"
                             android:textAlignment="center"
                             android:textColor="@color/primary_dark"
                             android:textSize="@dimen/_18ssp"
@@ -196,7 +193,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:fontFamily="@font/poppins_medium"
-                            android:text="Earnings"
+                            android:text="Favorites"
                             android:textAlignment="center"
                             android:textColor="@color/primary_dark"
                             android:textSize="@dimen/_10ssp" />
