@@ -51,14 +51,14 @@
         android:paddingTop="@dimen/_3sdp"
         android:paddingBottom="@dimen/_3sdp"
         android:textSize="@dimen/_11ssp"
-        app:layout_constraintBottom_toTopOf="@id/LinearLayout"
+        app:layout_constraintBottom_toTopOf="@id/myLinearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/titleMessage"
         app:layout_constraintTop_toTopOf="@id/titleMessage" />
 
     <FrameLayout
-        android:id="@+id/LinearLayout"
+        android:id="@+id/myLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/secondary"

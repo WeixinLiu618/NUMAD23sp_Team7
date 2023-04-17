@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 
+import edu.northeastern.numad23sp_team7.MainActivity;
 import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ActivityHuskyMainBinding;
 
@@ -56,8 +57,13 @@ public class HuskyMainActivity extends AppCompatActivity {
     private void changeFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.LinearLayout, fragment);
+        fragmentTransaction.replace(R.id.myLinearLayout, fragment);
         fragmentTransaction.commit();
     }
 
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(HuskyMainActivity.this, MainActivity.class);
+        startActivity(intent);
+        }
 }
