@@ -60,8 +60,8 @@ public class ProfileFragment extends Fragment {
         preferenceManager = new PreferenceManager(requireContext());
         // Inflate the layout for this fragment
         binding = FragmentProfileBinding.inflate(getLayoutInflater());
-        showUserInfo();
 
+        showUserInfo();
 
         binding.iconLogout.setOnClickListener(v -> {
             logout();
@@ -86,7 +86,7 @@ public class ProfileFragment extends Fragment {
         // set posts number
         productDao.getMyPostsProductsForUser(preferenceManager.getString(Constants.KEY_USER_ID), products -> {
             String postsNum = "0";
-            if(products != null && products.size() > 0) {
+            if (products != null && products.size() > 0) {
                 postsNum = String.valueOf(products.size());
             }
             Log.d(TAG, "showUserInfo: postNum " + postsNum);
@@ -96,17 +96,17 @@ public class ProfileFragment extends Fragment {
         // set sold number
         productDao.getMySoldProductsForUser(preferenceManager.getString(Constants.KEY_USER_ID), products -> {
             String soldNum = "0";
-            if(products != null && products.size() > 0) {
+            if (products != null && products.size() > 0) {
                 soldNum = String.valueOf(products.size());
             }
-            Log.d(TAG, "showUserInfo: soldNum " +soldNum);
+            Log.d(TAG, "showUserInfo: soldNum " + soldNum);
             binding.textSoldNumber.setText(soldNum);
         });
 
         // set favorites number
         userDao.getUserById(preferenceManager.getString(Constants.KEY_USER_ID), user -> {
             String favoritesNum = "0";
-            if(user != null && user.getFavorites() != null && user.getFavorites().size() > 0) {
+            if (user != null && user.getFavorites() != null && user.getFavorites().size() > 0) {
                 favoritesNum = String.valueOf(user.getFavorites().size());
             }
             binding.textFavoritesNumber.setText(favoritesNum);
@@ -117,8 +117,7 @@ public class ProfileFragment extends Fragment {
 
     private void logout() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Log out Confirmation")
-                .setMessage("Are you sure to log out?")
+        builder.setMessage("Are you sure to log out?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
