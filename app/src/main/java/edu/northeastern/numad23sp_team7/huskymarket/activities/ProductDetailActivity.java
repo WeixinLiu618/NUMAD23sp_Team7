@@ -18,6 +18,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.northeastern.numad23sp_team7.R;
@@ -28,6 +29,8 @@ import edu.northeastern.numad23sp_team7.huskymarket.model.ChatMessage;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.ImageCodec;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
 
 public class ProductDetailActivity extends AppCompatActivity {
     ActivityProductDetailBinding binding;
@@ -42,6 +45,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        userDao = new UserDao();
         binding = ActivityProductDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         database = FirebaseFirestore.getInstance();
@@ -49,6 +53,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         // Get product Id
         Intent intentFromSearch = getIntent();
         productId = intentFromSearch.getStringExtra(Constants.KEY_PRODUCT_ID);
+        loggedInUser = (User) intentFromSearch.getSerializableExtra(Constants.KEY_USER);
 
 
         //load product detail from database
@@ -72,6 +77,13 @@ public class ProductDetailActivity extends AppCompatActivity {
                         }
                         binding.bookmarkProductDetail.setBackground(
                                 ContextCompat.getDrawable(binding.bookmarkProductDetail.getContext(), bookmarkIcon ));
+                        List<String> images = product.getImages();
+                        if (!images.isEmpty()) {
+                            Bitmap imageBitMap = ImageCodec.getDecodedImage(images.get(0));
+                            if (imageBitMap != null) {
+                                binding.photo.setImageBitmap(imageBitMap);
+                            }
+                        }
                     }
 
                 });

@@ -63,6 +63,8 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         holder.binding.layoutHuskySearchResultContainer.setOnClickListener(view -> {
             Intent intent = new Intent(context, ProductDetailActivity.class);
             intent.putExtra(Constants.KEY_PRODUCT_ID, products.get(position).getProductId());
+            //zili added (for product detail bookmark)
+            intent.putExtra(Constants.KEY_USER, loggedInUser);
             context.startActivity(intent);
         });
 
