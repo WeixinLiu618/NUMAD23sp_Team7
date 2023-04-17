@@ -1,6 +1,7 @@
 package edu.northeastern.numad23sp_team7.huskymarket.adapter;
 
 
+import android.graphics.PorterDuff;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ItemSellingsBinding;
-import edu.northeastern.numad23sp_team7.huskymarket.database.ProductDao;
 import edu.northeastern.numad23sp_team7.huskymarket.listeners.MySellingsCardClickListener;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
@@ -28,7 +29,6 @@ public class MySellingsAdapter extends RecyclerView.Adapter<MySellingsAdapter.My
     private static final String TAG = "selling adapter";
 
     public MySellingsAdapter(ArrayList<Product> products, MySellingsCardClickListener mySellingsCardClickListener) {
-        Log.d(TAG, "MySellingsAdapter: "+"来到这里");
         this.products = products;
         this.mySellingsCardClickListener = mySellingsCardClickListener;
     }
@@ -36,7 +36,6 @@ public class MySellingsAdapter extends RecyclerView.Adapter<MySellingsAdapter.My
     @NonNull
     @Override
     public MySellingsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder: " + "来到这里");
         return new MySellingsViewHolder(
                 ItemSellingsBinding.inflate(
                         LayoutInflater.from(parent.getContext()),
@@ -68,11 +67,8 @@ public class MySellingsAdapter extends RecyclerView.Adapter<MySellingsAdapter.My
         public void setData(Product product) {
             // TODO set image of real product image data
 //            binding.imageProduct.setImageBitmap(ImageCodec.getDecodedImage(product.getImages().get(0)));
-            Log.d(TAG, "setData: "+ "set image来到这里");
             binding.imageProduct.setImageBitmap(ImageCodec.getDecodedImage(PRODUCT_IMAGE_STRING));
-            Log.d(TAG, "setData: "+ "set title来到这里");
             binding.textProductTitle.setText(product.getTitle());
-            Log.d(TAG, "setData: "+ "set price来到这里");
             String formattedPrice = String.format("$ %.2f", product.getPrice());
             binding.textProductPrice.setText(formattedPrice);
 

@@ -14,7 +14,8 @@
         android:background="@color/secondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -74,7 +75,7 @@
                         android:background="@color/secondary"
                         android:ellipsize="end"
                         android:fontFamily="@font/poppins_medium"
-                        android:maxLines="1"
+                        android:maxLines="2"
                         android:text="product title"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_15sdp"
@@ -98,13 +99,15 @@
                 </LinearLayout>
 
 
-                <ImageView
+                <com.makeramen.roundedimageview.RoundedImageView
                     android:id="@+id/iconSettings"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginEnd="@dimen/_5sdp"
-                    android:paddingStart="@dimen/_5sdp"
+                    android:background="@drawable/selector_settings"
+                    android:clickable="true"
+                    android:layout_marginStart="@dimen/_5sdp"
                     android:src="@drawable/ic_settings" />
 
             </LinearLayout>
