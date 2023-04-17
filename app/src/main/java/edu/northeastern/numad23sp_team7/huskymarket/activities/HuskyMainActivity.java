@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import edu.northeastern.numad23sp_team7.MainActivity;
 import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ActivityHuskyMainBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
@@ -63,4 +64,9 @@ public class HuskyMainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(HuskyMainActivity.this, MainActivity.class);
+        startActivity(intent);
+        }
 }

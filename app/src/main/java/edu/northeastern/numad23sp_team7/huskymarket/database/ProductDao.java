@@ -5,9 +5,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -19,9 +19,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Consumer;
 
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
+import edu.northeastern.numad23sp_team7.huskymarket.model.User;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 
 public class ProductDao {
@@ -110,7 +112,6 @@ public class ProductDao {
                             products.add(product);
                         }
                     }
-
                     callback.accept(products);
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -119,31 +120,74 @@ public class ProductDao {
         });
     }
 
-    public void getMyFavoritesProductsForUser(String currentUserId, Date currentTimestamp, Date latestTimeStamp, final Consumer<ArrayList<Product>> callback) {
-        ArrayList<Product> products = new ArrayList<>();
-        Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
-
-        productsQuery = productsQuery.whereLessThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, currentTimestamp);
-        productsQuery = productsQuery.whereGreaterThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, latestTimeStamp);
-
-        productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
-        productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Product product = document.toObject(Product.class);
-                        if (!currentUserId.isEmpty()) {
-                            products.add(product);
+    public void getProductById (String currentUserId, String productId, final Consumer<Product> callback) {
+        Query productQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_ID, productId);
+        productQuery.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Product product = document.toObject(Product.class);
+                                if (!currentUserId.isEmpty()) {
+                                    callback.accept(product);
+                                }
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
+                });
+    }
 
-                    callback.accept(products);
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
+    public void getForYouProductsForUser(String currentUserId, ArrayList<String> myFavoriteCategoryList,
+                                         Consumer<ArrayList<Product>> callback) {
+        ArrayList<Product> products = new ArrayList<>();
+
+        if (myFavoriteCategoryList.isEmpty()) {
+            Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
+            productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
+
+            productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Product product = document.toObject(Product.class);
+                            if (!currentUserId.isEmpty()) {
+                                products.add(product);
+                            }
+                        }
+                        callback.accept(products);
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                    }
                 }
+            });
+        } else {
+            for (String category : myFavoriteCategoryList) {
+                Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
+                productsQuery = productsQuery.whereEqualTo(Constants.KEY_PRODUCT_CATEGORY, category);
+
+                productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
+                productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Product product = document.toObject(Product.class);
+                                if (!currentUserId.isEmpty()) {
+                                    products.add(product);
+                                }
+                            }
+                            callback.accept(products);
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
             }
-        });
+        }
     }
 
 
@@ -188,15 +232,14 @@ public class ProductDao {
                             products.add(product);
                         }
                     }
-
-                    callback.accept(products);
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
+                        callback.accept(products);
+                    } else{
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                    }
                 }
-            }
-        });
-    }
 
+            });
+        }
 
     public void addProducts(ArrayList<Product> products) {
         for (Product product : products) {

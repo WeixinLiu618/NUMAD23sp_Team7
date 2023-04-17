@@ -13,14 +13,18 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
+import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 
 public class UserDao {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final CollectionReference usersRef = db.collection(Constants.KEY_COLLECTION_USERS);
+
     private final static String TAG = "userDao";
 
     public void getUserById(String userId, final Consumer<User> callback) {
@@ -43,6 +47,7 @@ public class UserDao {
                     }
                 });
     }
+
 
     public void updateUserProfileImage(String userId, String encodedImage) {
         usersRef.document(userId)
