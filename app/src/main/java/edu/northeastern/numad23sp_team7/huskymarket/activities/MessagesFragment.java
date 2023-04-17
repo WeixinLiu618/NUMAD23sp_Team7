@@ -1,15 +1,20 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -21,6 +26,7 @@ import java.util.List;
 
 import edu.northeastern.numad23sp_team7.databinding.FragmentMessagesBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.adapter.RecentMessagesAdapter;
+import edu.northeastern.numad23sp_team7.huskymarket.database.RecentMessageDao;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.listeners.RecentMessageCardClickListener;
 import edu.northeastern.numad23sp_team7.huskymarket.model.RecentMessage;
@@ -36,10 +42,11 @@ public class MessagesFragment extends Fragment implements RecentMessageCardClick
 
     private List<RecentMessageCard> recentMessageCards;
     private RecentMessagesAdapter recentMessagesAdapter;
-    private FirebaseAuth mAuth;
     private FirebaseFirestore database;
+    private String searchTerm = "";
 
     private static final UserDao userDao = new UserDao();
+    private static final RecentMessageDao recentMessageDao = new RecentMessageDao();
 
     private static final String TAG = "message-fragment";
 
@@ -49,10 +56,9 @@ public class MessagesFragment extends Fragment implements RecentMessageCardClick
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mAuth = FirebaseAuth.getInstance();
         database = FirebaseFirestore.getInstance();
         preferenceManager = new PreferenceManager(requireContext());
         // Inflate the layout for this fragment
@@ -70,7 +76,7 @@ public class MessagesFragment extends Fragment implements RecentMessageCardClick
                 .addSnapshotListener(eventListener);
 
 
-        // hard code
+        // TODO, hard code, need to delete later
         binding.buttonChat.setOnClickListener(v -> {
             userDao.getUserById("D9gtlUubrMYR9UZyCQlc18uAr7r2", receiver -> {
                 Intent intent = new Intent(getActivity(), ChatActivity.class);
@@ -80,7 +86,77 @@ public class MessagesFragment extends Fragment implements RecentMessageCardClick
 
         });
 
+        // search
+        binding.searchPlate.requestFocus();
+        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(binding.searchPlate, InputMethodManager.SHOW_IMPLICIT);
+        binding.searchPlate.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                // perform search
+                performSearch();
+                return true;
+            }
+            return false;
+        });
+
+        // when delete all text, perform search automatically
+        binding.searchPlate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // do nothing
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d(TAG, "onTextChanged: " + s.length());
+                if(s.length() == 0) {
+                    performSearch();
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                // do nothing
+            }
+        });
+
         return binding.getRoot();
+    }
+
+    private void performSearch() {
+        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(binding.searchPlate.getWindowToken(), 0);
+        binding.searchPlate.clearFocus();
+        searchTerm = binding.searchPlate.getText().toString().trim();
+        Log.d(TAG, "search term:" + searchTerm);
+        searchRecentMessage();
+    }
+
+    private void searchRecentMessage() {
+        loading(true);
+        recentMessageDao.getRecentMessageBySearch(preferenceManager.getString(Constants.KEY_USER_ID),
+                preferenceManager.getString(Constants.KEY_USERNAME), searchTerm, recentMessages -> {
+                    recentMessageCards.clear();
+                    for(RecentMessage recentMessage: recentMessages) {
+                        RecentMessageCard recentMessageCard = new RecentMessageCard();
+                        recentMessageCard.setLastMessage(recentMessage.getLastMessage());
+                        recentMessageCard.setTimestamp(recentMessage.getTimestamp());
+
+                        if (preferenceManager.getString(Constants.KEY_USER_ID).equals(recentMessage.getUser1Id())) {
+                            recentMessageCard.setDisplayedUserId(recentMessage.getUser2Id());
+                            recentMessageCard.setDisplayedUsername(recentMessage.getUser2Name());
+                            recentMessageCard.setDisplayedUserImage(recentMessage.getUser2Image());
+                        } else {
+                            recentMessageCard.setDisplayedUserId(recentMessage.getUser1Id());
+                            recentMessageCard.setDisplayedUsername(recentMessage.getUser1Name());
+                            recentMessageCard.setDisplayedUserImage(recentMessage.getUser1Image());
+                        }
+                        recentMessageCards.add(recentMessageCard);
+                    }
+                    Collections.sort(recentMessageCards, (o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
+                    recentMessagesAdapter.notifyDataSetChanged();
+                    loading(false);
+                });
+
+
     }
 
 
@@ -138,7 +214,18 @@ public class MessagesFragment extends Fragment implements RecentMessageCardClick
             }
             Collections.sort(recentMessageCards, (o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
             recentMessagesAdapter.notifyDataSetChanged();
+            loading(false);
+        }
 
+    };
+
+
+    private void loading(boolean isLoading) {
+        if (isLoading) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.recentMessagesRecyclerView.setVisibility(View.GONE);
+            binding.noMessagePrompt.setVisibility(View.GONE);
+        } else {
             if (recentMessageCards.size() == 0) {
                 binding.noMessagePrompt.setVisibility(View.VISIBLE);
                 binding.recentMessagesRecyclerView.setVisibility(View.GONE);
@@ -149,6 +236,5 @@ public class MessagesFragment extends Fragment implements RecentMessageCardClick
             }
             binding.progressBar.setVisibility(View.GONE);
         }
-
-    };
+    }
 }

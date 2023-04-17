@@ -1,20 +1,21 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +29,13 @@ import edu.northeastern.numad23sp_team7.huskymarket.model.ChatMessage;
 import edu.northeastern.numad23sp_team7.huskymarket.model.RecentMessage;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.FCMApiClient;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.FCMApiService;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.ImageCodec;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -45,6 +52,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private FirebaseFirestore database;
 
+
     private String recentMessageId = null;
 
     private static final String TAG = "chat-activity";
@@ -56,8 +64,8 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
 
-        // TODO connect with other fragments here: message fragment, as well as product detail
-        // get receiver from former activity
+        // TODO connect with other fragments here:
+        // get receiver from former activity: message fragment, product detail, notification
         receiver = (User) getIntent().getSerializableExtra("user");
         binding.textReceiverName.setText(receiver.getUsername());
 
@@ -71,8 +79,8 @@ public class ChatActivity extends AppCompatActivity {
         senderProfileImage = preferenceManager.getString(Constants.KEY_PROFILE_IMAGE);
         chatAdapter = new ChatAdapter(
                 chatMessages,
-                decodeProfileImageString(senderProfileImage),
-                decodeProfileImageString(receiver.getProfileImage()),
+                ImageCodec.getDecodedImage(senderProfileImage),
+                ImageCodec.getDecodedImage(receiver.getProfileImage()),
                 senderId);
         binding.chatRecyclerView.setAdapter(chatAdapter);
 
@@ -117,9 +125,59 @@ public class ChatActivity extends AppCompatActivity {
                     Constants.KEY_TIMESTAMP, new Date()
             );
         }
+        if (receiver.getFcmToken() != null) {
+            try {
+                JSONArray tokens = new JSONArray();
+                tokens.put(receiver.getFcmToken());
+
+                JSONObject data = new JSONObject();
+                data.put(Constants.KEY_USER_ID, senderId);
+                data.put(Constants.KEY_USERNAME, senderName);
+                data.put(Constants.KEY_FCM_TOKEN, receiver.getFcmToken());
+                data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
+
+                JSONObject messageBody = new JSONObject();
+                messageBody.put(Constants.KEY_DATA, data);
+                messageBody.put(Constants.KEY_REGISTRATION_IDS, tokens);
+                sendNotification(messageBody.toString());
+
+            } catch (Exception e) {
+                showToast(e.getMessage());
+            }
+        }
+
         binding.inputMessage.setText(null);
 
 
+    }
+
+    private void showToast(String message) { // can delete later
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void sendNotification(String messageBody) {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put(Constants.KEY_AUTHORIZATION, Constants.VALUE_AUTHORIZATION);
+        headers.put(Constants.KEY_CONTENT_TYPE, Constants.VALUE_CONTENT_TYPE);
+
+        FCMApiClient.getClient()
+                .create(FCMApiService.class)
+                .sendMessage(headers, messageBody)
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+                        if (response.isSuccessful()) {
+                            showToast("Notification sent successful");
+                        } else {
+                            showToast("Error: " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                        showToast(t.getMessage());
+                    }
+                });
     }
 
 
@@ -154,15 +212,7 @@ public class ChatActivity extends AppCompatActivity {
             checkRecentMessage(senderId, receiver.getId());
             checkRecentMessage(receiver.getId(), senderId);
         }
-
     };
-
-
-    // string -> bitmap
-    private Bitmap decodeProfileImageString(String encodedImage) {
-        byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-    }
 
 
     // check if recentMessage collection has had a recent conversation

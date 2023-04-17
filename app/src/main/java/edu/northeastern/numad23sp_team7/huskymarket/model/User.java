@@ -12,6 +12,8 @@ public class User implements Serializable {
     private String profileImage;
     private List<String> favorites = new ArrayList<>(); //put productId in it
 
+    private String fcmToken = null;
+
 
     public User() {
     }
@@ -60,6 +62,13 @@ public class User implements Serializable {
 
     public String getId() {
         return this.id;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+    public String getFcmToken() {
+        return this.fcmToken;
     }
 
 }

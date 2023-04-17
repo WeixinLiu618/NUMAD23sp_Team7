@@ -30,6 +30,8 @@ public class Constants {
     public static final String KEY_USER2_IMAGE = "user2Image";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_LAST_MESSAGE = "lastMessage";
+    public static final String KEY_DELETED_BY_USER1 = "deletedByUser1";
+    public static final String KEY_DELETED_BY_USER2 = "deletedByUser2";
     public static final String KEY_TIMESTAMP = "timestamp";
 
     public static final String KEY_PRODUCT_ID = "productId";
@@ -39,6 +41,18 @@ public class Constants {
     public static final String KEY_PRODUCT_CATEGORY_ARRAY = "categories";
     public static final String KEY_PRODUCT_TIMESTAMP = "timestamp";
     public static final String KEY_PRODUCT_STATUS = "status";
+    public static final String KEY_POST_USER_ID = "postUserId";
     public static final String VALUE_PRODUCT_STATUS_SOLD = "sold";
     public static final String VALUE_PRODUCT_STATUS_AVAILABLE = "available";
+
+
+    // notifications
+    public static final String KEY_AUTHORIZATION = "Authorization";
+    public static final String VALUE_AUTHORIZATION = "key=AAAAt0ALpps:APA91bEpuagOjLQ2j3OjMXCMWmRAbZOpmUAMq2aoulPfxASMpMfWTcVUQu-5IlDm2wvCVKOlRZqGb4QasybMRrjBQ81FOz1HpzsclA0U8bFJ1BCGaD79PVeUIFzSFbfn8EWYtvqnfoWa";
+
+    public static final String KEY_CONTENT_TYPE = "Content-Type";
+    public static final String VALUE_CONTENT_TYPE = "application/json";
+    public static final String KEY_DATA = "data";
+    public static final String KEY_REGISTRATION_IDS = "registration_ids";
+    public static final String KEY_FCM_TOKEN = "fcmToken";
 }

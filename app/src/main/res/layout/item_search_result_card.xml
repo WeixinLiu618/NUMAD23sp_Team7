@@ -47,7 +47,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
-                        app:srcCompat="@drawable/sample" />
+                        app:srcCompat="@drawable/neu_furry_friend" />
 
                         <ImageView
                             android:id="@+id/iconHuskySearchResultBookmark"

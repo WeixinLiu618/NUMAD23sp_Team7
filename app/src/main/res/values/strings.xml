@@ -36,6 +36,14 @@
         <item>Vancouver</item>
     </string-array>
 
+    <string-array name="locations2">
+        <item>Location</item>
+        <item>Seattle</item>
+        <item>Boston</item>
+        <item>San Jose</item>
+        <item>Vancouver</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_login">LoginActivity</string>
@@ -56,5 +64,7 @@
     <string name="upload_profile_image">Upload Profile Image</string>
     <string name="sign_up">Sign up</string>
     <string name="email_">Email:</string>
+    <string name="you_has_not_posted_any_items_yet">You has not posted any items yet.</string>
+    <string name="my_posts">My Posts</string>
 
 </resources>

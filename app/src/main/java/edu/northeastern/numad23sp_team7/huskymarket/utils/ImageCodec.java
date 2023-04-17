@@ -1,10 +1,14 @@
 package edu.northeastern.numad23sp_team7.huskymarket.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class ImageCodec {
 
@@ -21,5 +25,21 @@ public class ImageCodec {
     public static Bitmap getDecodedImage(String encodedImage) {
         byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+    }
+
+    /**
+     * Given an imageUri, convert the imageUri to its encoded bitmap string
+     * @param context Activity Context
+     * @param uri image Uri
+     * @return encoded image string
+     */
+    public static String getEncodedImageFromUri(Context context, Uri uri) {
+        Bitmap bitmap = null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return getEncodedImage(bitmap);
     }
 }

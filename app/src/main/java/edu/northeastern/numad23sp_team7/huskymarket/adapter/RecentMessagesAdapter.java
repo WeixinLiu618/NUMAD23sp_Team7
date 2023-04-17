@@ -18,6 +18,7 @@ import edu.northeastern.numad23sp_team7.databinding.ItemRecentMessageBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.listeners.RecentMessageCardClickListener;
 import edu.northeastern.numad23sp_team7.huskymarket.model.RecentMessageCard;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.ImageCodec;
 
 public class RecentMessagesAdapter extends RecyclerView.Adapter<RecentMessagesAdapter.RecentMessageViewHolder> {
     private final List<RecentMessageCard> recentMessageCards;
@@ -61,7 +62,7 @@ public class RecentMessagesAdapter extends RecyclerView.Adapter<RecentMessagesAd
         }
 
         public void setData(RecentMessageCard recentMessageCard) {
-            binding.imageProfile.setImageBitmap(decodeProfileImageString(recentMessageCard.getDisplayedUserImage()));
+            binding.imageProfile.setImageBitmap(ImageCodec.getDecodedImage(recentMessageCard.getDisplayedUserImage()));
             binding.textName.setText(recentMessageCard.getDisplayedUsername());
             binding.textRecentMessage.setText(recentMessageCard.getLastMessage());
             binding.textDateTime.setText(getDateTimeText(recentMessageCard.getTimestamp()));
@@ -75,11 +76,5 @@ public class RecentMessagesAdapter extends RecyclerView.Adapter<RecentMessagesAd
         }
     }
 
-
-    //     string -> bitmap
-    private Bitmap decodeProfileImageString(String encodedImage) {
-        byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-    }
 
 }

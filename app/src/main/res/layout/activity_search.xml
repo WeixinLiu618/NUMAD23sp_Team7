@@ -83,7 +83,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textSize="@dimen/_12ssp"
-                    android:entries="@array/locations"
+                    android:entries="@array/locations2"
                     android:spinnerMode="dialog"
                     android:gravity="center" />
             </RelativeLayout>

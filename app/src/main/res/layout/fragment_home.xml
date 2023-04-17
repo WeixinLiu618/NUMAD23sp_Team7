@@ -24,11 +24,10 @@
                     android:id="@+id/about_us"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="5dp"
                     android:layout_marginLeft="5dp"
-                    android:layout_weight="0.28"
+                    android:layout_weight="0.22"
                     android:clickable="true"
                     android:text="About Us"
                     android:textColor="@color/black"
@@ -71,7 +70,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="0.22"
+                    android:layout_weight="0.28"
                     android:autoSizeTextType="none"
                     android:entries="@array/locations"
                     android:gravity="left"
@@ -98,7 +97,6 @@
                 android:paddingTop="@dimen/_3sdp"
                 android:paddingBottom="@dimen/_3sdp"
                 android:textSize="@dimen/_10ssp"
-                app:layout_constraintBottom_toTopOf="@id/myLinearLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -107,9 +105,8 @@
     </LinearLayout>
 
 
-
         <LinearLayout
-            android:id="@+id/myLinearLayout"
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@color/secondary"
@@ -142,7 +139,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="For you"
-                    android:textColor="@color/black" />
+                    android:checked="true"
+                    android:textColor="@color/primary" />
 
                 <Button
                     android:id="@+id/latestFilter"

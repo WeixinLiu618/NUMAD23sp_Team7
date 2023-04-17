@@ -12,6 +12,9 @@ public class RecentMessage {
     private String lastMessage;
     private Date timestamp;
 
+    private boolean deletedByUser1;
+    private boolean deletedByUser2;
+
     public RecentMessage() {
     }
 
@@ -26,6 +29,8 @@ public class RecentMessage {
         this.user2Image = user2Image;
         this.lastMessage = lastMessage;
         this.timestamp = timestamp;
+        this.deletedByUser1 = false;
+        this.deletedByUser2 = false;
     }
 
     public String getUser1Id() {
@@ -93,4 +98,19 @@ public class RecentMessage {
     }
 
 
+    public boolean isDeletedByUser1() {
+        return deletedByUser1;
+    }
+
+    public void setDeletedByUser1(boolean deletedByUser1) {
+        this.deletedByUser1 = deletedByUser1;
+    }
+
+    public boolean isDeletedByUser2() {
+        return deletedByUser2;
+    }
+
+    public void setDeletedByUser2(boolean deletedByUser2) {
+        this.deletedByUser2 = deletedByUser2;
+    }
 }

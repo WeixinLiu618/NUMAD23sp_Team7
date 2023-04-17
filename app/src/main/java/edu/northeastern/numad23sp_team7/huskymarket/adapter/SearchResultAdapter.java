@@ -4,6 +4,7 @@ package edu.northeastern.numad23sp_team7.huskymarket.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -12,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.northeastern.numad23sp_team7.R;
@@ -22,6 +24,7 @@ import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
 import edu.northeastern.numad23sp_team7.huskymarket.activities.HuskyMainActivity;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.ImageCodec;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.SearchResultViewHolder> {
 
@@ -48,7 +51,13 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     public void onBindViewHolder(@NonNull SearchResultViewHolder holder, int position) {
         holder.binding.setProduct(products.get(position));
 
-        // TODO: Display image
+        List<String> images = products.get(position).getImages();
+        if (!images.isEmpty()) {
+            Bitmap imageBitMap = ImageCodec.getDecodedImage(images.get(0));
+            if (imageBitMap != null) {
+                holder.binding.imageViewHuskySearchResult.setImageBitmap(imageBitMap);
+            }
+        }
 
         // Redirect to product detail
         holder.binding.layoutHuskySearchResultContainer.setOnClickListener(view -> {
@@ -108,7 +117,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         // Saved status
         // 0: not saved
         // 1: saved
-        // 2: not looged-in™
+        // 2: not logged-in™
         if (loggedInUser == null) {
             return 2;
         }

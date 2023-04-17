@@ -2,6 +2,8 @@ package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import edu.northeastern.numad23sp_team7.databinding.FragmentProfileBinding;
+import edu.northeastern.numad23sp_team7.huskymarket.database.ProductDao;
 import edu.northeastern.numad23sp_team7.huskymarket.database.RecentMessageDao;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
@@ -36,9 +39,10 @@ public class ProfileFragment extends Fragment {
 
     private FragmentProfileBinding binding;
     private FirebaseAuth mAuth;
-    private FirebaseFirestore database;
+
     private PreferenceManager preferenceManager;
     private static final UserDao userDao = new UserDao();
+    private static final ProductDao productDao = new ProductDao();
     private static final RecentMessageDao recentMessageDao = new RecentMessageDao();
 
     private static final String TAG = "profile fragment";
@@ -52,7 +56,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mAuth = FirebaseAuth.getInstance();
-        database = FirebaseFirestore.getInstance();
+
         preferenceManager = new PreferenceManager(requireContext());
         // Inflate the layout for this fragment
         binding = FragmentProfileBinding.inflate(getLayoutInflater());
@@ -78,38 +82,63 @@ public class ProfileFragment extends Fragment {
         binding.username.setText(preferenceManager.getString(Constants.KEY_USERNAME));
         binding.email.setText(preferenceManager.getString(Constants.KEY_EMAIL));
         binding.editableUsername.setText(preferenceManager.getString(Constants.KEY_USERNAME));
-        // TODO set posts, sold, earnings to real numbers
+
+        // set posts number
+        productDao.getMyPostsProductsForUser(preferenceManager.getString(Constants.KEY_USER_ID), products -> {
+            String postsNum = "0";
+            if(products != null && products.size() > 0) {
+                postsNum = String.valueOf(products.size());
+            }
+            Log.d(TAG, "showUserInfo: postNum " + postsNum);
+            binding.textPostsNumber.setText(postsNum);
+        });
+
+        // set sold number
+        productDao.getMySoldProductsForUser(preferenceManager.getString(Constants.KEY_USER_ID), products -> {
+            String soldNum = "0";
+            if(products != null && products.size() > 0) {
+                soldNum = String.valueOf(products.size());
+            }
+            Log.d(TAG, "showUserInfo: soldNum " +soldNum);
+            binding.textSoldNumber.setText(soldNum);
+        });
+
+        // set favorites number
+        userDao.getUserById(preferenceManager.getString(Constants.KEY_USER_ID), user -> {
+            String favoritesNum = "0";
+            if(user != null && user.getFavorites() != null && user.getFavorites().size() > 0) {
+                favoritesNum = String.valueOf(user.getFavorites().size());
+            }
+            binding.textFavoritesNumber.setText(favoritesNum);
+        });
+
     }
 
 
     private void logout() {
-        if (mAuth.getCurrentUser() != null) {
-            mAuth.signOut();
-            preferenceManager.clear();
-            Intent intent = new Intent(getActivity(), HuskyLoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Log out Confirmation")
+                .setMessage("Are you sure to log out?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAuth.signOut();
+                        userDao.updateFCMToken(preferenceManager.getString(Constants.KEY_USER_ID), null);
+                        preferenceManager.clear();
+                        Intent intent = new Intent(getActivity(), HuskyLoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
     }
 
-
-    // string -> bitmap
-//    private Bitmap decodeProfileImageString(String encodedImage) {
-//        byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
-//        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//    }
-
-
-    // bitmap -> string
-//    private String getEncodedImage(Bitmap bitmap) {
-//        int width = 150;
-//        int height = bitmap.getHeight() * width / bitmap.getWidth();
-//        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
-//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-//        byte[] bytes = byteArrayOutputStream.toByteArray();
-//        return Base64.encodeToString(bytes, Base64.DEFAULT);
-//    }
 
     private final ActivityResultLauncher<Intent> pickImage = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -138,10 +167,8 @@ public class ProfileFragment extends Fragment {
     );
 
 
-
     private void showToast(String text) {
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
-
 
 }

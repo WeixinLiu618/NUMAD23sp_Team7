@@ -11,13 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.activity.OnBackPressedDispatcher;
-import androidx.activity.OnBackPressedDispatcherOwner;
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -35,7 +30,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.FragmentHomeBinding;
@@ -136,10 +133,6 @@ public class HomeFragment extends Fragment {
 
     }
 
-
-    public void allFilterTapped(View view) {
-
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -174,7 +167,6 @@ public class HomeFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String location = String.valueOf(binding.locationSpinner.getSelectedItem());
                 selectedLocation = location;
-                // Todo: check which filter is tapped. If local filter is tapped , call this function
                 if (binding.localFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
                     localFilterTapped(view);
                 }
@@ -256,26 +248,14 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        listenOnProductLocationChanges();
-        listenOnCurrentUserFavoritesChanges();
-
         // show About us
         showAboutUs();
 
-        // handle back button
-//        callback = new OnBackPressedCallback(true /* enabled by default */) {
-//            @Override
-//            public void handleOnBackPressed() {
-//                requireActivity().onBackPressed();
-//            }
-//        };
-
+        // Handle the back button press event
         requireActivity().getOnBackPressedDispatcher().addCallback(this.getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                // Handle the back button press event
                 // Navigate back to the previous screen
-
                 if (getChildFragmentManager().getBackStackEntryCount() > 0) {
                     // If there are fragments in the back stack, pop them
                     getChildFragmentManager().popBackStack();
@@ -289,54 +269,72 @@ public class HomeFragment extends Fragment {
             }
         });
 
-
         return binding.getRoot();
     }
 
+
     public void forYouFilterTapped(View view) {
-        ArrayList<String> myFavoriteCategoryList = getMyFavoriteCategoriesForUser();
-        productDao.getForYouProductsForUser(currentUserId, myFavoriteCategoryList, productsList -> {
-            filterResultAdapter.setProducts(productsList);
-            filterResultAdapter.notifyDataSetChanged();
-        });
+        getMyFavoriteCategoriesForUser();
     }
 
-    private ArrayList<String> getMyFavoriteCategoriesForUser() {
+    private void getMyFavoriteCategoriesForUser() {
         Map<String, Integer> myFavoriteCategoryMap = new HashMap<>();
         ArrayList<String> myFavoriteCategoryList = new ArrayList<>();
 
         ArrayList<Product> myFavorites = new ArrayList<>();
         userDao.getUserById(currentUserId, user -> {
-            if (!user.getFavorites().isEmpty()) {
+            if (user != null && user.getFavorites() != null && !user.getFavorites().isEmpty()) {
+                List<CompletableFuture<Product>> futures = new ArrayList<>();
                 for (String productId: user.getFavorites()) {
+                    CompletableFuture<Product> future = new CompletableFuture<>();
                     productDao.getProductById(currentUserId, productId, product -> {
-                        myFavorites.add(product);
+                        if (product != null) {
+                            future.complete(product);
+                        } else {
+                            future.completeExceptionally(new RuntimeException("Product not found"));
+                        }
                     });
+                    futures.add(future);
                 }
+                CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]))
+                        .thenRun(() -> {
+                            futures.stream()
+                                    .map(CompletableFuture::join)
+                                    .forEach(myFavorites::add);
+                            // Use the myFavorites list here
+                            for (Product myFavorite: myFavorites) {
+                                String category = myFavorite.getCategory();
+                                if (myFavoriteCategoryMap.containsKey(category)) {
+                                    myFavoriteCategoryMap.put(category, myFavoriteCategoryMap.get(category) + 1);
+                                }
+                                myFavoriteCategoryMap.put(category, 1);
+                            }
+
+                            int maxValue = Integer.MIN_VALUE;
+                            for (int value : myFavoriteCategoryMap.values()) {
+                                if (value > maxValue) {
+                                    maxValue = value;
+                                }
+                            }
+
+                            for (Map.Entry<String, Integer> entry: myFavoriteCategoryMap.entrySet()) {
+                                if (entry.getValue() == maxValue) {
+                                    myFavoriteCategoryList.add(entry.getKey());
+                                }
+                            }
+                            productDao.getForYouProductsForUser(currentUserId, myFavoriteCategoryList, productsList -> {
+                                if (productsList != null) {
+                                    filterResultAdapter.setProducts(productsList);
+                                    filterResultAdapter.notifyDataSetChanged();
+                                }
+                            });
+                        })
+                        .exceptionally(ex -> {
+                            // Handle the exception here
+                            return null;
+                        });
             }
         });
-
-        for (Product myFavorite: myFavorites) {
-            String category = myFavorite.getCategory();
-            if (myFavoriteCategoryMap.containsKey(category)) {
-                myFavoriteCategoryMap.put(category, myFavoriteCategoryMap.get(category) + 1);
-            }
-            myFavoriteCategoryMap.put(category, 1);
-        }
-
-        int maxValue = Integer.MIN_VALUE;
-        for (int value : myFavoriteCategoryMap.values()) {
-            if (value > maxValue) {
-                maxValue = value;
-            }
-        }
-
-        for (Map.Entry<String, Integer> entry: myFavoriteCategoryMap.entrySet()) {
-            if (entry.getValue() == maxValue) {
-                myFavoriteCategoryList.add(entry.getKey());
-            }
-        }
-        return myFavoriteCategoryList;
     }
 
     public void latestFilterTapped(View view) {
@@ -405,7 +403,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void listenOnProductLocationChanges() {
+    public void listenOnProductChanges() {
         productsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot snapshots, FirebaseFirestoreException error) {
@@ -414,24 +412,62 @@ public class HomeFragment extends Fragment {
                     return;
                 }
 
-                ArrayList<Product> myProductList = new ArrayList<>();
-                for (QueryDocumentSnapshot document : snapshots) {
-                    Product myProduct = document.toObject(Product.class);
-                    if (myProduct.getLocation().equals(selectedLocation)) {
-                        myProductList.add(myProduct);
-                        filterResultAdapter.setProducts(myProductList);
-                        filterResultAdapter.notifyDataSetChanged();
-                    }
+//                ArrayList<Product> myProductList = new ArrayList<>();
+//                for (QueryDocumentSnapshot document : snapshots) {
+//                    Product myProduct = document.toObject(Product.class);
+//                    if (myProduct.getLocation().equals(selectedLocation)) {
+//                        myProductList.add(myProduct);
+//                        filterResultAdapter.setProducts(myProductList);
+//                        filterResultAdapter.notifyDataSetChanged();
+//                    }
+//                }
+                if (binding.localFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
+                    localFilterTapped(getView());
+                } else if (binding.forYouFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
+                    forYouFilterTapped(getView());
+                } else if (binding.latestFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
+                    latestFilterTapped(getView());
+                } else if (binding.myFavoritesFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
+                    myFavoritesFilterTapped(getView());
                 }
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Update the UI with the new data
-                        filterResultAdapter.setProducts(myProductList);
-                        filterResultAdapter.notifyDataSetChanged();
+
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        // Update the UI with the new data
+//                        filterResultAdapter.setProducts(myProductList);
+//                        filterResultAdapter.notifyDataSetChanged();
+//                    }
+//                });
+//            }
+//        });
+            }
+        });
+    }
+
+    public void listenOnUserChanges() {
+        usersRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot snapshots, FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e(TAG, "Listen failed: ", error);
+                    return;
+                }
+                for (QueryDocumentSnapshot document : snapshots) {
+                    User myUser = document.toObject(User.class);
+                    if (myUser.getId().equals(currentUserId)) {
+                        if (binding.localFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
+                            localFilterTapped(getView());
+                        } else if (binding.forYouFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
+                            forYouFilterTapped(getView());
+                        } else if (binding.latestFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
+                            latestFilterTapped(getView());
+                        } else if (binding.myFavoritesFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
+                            myFavoritesFilterTapped(getView());
+                        }
                     }
-                });
+                }
             }
         });
     }
@@ -447,7 +483,7 @@ public class HomeFragment extends Fragment {
                 ArrayList<Product> myFavorites = new ArrayList<>();
                 for (QueryDocumentSnapshot document : snapshots) {
                     User myUser = document.toObject(User.class);
-                    if (myUser.getId().equals(currentUserId) && !myUser.getFavorites().isEmpty()) {
+                    if (myUser.getId().equals(currentUserId)) {
                         for (String productId: myUser.getFavorites()) {
                             productDao.getProductById(currentUserId, productId, product -> {
                                 myFavorites.add(product);
@@ -473,14 +509,20 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        binding.searchPlate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), SearchActivity.class);
-                startActivity(intent);
+
+        binding.searchPlate.setOnClickListener(v -> startSearchPage());
+        binding.searchPlate.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                startSearchPage();
             }
         });
+
     }
 
+    private void startSearchPage() {
+        Intent intent = new Intent(getActivity(), SearchActivity.class);
+        intent.putExtra(Constants.KEY_PRODUCT_LOCATION, selectedLocation);
+        startActivity(intent);
+    }
 
 }

@@ -27,8 +27,8 @@ public class UserDao {
 
     private final static String TAG = "userDao";
 
-    public void getUserById(String id, final Consumer<User> callback) {
-        usersRef.document(id)
+    public void getUserById(String userId, final Consumer<User> callback) {
+        usersRef.document(userId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -49,8 +49,8 @@ public class UserDao {
     }
 
 
-    public void updateUserProfileImage(String id, String encodedImage) {
-        usersRef.document(id)
+    public void updateUserProfileImage(String userId, String encodedImage) {
+        usersRef.document(userId)
                 .update(Constants.KEY_PROFILE_IMAGE, encodedImage)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -85,6 +85,17 @@ public class UserDao {
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Error adding item to favorites", e);
+                });
+    }
+
+    public void updateFCMToken(String userId, String token) {
+        usersRef.document(userId)
+                .update(Constants.KEY_FCM_TOKEN, token)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "updateFCMToken: " + token);
+                })
+                .addOnFailureListener(e -> {
+                    Log.d(TAG, "updateFCMToken: " + e);
                 });
     }
 }

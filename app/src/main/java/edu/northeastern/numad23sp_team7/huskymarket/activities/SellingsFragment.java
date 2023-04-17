@@ -1,66 +1,83 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import edu.northeastern.numad23sp_team7.R;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SellingsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class SellingsFragment extends Fragment {
+import com.google.firebase.firestore.FirebaseFirestore;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.util.ArrayList;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+import edu.northeastern.numad23sp_team7.databinding.FragmentSellingsBinding;
+import edu.northeastern.numad23sp_team7.huskymarket.adapter.MySellingsAdapter;
+import edu.northeastern.numad23sp_team7.huskymarket.database.ProductDao;
+import edu.northeastern.numad23sp_team7.huskymarket.listeners.MySellingsCardClickListener;
+import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
+
+public class SellingsFragment extends Fragment implements MySellingsCardClickListener {
+
+    private FragmentSellingsBinding binding;
+    private PreferenceManager preferenceManager;
+    private ArrayList<Product> mySellings = new ArrayList<>();
+    private MySellingsAdapter mySellingsAdapter;
+    private FirebaseFirestore database;
+    private static final ProductDao productDao = new ProductDao();
+
+    private static final String TAG = "Fragment Sellings";
 
     public SellingsFragment() {
-        // Required empty public constructor
+
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SellingsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SellingsFragment newInstance(String param1, String param2) {
-        SellingsFragment fragment = new SellingsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        database = FirebaseFirestore.getInstance();
+        preferenceManager = new PreferenceManager(requireContext());
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sellings, container, false);
+        binding = FragmentSellingsBinding.inflate(getLayoutInflater());
+        mySellings = new ArrayList<>();
+        mySellingsAdapter = new MySellingsAdapter(mySellings, getContext(), this);
+        binding.recyclerViewSellings.setAdapter(mySellingsAdapter);
+
+        String userId = preferenceManager.getString(Constants.KEY_USER_ID);
+
+
+        // TODO
+        productDao.getMyPostsProductsForUser(userId, mySellings -> {
+            mySellingsAdapter.notifyDataSetChanged();
+            Log.d(TAG, "onCreateView: "+mySellings.size());
+            if (mySellings.size() == 0) {
+                binding.noPostsPrompt.setVisibility(View.VISIBLE);
+                binding.recyclerViewSellings.setVisibility(View.GONE);
+            } else {
+                binding.recyclerViewSellings.smoothScrollToPosition(0);
+                binding.recyclerViewSellings.setVisibility(View.VISIBLE);
+                binding.progressBar.setVisibility(View.GONE);
+            }
+            binding.progressBar.setVisibility(View.GONE);
+        });
+
+
+
+
+        return binding.getRoot();
+
+
+    }
+
+    @Override
+    public void onEditClick(int position) {
+
     }
 }
