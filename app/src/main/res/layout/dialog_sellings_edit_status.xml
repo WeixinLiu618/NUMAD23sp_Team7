@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/secondary"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:background="@color/dark_brown"
+        android:fontFamily="@font/poppins_bold"
+        android:gravity="center"
+        android:paddingStart="@dimen/_20sdp"
+        android:paddingEnd="@dimen/_20sdp"
+        android:scaleType="center"
+        android:text="Set As..."
+        android:textAlignment="center"
+        android:textColor="#F9F5E7"
+        android:textSize="@dimen/_20ssp" />
+
+    <Button
+        android:id="@+id/setAvailableButton"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:backgroundTint="#9DC08B"
+        android:gravity="center"
+        android:text="Available" />
+
+    <Button
+        android:id="@+id/setSoldButton"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_40sdp"
+        android:backgroundTint="@color/primary"
+        android:gravity="center"
+        android:text="Sold" />
+
+
+</LinearLayout>

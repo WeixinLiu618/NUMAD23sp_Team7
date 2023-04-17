@@ -9,6 +9,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -209,11 +211,18 @@ public class ProductDao {
         }
     }
 
-    public void updateProductStatus(String productId, String status) {
-        productsRef.document(productId)
-                .update(Constants.KEY_PRODUCT_STATUS, status)
+    public void updateProductStatus(String productId, String status, final Consumer<Product> callback) {
+        DocumentReference productRef = productsRef.document(productId);
+        productRef.update(Constants.KEY_PRODUCT_STATUS, status)
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "Product status successfully updated!" + status);
+                    productRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Product product = documentSnapshot.toObject(Product.class);
+                            callback.accept(product);
+                        }
+                    });
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Error updating product status.", e);

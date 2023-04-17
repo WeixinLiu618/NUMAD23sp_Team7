@@ -1,7 +1,6 @@
 package edu.northeastern.numad23sp_team7.huskymarket.adapter;
 
 
-import android.graphics.PorterDuff;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ItemSellingsBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.listeners.MySellingsCardClickListener;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
@@ -79,12 +77,9 @@ public class MySellingsAdapter extends RecyclerView.Adapter<MySellingsAdapter.My
                 binding.imageSold.setVisibility(View.GONE);
             }
 
-            // set on edit click listener
+            // set on setting click listener
             binding.iconSettings.setOnClickListener(v -> {
-                int position = getLayoutPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    mySellingsCardClickListener.onEditClick(position);
-                }
+                mySellingsCardClickListener.onSettingClick(product);
             });
 
         }

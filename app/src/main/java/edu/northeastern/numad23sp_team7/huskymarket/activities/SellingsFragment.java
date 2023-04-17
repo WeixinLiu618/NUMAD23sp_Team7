@@ -1,10 +1,12 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -14,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
+import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.FragmentSellingsBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.adapter.MySellingsAdapter;
 import edu.northeastern.numad23sp_team7.huskymarket.database.ProductDao;
@@ -47,8 +50,7 @@ public class SellingsFragment extends Fragment implements MySellingsCardClickLis
         binding = FragmentSellingsBinding.inflate(getLayoutInflater());
         String userId = preferenceManager.getString(Constants.KEY_USER_ID);
 
-
-        // TODO
+        // show all posts products
         productDao.getMyPostsProductsForUser(userId, products -> {
             this.mySellings = products;
             mySellingsAdapter = new MySellingsAdapter(mySellings, this);
@@ -65,7 +67,55 @@ public class SellingsFragment extends Fragment implements MySellingsCardClickLis
     }
 
     @Override
-    public void onEditClick(int position) {
+    public void onSettingClick(Product curProduct) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        View dialogView = inflater.inflate(R.layout.dialog_sellings_edit_status, null);
+        builder.setView(dialogView);
+
+        Button buttonAvailable = (Button) dialogView.findViewById(R.id.setAvailableButton);
+        Button buttonSold = (Button) dialogView.findViewById(R.id.setSoldButton);
+        AlertDialog alertDialog = builder.create();
+
+
+        String productId = curProduct.getProductId();
+
+        buttonAvailable.setOnClickListener(v -> {
+            if (curProduct.getStatus().equals(Constants.VALUE_PRODUCT_STATUS_SOLD)) {
+                productDao.updateProductStatus(productId, Constants.VALUE_PRODUCT_STATUS_AVAILABLE, product -> {
+                    for (int position = 0; position < mySellings.size(); position++) {
+                        if (mySellings.get(position).getProductId().equals(productId)) {
+                            mySellings.set(position, product);
+                            mySellingsAdapter.notifyItemChanged(position);
+                            break;
+                        }
+                    }
+                });
+
+
+
+            }
+            alertDialog.dismiss();
+
+        });
+        buttonSold.setOnClickListener(v -> {
+            if (curProduct.getStatus().equals(Constants.VALUE_PRODUCT_STATUS_AVAILABLE)) {
+                productDao.updateProductStatus(productId, Constants.VALUE_PRODUCT_STATUS_SOLD, product -> {
+                    for (int position = 0; position < mySellings.size(); position++) {
+                        if (mySellings.get(position).getProductId().equals(productId)) {
+                            mySellings.set(position, product);
+                            mySellingsAdapter.notifyItemChanged(position);
+                            break;
+                        }
+                    }
+                });
+
+            }
+            alertDialog.dismiss();
+        });
+        alertDialog.show();
+
 
     }
 
