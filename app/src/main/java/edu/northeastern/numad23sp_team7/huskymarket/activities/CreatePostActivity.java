@@ -96,7 +96,7 @@ public class CreatePostActivity extends AppCompatActivity {
         condition.setMinValue(10);
         condition.setMaxValue(100);
         condition.setWrapSelectorWheel(false);
-        condition.setFormatter(value -> String.format("%.1f", value / 10.0));
+//        condition.setFormatter(value -> String.format("%.1f", value / 10.0));
         condition.setValue(100);
 
         // Create the location spinner and set its options
