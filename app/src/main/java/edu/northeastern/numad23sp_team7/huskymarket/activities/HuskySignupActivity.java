@@ -113,6 +113,7 @@ public class HuskySignupActivity extends AppCompatActivity {
                                 } else {
                                     // Error creating user in Firebase Authentication
                                     showToast("Fail to sign up");
+                                    loading(false);
                                 }
                             }
                         });
