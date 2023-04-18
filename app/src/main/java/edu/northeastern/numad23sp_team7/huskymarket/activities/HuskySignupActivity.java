@@ -38,6 +38,7 @@ import edu.northeastern.numad23sp_team7.databinding.ActivityHuskySignupBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.ImageCodec;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
 
 public class HuskySignupActivity extends AppCompatActivity {
@@ -133,7 +134,7 @@ public class HuskySignupActivity extends AppCompatActivity {
                             InputStream inputStream = getContentResolver().openInputStream(profileImageUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                             binding.imageProfile.setImageBitmap(bitmap);
-                            encodedImage = getEncodedImage(bitmap);
+                            encodedImage = ImageCodec.getEncodedImage(bitmap);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -148,7 +149,7 @@ public class HuskySignupActivity extends AppCompatActivity {
     private void setDefaultProfileImage() {
         Drawable drawable = getResources().getDrawableForDensity(R.drawable.default_avatar, DisplayMetrics.DENSITY_MEDIUM, null);
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-        encodedImage = getEncodedImage(bitmap);
+        encodedImage = ImageCodec.getEncodedImage(bitmap);
     }
 
 
@@ -177,16 +178,6 @@ public class HuskySignupActivity extends AppCompatActivity {
         return true;
     }
 
-    // bitmap -> string
-    private String getEncodedImage(Bitmap bitmap) {
-        int width = 150;
-        int height = bitmap.getHeight() * width / bitmap.getWidth();
-        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream); // jpeg to png
-        byte[] bytes = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
-    }
 
     private void showToast(String text) {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();

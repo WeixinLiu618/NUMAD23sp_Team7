@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ItemSellingsBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.listeners.MySellingsCardClickListener;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
@@ -64,8 +65,13 @@ public class MySellingsAdapter extends RecyclerView.Adapter<MySellingsAdapter.My
 
         public void setData(Product product) {
             // TODO set image of real product image data
-//            binding.imageProduct.setImageBitmap(ImageCodec.getDecodedImage(product.getImages().get(0)));
-            binding.imageProduct.setImageBitmap(ImageCodec.getDecodedImage(PRODUCT_IMAGE_STRING));
+            if(product.getImages() != null && product.getImages().get(0) != null) {
+                binding.imageProduct.setImageBitmap(ImageCodec.getDecodedImage(product.getImages().get(0)));
+            }else {
+                binding.imageProduct.setImageResource(R.drawable.sample);
+            }
+
+
             binding.textProductTitle.setText(product.getTitle());
             String formattedPrice = String.format("$ %.2f", product.getPrice());
             binding.textProductPrice.setText(formattedPrice);

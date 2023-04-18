@@ -13,7 +13,7 @@ import java.io.IOException;
 public class ImageCodec {
 
     public static String getEncodedImage(Bitmap bitmap) {
-        int width = 150;
+        int width = 800;
         int height = bitmap.getHeight() * width / bitmap.getWidth();
         Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
