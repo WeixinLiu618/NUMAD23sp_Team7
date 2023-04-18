@@ -77,6 +77,10 @@ public class MySellingsAdapter extends RecyclerView.Adapter<MySellingsAdapter.My
                 binding.imageSold.setVisibility(View.GONE);
             }
 
+            // set on image click listener
+            binding.imageProduct.setOnClickListener(v -> {
+                mySellingsCardClickListener.onProductImageClick(product);
+            });
             // set on setting click listener
             binding.iconSettings.setOnClickListener(v -> {
                 mySellingsCardClickListener.onSettingClick(product);

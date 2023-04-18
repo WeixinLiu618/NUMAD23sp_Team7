@@ -51,9 +51,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         database = FirebaseFirestore.getInstance();
 
         // Get product Id
-        Intent intentFromSearch = getIntent();
-        productId = intentFromSearch.getStringExtra(Constants.KEY_PRODUCT_ID);
-        loggedInUser = (User) intentFromSearch.getSerializableExtra(Constants.KEY_USER);
+        Intent intentFromFormer = getIntent();
+        productId = intentFromFormer.getStringExtra(Constants.KEY_PRODUCT_ID);
+        loggedInUser = (User) intentFromFormer.getSerializableExtra(Constants.KEY_USER);
 
 
         //load product detail from database
