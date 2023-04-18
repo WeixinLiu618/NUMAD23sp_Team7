@@ -1,6 +1,7 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.FragmentSellingsBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.adapter.MySellingsAdapter;
 import edu.northeastern.numad23sp_team7.huskymarket.database.ProductDao;
+import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.listeners.MySellingsCardClickListener;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
@@ -32,7 +34,9 @@ public class SellingsFragment extends Fragment implements MySellingsCardClickLis
     private ArrayList<Product> mySellings = new ArrayList<>();
     private MySellingsAdapter mySellingsAdapter;
     private FirebaseFirestore database;
+
     private static final ProductDao productDao = new ProductDao();
+    private static final UserDao userDao = new UserDao();
 
     private static final String TAG = "Fragment Sellings";
 
@@ -117,6 +121,17 @@ public class SellingsFragment extends Fragment implements MySellingsCardClickLis
         alertDialog.show();
 
 
+    }
+
+    @Override
+    public void onProductImageClick(Product product) {
+        // click into details page
+        userDao.getUserById(preferenceManager.getString(Constants.KEY_USER_ID), loggedInUser -> {
+            Intent intent = new Intent(getActivity(), ProductDetailActivity.class);
+            intent.putExtra(Constants.KEY_PRODUCT_ID, product.getProductId());
+            intent.putExtra(Constants.KEY_USER, loggedInUser);
+            startActivity(intent);
+        });
     }
 
     private void loading(boolean isLoading) {
