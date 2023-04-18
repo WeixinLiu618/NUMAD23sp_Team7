@@ -63,7 +63,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                         product = documentSnapshot.toObject(Product.class);
                         binding.productName.setText(product.getTitle());
                         binding.productConditionView.setText(String.valueOf(product.getCondition()));
-                        binding.thePriceOfProduct.setText(String.valueOf(product.getPrice()));
+                        binding.thePriceOfProduct.setText("$" + String.valueOf(product.getPrice()));
                         binding.location.setText(product.getLocation());
                         //TODO: get Image
                         //bookmark
@@ -77,6 +77,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                         }
                         binding.bookmarkProductDetail.setBackground(
                                 ContextCompat.getDrawable(binding.bookmarkProductDetail.getContext(), bookmarkIcon ));
+
                         List<String> images = product.getImages();
                         if (!images.isEmpty()) {
                             Bitmap imageBitMap = ImageCodec.getDecodedImage(images.get(0));
