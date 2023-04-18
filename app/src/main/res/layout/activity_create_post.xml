@@ -144,7 +144,7 @@
             <!-- Post category -->
             <TextView
                 android:id="@+id/text_view_category"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_20sdp"
                 android:layout_marginTop="@dimen/_20sdp"
@@ -157,22 +157,20 @@
 
             <Spinner
                 android:id="@+id/spinner_category"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/_40sdp"
-                android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:contentDescription="Enter item category"
                 android:prompt="@string/choose_a_category"
                 android:spinnerMode="dialog"
                 app:layout_constraintBottom_toBottomOf="@+id/text_view_category"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/text_view_category"
                 app:layout_constraintTop_toTopOf="@+id/text_view_category" />
 
             <!-- Post location -->
             <TextView
                 android:id="@+id/text_view_location"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_20sdp"
                 android:layout_marginTop="@dimen/_20sdp"
@@ -187,25 +185,24 @@
 
             <Spinner
                 android:id="@+id/spinner_location"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/_40ssp"
-                android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:contentDescription="Enter item category"
                 android:prompt="@string/choose_a_category"
                 android:spinnerMode="dialog"
                 app:layout_constraintBottom_toBottomOf="@+id/text_view_location"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/text_view_location"
-                app:layout_constraintTop_toTopOf="@+id/text_view_location" />
-            <!--            Post Condition-->
 
+                app:layout_constraintTop_toTopOf="@+id/text_view_location" />
+
+            <!--            Post Condition-->
             <TextView
                 android:id="@+id/text_view_condition"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_20sdp"
-                android:layout_marginTop="@dimen/_35sdp"
+                android:layout_marginTop="@dimen/_40sdp"
                 android:fontFamily="@font/poppins_medium"
                 android:text="Condition"
                 android:textColor="@color/black"
@@ -219,7 +216,7 @@
                 android:id="@+id/edit_text_condition"
                 android:layout_width="60dp"
                 android:layout_height="100dp"
-                android:layout_marginEnd="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:stepSize="5"
                 app:layout_constraintBottom_toBottomOf="@+id/text_view_condition"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -243,11 +240,12 @@
                 android:id="@+id/edit_text_price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:fontFamily="@font/poppins_regular"
                 android:hint="Item Price"
                 android:inputType="numberDecimal"
-                android:textSize="@dimen/_13ssp"
+                android:textSize="@dimen/_12ssp"
+                android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="@+id/text_view_price"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/text_view_price" />

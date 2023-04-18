@@ -7,10 +7,14 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -40,6 +44,7 @@ import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.huskymarket.database.ProductDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.ImageCodec;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
 
 public class CreatePostActivity extends AppCompatActivity {
@@ -82,7 +87,7 @@ public class CreatePostActivity extends AppCompatActivity {
         // Get a reference to the products collection and create a new document with a generated ID
         database = FirebaseFirestore.getInstance();
 
-
+        // init
         preferenceManager = new PreferenceManager(getApplicationContext());
         postUserId = preferenceManager.getString(Constants.KEY_USER_ID);
         selectedImageText = findViewById(R.id.select_image);
@@ -90,6 +95,7 @@ public class CreatePostActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.send_post_btn);
         backButton = findViewById(R.id.back_btn);
         imageUploadClick = findViewById(R.id.image_view_post);
+
         title = findViewById(R.id.edit_text_title);
         description = findViewById(R.id.edit_text_description);
         condition = findViewById(R.id.edit_text_condition);
@@ -114,24 +120,21 @@ public class CreatePostActivity extends AppCompatActivity {
         categorySpinner.setSelection(0);
 
         price = findViewById(R.id.edit_text_price);
-        //Set OnClick Activity for send button
+
+        //send button
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadPostData();
-                Toast.makeText(getApplicationContext(), "Post Sent Successfully", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), HuskyMainActivity.class);
-                startActivity(intent);
-            }
-        });
+                if(uploadValidPostData()) {
+                    showToast("Post Sent Successfully");
+                    Intent intent = new Intent(getApplicationContext(), HuskyMainActivity.class);
+                    startActivity(intent);
+                }
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), HuskyMainActivity.class);
-                startActivity(intent);
             }
         });
+        // back button
+        backButton.setOnClickListener(v -> onBackPressed());
     }
 
     public void onClickMyImageView(View view) {
@@ -191,7 +194,7 @@ public class CreatePostActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && data != null) {
             if (requestCode == REQUEST_CAMERA) {
                 encodedImageString = getEncodedImageFromUri(this, imageUri);
-                Picasso.get().load(imageUri).resize(500, 500)
+                Picasso.get().load(imageUri).resize(600, 800)
                         .centerCrop().into(imageUploadClick); // Set the new bitmap
 
                 selectedImageText.setText("Image selected");
@@ -210,7 +213,7 @@ public class CreatePostActivity extends AppCompatActivity {
     }
 
 
-    private void uploadPostData() {
+    private boolean uploadValidPostData() {
         String itemTitle = title.getText().toString().trim();
         String itemDescription = description.getText().toString().trim();
         String itemLocation = locationSpinner.getSelectedItem().toString();
@@ -222,26 +225,29 @@ public class CreatePostActivity extends AppCompatActivity {
         if (itemTitle.isEmpty()) {
             title.setError("Title is required");
             title.requestFocus();
-            return;
+            return false;
         }
 
         if (itemDescription.isEmpty()) {
             description.setError("Description is required");
             description.requestFocus();
-            return;
+            return false;
         }
 
         if (priceString.isEmpty()) {
             price.setError("Price is required");
             price.requestFocus();
-            return;
+            return false;
         } else {
             itemPrice = Float.parseFloat(priceString);
-            if (itemPrice <= 0) {
-                price.setError("Price is required");
+            if (itemPrice < 0) {
+                price.setError("Price is invalid");
                 price.requestFocus();
-                return;
+                return false;
             }
+        }
+        if(encodedImageString == null) {
+            setDefaultProductImage();
         }
 
         Product product = new Product();
@@ -264,6 +270,7 @@ public class CreatePostActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Log.d(TAG, "uploadPostData: " + e);
                 });
+        return true;
     }
 
     private File createImageFile() throws IOException {
@@ -280,5 +287,16 @@ public class CreatePostActivity extends AppCompatActivity {
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = imageFile.getAbsolutePath();
         return imageFile;
+    }
+
+    private void setDefaultProductImage() {
+        Drawable drawable = getResources().getDrawableForDensity(R.drawable.neu_furry_friend, DisplayMetrics.DENSITY_MEDIUM, null);
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        encodedImageString = ImageCodec.getEncodedImage(bitmap);
+    }
+
+
+    private void showToast(String text) {
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
     }
 }

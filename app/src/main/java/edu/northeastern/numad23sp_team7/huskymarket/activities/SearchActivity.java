@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -134,9 +136,7 @@ public class SearchActivity extends AppCompatActivity {
             product.setLocation(locations[(int) (Math.random() * (locations.length - 1)) + 1]);
             product.setCondition((float) (Math.random() * 5));
             product.setCategory(categories[(int) (Math.random() * (categories.length - 1)) + 1]);
-            product.setColor("Color " + i);
             product.setImages(Arrays.asList("image1", "image2"));
-            product.setMaterial("Material " + i);
             product.setStatus(statuses[(new Random()).nextInt(statuses.length)]);
             product.setPrice((float) (Math.random() * 100));
             products.add(product);

@@ -1,6 +1,7 @@
 package edu.northeastern.numad23sp_team7.huskymarket.model;
 
 import com.google.firebase.firestore.ServerTimestamp;
+
 import java.util.Date;
 import java.util.List;
 
@@ -12,9 +13,7 @@ public class Product {
     private String location;
     private float condition;
     private String category;
-    private String color;
     private List<String> images;
-    private String material;
     private String status;
     private float price;
     private @ServerTimestamp Date timestamp;
@@ -22,7 +21,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(String productId, String title, String description, String postUserId, String location, float condition, String category, String color, List<String> images, String material, String status, float price) {
+    public Product(String productId, String title, String description, String postUserId, String location, float condition, String category, List<String> images, String status, float price) {
         this.productId = productId;
         this.title = title;
         this.description = description;
@@ -30,9 +29,7 @@ public class Product {
         this.location = location;
         this.condition = condition;
         this.category = category;
-        this.color = color;
         this.images = images;
-        this.material = material;
         this.status = status;
         this.price = price;
     }
@@ -85,13 +82,6 @@ public class Product {
         this.category = category;
     }
 
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
 
     public List<String> getImages() {
         return images;
@@ -101,13 +91,6 @@ public class Product {
         this.images = images;
     }
 
-    public String getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(String material) {
-        this.material = material;
-    }
 
     public String getStatus() {
         return status;
