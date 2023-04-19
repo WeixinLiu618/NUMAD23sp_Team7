@@ -8,10 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,15 +18,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.NumberPicker;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -40,14 +31,12 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 
 import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ActivityCreatePostBinding;
-import edu.northeastern.numad23sp_team7.databinding.ActivityHuskySignupBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.database.ProductDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
@@ -164,7 +153,6 @@ public class CreatePostActivity extends AppCompatActivity {
                                 }
                                 break;
                             case 1:
-                                Log.d(TAG, "onClick: " + "来到这里");
 //                                if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                                     // Open gallery
 //                                    Log.d(TAG, "onClick: " + "来到这里");
@@ -267,6 +255,7 @@ public class CreatePostActivity extends AppCompatActivity {
         product.setLocation(itemLocation);
         product.setPostUserId(postUserId);
         product.setImages(Collections.singletonList(encodedImageString));
+        product.setTimestamp(new Date());
 
         database.collection(Constants.KEY_COLLECTION_PRODUCTS)
                 .add(product)
