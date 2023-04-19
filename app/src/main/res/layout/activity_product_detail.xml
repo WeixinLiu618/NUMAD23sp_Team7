@@ -4,8 +4,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/secondary"
     tools:context=".huskymarket.activities.ProductDetailActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerBackground"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_50sdp"
+        android:background="@color/primary"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/back_btn"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/ic_back"
+            android:tint="@color/secondary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/textViewHuskyDetailPageHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_17sdp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="Product Detail"
+            android:textStyle="bold"
+            android:textColor="@color/secondary"
+            android:textSize="@dimen/_16ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/back_btn"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
         android:layout_width="0dp"
@@ -14,227 +51,317 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toBottomOf="@id/headerBackground">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:padding="@dimen/_15sdp">
 
-            <ImageView
-                android:id="@+id/photo"
-                android:layout_width="430dp"
-                android:layout_height="283dp"
-                android:layout_marginTop="124dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardViewHuskyDetailImageWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintDimensionRatio="1:0.6"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:src="@tools:sample/backgrounds/scenic" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/product_name"
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/imageViewHuskyDetailProductImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/neu_furry_friend" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/textViewHuskyDetailProductTitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Product Name"
-                android:textColor="#000000"
-                android:textSize="24sp"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/_15sdp"
+                app:layout_constraintTop_toBottomOf="@id/cardViewHuskyDetailImageWrapper"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/photo" />
+                app:layout_constraintEnd_toEndOf="parent">
 
+                <TextView
+                    android:id="@+id/textViewHuskyDetailProductName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:text="Product Name Product Name Product Name Product Name Product Name Product Name Product Name Product Name"
+                    android:textColor="#000000"
+                    android:textSize="@dimen/_20sdp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/iconHuskyDetailBookmark"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <com.makeramen.roundedimageview.RoundedImageView
-                android:id="@+id/imageProfile"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/default_avatar"
-                android:scaleType="centerCrop"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/product_name"
-                app:riv_oval="true" />
+                <ImageView
+                    android:id="@id/iconHuskyDetailBookmark"
+                    android:src="@drawable/round_favorite_border_26"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    app:layout_constraintTop_toTopOf="@id/textViewHuskyDetailProductName"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/location"
-                android:layout_width="140dp"
-                android:layout_height="20dp"
-                android:layout_marginLeft="124dp"
-                android:layout_marginTop="20dp"
-                android:text="Seller location"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/product_name" />
-
-            <TextView
-                android:id="@+id/thePriceOfProduct"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:id="@+id/textViewHuskyDetailPriceOfProduct"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
-
-            <TextView
-                android:id="@+id/productDescription"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:text="Description:"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_18sdp"
+                android:textColor="@color/black"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="$ 120.10"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/category" />
-            <TextView
-                android:id="@+id/descriptionText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="98dp"
-                android:layout_marginTop="4dp"
-                android:text="DescriptionText"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/category"
+                app:layout_constraintTop_toBottomOf="@id/textViewHuskyDetailProductTitle"
+                app:layout_constraintEnd_toStartOf="@+id/layoutHuskyDetailLocationContainer"
                 />
 
-            <TextView
-                android:id="@+id/productDetail"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@id/layoutHuskyDetailLocationContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:text="Details:"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/thePriceOfProduct" />
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/textViewHuskyDetailPriceOfProduct"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <androidx.constraintlayout.utils.widget.ImageFilterView
+                    android:id="@+id/iconHuskyDetailLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_outline_location_on_20"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+                <TextView
+                    android:id="@+id/textViewHuskyDetailLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:text="Boston"
+                    android:textSize="@dimen/_15sdp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    app:layout_constraintStart_toEndOf="@id/iconHuskyDetailLocation"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/viewHuskyDetailSeparator1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_2sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:background="@color/light_gray"
+                app:layout_constraintTop_toBottomOf="@id/layoutHuskyDetailLocationContainer" />
 
             <TextView
-                android:id="@+id/productCondition"
+                android:id="@+id/textViewHuskyDetailSellerInformation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:text="Condition:"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:text="Seller information"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/productDetail" />
+                app:layout_constraintTop_toBottomOf="@id/viewHuskyDetailSeparator1" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutHuskyDetailSellerInfoContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                app:layout_constraintTop_toBottomOf="@id/textViewHuskyDetailSellerInformation"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/iconHuskyDetailSendMessage">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/imageDetailSellerProfile"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:background="@drawable/default_avatar"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:riv_oval="true" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:text="username username username username username "
+                    android:textSize="@dimen/_15sdp"
+                    android:textColor="@color/black"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/imageDetailSellerProfile"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/iconHuskyDetailSendMessage"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@drawable/ic_send_message"
+                app:layout_constraintTop_toTopOf="@id/layoutHuskyDetailSellerInfoContainer"
+                app:layout_constraintBottom_toBottomOf="@id/layoutHuskyDetailSellerInfoContainer"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <View
+                android:id="@+id/viewHuskyDetailSeparator2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_2sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:background="@color/light_gray"
+                app:layout_constraintTop_toBottomOf="@id/layoutHuskyDetailSellerInfoContainer" />
 
             <TextView
-                android:id="@id/conditionRates"
-                android:layout_width="wrap_content"
+                android:id="@+id/textViewHuskyDetailSectionTitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="98dp"
-                android:layout_marginTop="4dp"
-                android:text="New"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/productDetail"/>
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:text="Details"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/viewHuskyDetailSeparator2" />
+
             <TextView
-                android:id="@id/category"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:text="Category:"
+                android:id="@+id/textViewHuskyDetailCondition"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/productCondition"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_15sdp"
+                android:textColor="@color/black"
+                android:text="Condition"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewHuskyDetailSectionTitle"
                 />
             <TextView
-                android:id="@id/categoryText"
+                android:id="@+id/textViewHuskyDetailConditionValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_15sdp"
+                android:text="8.5/10"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/textViewHuskyDetailCondition"
+                app:layout_constraintBottom_toBottomOf="@id/textViewHuskyDetailCondition" />
+            <TextView
+                android:id="@+id/textViewHuskyDetailCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="98dp"
-                android:layout_marginTop="4dp"
-                android:text="categorytext"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/productCondition"/>
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_15sdp"
+                android:textColor="@color/black"
+                android:text="Category"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewHuskyDetailCondition"
+                />
+            <TextView
+                android:id="@+id/textViewHuskyDetailCategoryValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_15sdp"
+                android:text="Furniture"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/textViewHuskyDetailCategory"
+                app:layout_constraintBottom_toBottomOf="@id/textViewHuskyDetailCategory" />
+            <TextView
+                android:id="@+id/textViewHuskyDetailStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_15sdp"
+                android:textColor="@color/black"
+                android:text="Status"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewHuskyDetailCategory"
+                />
+            <TextView
+                android:id="@+id/textViewHuskyDetailStatusValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_15sdp"
+                android:text="Available"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/textViewHuskyDetailStatus"
+                app:layout_constraintBottom_toBottomOf="@id/textViewHuskyDetailStatus" />
+            <TextView
+                android:id="@+id/textViewHuskyDetailListingDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_15sdp"
+                android:textColor="@color/black"
+                android:text="Listing date"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewHuskyDetailStatus"
+                />
+            <TextView
+                android:id="@+id/textViewHuskyDetailListingTimeValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_15sdp"
+                android:text="Jan 23, 2023"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/textViewHuskyDetailListingDate"
+                app:layout_constraintBottom_toBottomOf="@id/textViewHuskyDetailListingDate" />
 
-            <ImageView
-                android:id="@+id/bookmarkProductDetail"
-                android:layout_width="55dp"
-                android:layout_height="62dp"
-                android:layout_marginLeft="320dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/ic_bookmarked_not"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/photo">
+            <View
+                android:id="@+id/viewHuskyDetailSeparator3"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_2sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:background="@color/light_gray"
+                app:layout_constraintTop_toBottomOf="@id/textViewHuskyDetailListingDate" />
 
-            </ImageView>
+            <TextView
+                android:id="@+id/textViewHuskyDetailDescriptionSectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:text="Description"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/viewHuskyDetailSeparator3" />
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="27dp"
-                android:layout_marginLeft="88dp"
-                android:layout_marginTop="16dp"
-                android:src="@drawable/ic_outline_location_on_20"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/product_name"></ImageView>
+            <TextView
+                android:id="@+id/textViewHuskyDetailDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_15sdp"
+                android:textColor="@color/black"
+                android:text="Check out this fantastic second-hand item I found on Facebook Marketplace! This vintage wooden dresser, with its intricate carvings and antique brass handles, truly captures the essence of a bygone era. The dresser has six spacious drawers, providing ample storage for your clothing and belongings. Each drawer glides smoothly, showcasing the craftsmanship of its original maker."
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewHuskyDetailDescriptionSectionTitle"
+                />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
-
-    <View
-        android:id="@+id/viewSupporter"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:background="@color/primary"
-        app:layout_constraintTop_toBottomOf="@id/back_btn" />
-
-    <View
-        android:id="@+id/headerBackground"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/primary"
-        app:layout_constraintBottom_toBottomOf="@id/viewSupporter"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/back_btn"
-        android:layout_width="@dimen/_30sdp"
-        android:layout_height="@dimen/_30sdp"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:padding="@dimen/_5sdp"
-        android:src="@drawable/ic_back"
-        android:tint="@color/secondary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_8sdp"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="Product Detail"
-        android:textColor="@color/light_gray"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/back_btn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/back_btn"
-        app:layout_constraintTop_toTopOf="@id/back_btn" />
-
-
-    <ImageView
-        android:id="@+id/layoutSendMessage"
-        android:layout_width="@dimen/_35sdp"
-        android:layout_height="@dimen/_35sdp"
-        android:layout_marginStart="@dimen/_30sdp"
-        android:layout_marginBottom="@dimen/_30sdp"
-        android:background="@drawable/ic_send_message"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"  />
-
-    <TextView
-        android:layout_width="179dp"
-        android:layout_height="49dp"
-        android:layout_marginStart="@dimen/_90sdp"
-        android:layout_marginBottom="@dimen/_30sdp"
-        android:text="Interested? Let's start to chat!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

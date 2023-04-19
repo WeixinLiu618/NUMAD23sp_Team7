@@ -18,12 +18,16 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ActivityProductDetailBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.adapter.SearchResultAdapter;
+import edu.northeastern.numad23sp_team7.huskymarket.database.ProductDao;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.ChatMessage;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
@@ -34,13 +38,15 @@ import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
 
 public class ProductDetailActivity extends AppCompatActivity {
     ActivityProductDetailBinding binding;
-    private FirebaseFirestore database;
+    private FirebaseFirestore database = FirebaseFirestore.getInstance();
     private String productId;
     private Product product;
     private User loggedInUser;
     private AtomicInteger saved;
-    private UserDao userDao;
+    private UserDao userDao = new UserDao();
+    private ProductDao productDao = new ProductDao();
     private int bookmarkIcon;
+    private PreferenceManager preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,76 +54,71 @@ public class ProductDetailActivity extends AppCompatActivity {
         userDao = new UserDao();
         binding = ActivityProductDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        database = FirebaseFirestore.getInstance();
+        preferenceManager = new PreferenceManager(this);
 
         // Get product Id
         Intent intentFromFormer = getIntent();
         productId = intentFromFormer.getStringExtra(Constants.KEY_PRODUCT_ID);
-        loggedInUser = (User) intentFromFormer.getSerializableExtra(Constants.KEY_USER);
-
-
-        //load product detail from database
-        database.collection(Constants.KEY_COLLECTION_PRODUCTS).document(productId).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        product = documentSnapshot.toObject(Product.class);
-                        binding.productName.setText(product.getTitle());
-                        binding.conditionRates.setText(String.valueOf(product.getCondition()));
-                        binding.descriptionText.setText(String.valueOf(product.getDescription()));
-                        binding.categoryText.setText(String.valueOf(product.getCategory()));
-                        binding.thePriceOfProduct.setText("$" + String.valueOf(product.getPrice()));
-                        binding.location.setText(product.getLocation());
-                        //TODO: get Image
-                        //bookmark
-                        //Drawable bookmarkIcon;
-                        productId = product.getProductId();
-                        saved = new AtomicInteger(isFavorite(productId));
-                        if (saved.get() == 1 ) {
-                            bookmarkIcon = R.drawable.ic_bookmarked;
-                        } else {
-                            bookmarkIcon = R.drawable.ic_bookmarked_not;
-                        }
-                        binding.bookmarkProductDetail.setBackground(
-                                ContextCompat.getDrawable(binding.bookmarkProductDetail.getContext(), bookmarkIcon ));
-
-                        List<String> images = product.getImages();
-                        if (!images.isEmpty()) {
-                            Bitmap imageBitMap = ImageCodec.getDecodedImage(images.get(0));
-                            if (imageBitMap != null) {
-                                binding.photo.setImageBitmap(imageBitMap);
-                            }
-                        }
-                    }
-
-                });
-        binding.bookmarkProductDetail.setOnClickListener(view -> {
-            if (saved.get() == 1) {
-                saved.set(0);
-                loggedInUser.getFavorites().remove(productId);
-                userDao.removeItemFromFavorites(loggedInUser.getId(), productId);
-                bookmarkIcon = R.drawable.ic_bookmarked_not;
-            } else if (saved.get() == 0) {
-                saved.set(1);
-                loggedInUser.getFavorites().add(productId);
-                userDao.addItemToFavorites(loggedInUser.getId(), productId);
-                bookmarkIcon = R.drawable.ic_bookmarked;
-            }
-            binding.bookmarkProductDetail.setBackground(
-                    ContextCompat.getDrawable(binding.bookmarkProductDetail.getContext(),bookmarkIcon));
+        String userId = preferenceManager.getString(Constants.KEY_USER_ID);
+        userDao.getUserById(userId, user -> {
+            loggedInUser = user;
         });
 
-        binding.layoutSendMessage.setOnClickListener(v -> {
-            //start chat with seller
-            UserDao userDao = new UserDao();
-            userDao.getUserById(product.getPostUserId(), receiver -> {
-                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-                intent.putExtra(Constants.KEY_USER, receiver);
-                startActivity(intent);
-            });
+
+        productDao.getProductById(userId, productId, productObj -> {
+            product = productObj;
+            updateView();
         });
-        // back button
-        binding.backBtn.setOnClickListener(v -> onBackPressed());
+
+//        binding.bookmarkProductDetail.setOnClickListener(view -> {
+//            if (saved.get() == 1) {
+//                saved.set(0);
+//                loggedInUser.getFavorites().remove(productId);
+//                userDao.removeItemFromFavorites(loggedInUser.getId(), productId);
+//                bookmarkIcon = R.drawable.ic_bookmarked_not;
+//            } else if (saved.get() == 0) {
+//                saved.set(1);
+//                loggedInUser.getFavorites().add(productId);
+//                userDao.addItemToFavorites(loggedInUser.getId(), productId);
+//                bookmarkIcon = R.drawable.ic_bookmarked;
+//            }
+//            binding.bookmarkProductDetail.setBackground(
+//                    ContextCompat.getDrawable(binding.bookmarkProductDetail.getContext(),bookmarkIcon));
+//        });
+//
+//        binding.layoutSendMessage.setOnClickListener(v -> {
+//            //start chat with seller
+//            UserDao userDao = new UserDao();
+//            userDao.getUserById(product.getPostUserId(), receiver -> {
+//                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+//                intent.putExtra(Constants.KEY_USER, receiver);
+//                startActivity(intent);
+//            });
+//        });
+//        // back button
+//        binding.backBtn.setOnClickListener(v -> onBackPressed());
     }
+
+    private void updateView() {
+        List<String> images = product.getImages();
+        if (!images.isEmpty()) {
+            Bitmap imageBitMap = ImageCodec.getDecodedImage(images.get(0));
+            if (imageBitMap != null) {
+                binding.imageViewHuskyDetailProductImage.setImageBitmap(imageBitMap);
+            }
+        }
+        binding.textViewHuskyDetailProductName.setText(product.getTitle());
+        binding.textViewHuskyDetailPriceOfProduct.setText("$ " + String.format("%.2f", product.getPrice()));
+        binding.textViewHuskyDetailLocation.setText(product.getLocation());
+        binding.textViewHuskyDetailConditionValue.setText(String.format("%.1f", product.getCondition()) + "/10.0");
+        binding.textViewHuskyDetailCategoryValue.setText(product.getCategory());
+        String status = product.getStatus();
+        status = status.substring(0, 1).toUpperCase() + status.substring(1);
+        binding.textViewHuskyDetailStatusValue.setText(status);
+        binding.textViewHuskyDetailListingTimeValue.setText(getSimpleDate(product.getTimestamp()));
+        binding.textViewHuskyDetailDescription.setText(product.getDescription());
+    }
+
     private int isFavorite(String productId) {
         // Saved status
         // 0: not saved
@@ -132,5 +133,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
 
         return 0;
+    }
+
+    private String getSimpleDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
+        return sdf.format(date);
     }
 }
