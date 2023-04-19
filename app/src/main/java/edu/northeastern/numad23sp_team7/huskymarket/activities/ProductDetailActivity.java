@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -149,7 +152,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void setChatIcon() {
-        if (!loggedInUser.getId().equals(product.getPostUserId())) {
+        if (!preferenceManager.getString(Constants.KEY_USER_ID).equals(product.getPostUserId())) {
             binding.iconHuskyDetailSendMessage.setVisibility(View.VISIBLE);
         }
     }
