@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,85 +9,81 @@
     tools:context=".huskymarket.activities.ChatActivity">
 
 
-    <View
+    <LinearLayout
         android:id="@+id/headerBackground"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/_60sdp"
         android:background="@color/primary"
-        app:layout_constraintBottom_toBottomOf="@id/viewSupporter"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/back_btn"
-        android:layout_width="@dimen/_30sdp"
-        android:layout_height="@dimen/_30sdp"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:padding="@dimen/_5sdp"
-        android:src="@drawable/ic_back"
-        android:tint="@color/secondary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/send_post_btn"
-        android:layout_width="@dimen/_30sdp"
-        android:layout_height="@dimen/_30sdp"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:padding="@dimen/_5sdp"
-        android:src="@drawable/ic_send"
-        android:tint="@color/secondary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_8sdp"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="Create Post"
-        android:textColor="@color/light_gray"
-        android:textSize="@dimen/_14ssp"
-        android:fontFamily="@font/poppins_bold"
-        app:layout_constraintBottom_toBottomOf="@id/back_btn"
-        app:layout_constraintEnd_toStartOf="@id/send_post_btn"
-        app:layout_constraintStart_toEndOf="@id/back_btn"
-        app:layout_constraintTop_toTopOf="@id/back_btn" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/back_btn"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_weight="1"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/ic_back"
+            android:tint="@color/secondary" />
 
 
-    <View
-        android:id="@+id/viewSupporter"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:background="@color/primary"
-        app:layout_constraintTop_toBottomOf="@id/back_btn" />
+        <TextView
+            android:id="@+id/textName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="@dimen/_12sdp"
+
+            android:layout_weight="4"
+            android:fontFamily="@font/poppins_bold"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/_5sdp"
+            android:text="Create Post"
+            android:textColor="@color/light_gray"
+            android:textSize="@dimen/_14ssp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/send_post_btn"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_weight="1"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/ic_send"
+            android:tint="@color/secondary" />
+
+
+    </LinearLayout>
+
 
     <ScrollView
+        android:id="@+id/scrollViewContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/headerBackground"
         android:clipToPadding="false"
         android:overScrollMode="never"
-        android:padding="@dimen/_10sdp"
-        android:scrollbars="none"
-        app:layout_constraintTop_toBottomOf="@id/viewSupporter">
+        android:scrollbars="none">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/_15sdp"
+            android:paddingEnd="@dimen/_15sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_20sdp">
             <!-- Post Title -->
             <TextView
                 android:id="@+id/text_view_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
                 android:fontFamily="@font/poppins_medium"
-                android:padding="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingStart="@dimen/_5sdp"
                 android:text="Title"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14ssp"
@@ -99,12 +95,11 @@
                 android:id="@+id/edit_text_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
                 android:fontFamily="@font/poppins_regular"
                 android:hint="Enter Item title"
                 android:maxLines="1"
-                android:padding="@dimen/_10sdp"
+                android:paddingStart="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_10sdp"
                 android:textSize="@dimen/_12ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -115,11 +110,11 @@
                 android:id="@+id/text_view_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
                 android:fontFamily="@font/poppins_medium"
-                android:padding="@dimen/_10sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:paddingStart="@dimen/_5sdp"
                 android:text="Description"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14ssp"
@@ -131,12 +126,12 @@
                 android:id="@+id/edit_text_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
                 android:fontFamily="@font/poppins_regular"
                 android:hint="Enter item description"
                 android:inputType="textMultiLine"
-                android:padding="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_10sdp"
+                android:paddingStart="@dimen/_5sdp"
+
                 android:textSize="@dimen/_12ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -146,7 +141,7 @@
                 android:id="@+id/text_view_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_20sdp"
+                android:paddingStart="@dimen/_5sdp"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:fontFamily="@font/poppins_medium"
                 android:text="Category"
@@ -159,7 +154,6 @@
                 android:id="@+id/spinner_category"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_40sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
                 android:contentDescription="Enter item category"
                 android:prompt="@string/choose_a_category"
                 android:spinnerMode="dialog"
@@ -172,14 +166,12 @@
                 android:id="@+id/text_view_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_20sdp"
                 android:layout_marginTop="@dimen/_20sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
                 android:fontFamily="@font/poppins_medium"
                 android:text="Location"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14ssp"
-
+                android:paddingStart="@dimen/_5sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/spinner_category" />
 
@@ -187,7 +179,6 @@
                 android:id="@+id/spinner_location"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_40ssp"
-                android:layout_marginEnd="@dimen/_10sdp"
                 android:contentDescription="Enter item category"
                 android:prompt="@string/choose_a_category"
                 android:spinnerMode="dialog"
@@ -201,12 +192,12 @@
                 android:id="@+id/text_view_condition"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_20sdp"
                 android:layout_marginTop="@dimen/_40sdp"
                 android:fontFamily="@font/poppins_medium"
                 android:text="Condition"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14ssp"
+                android:paddingStart="@dimen/_5sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_view_location" />
 
@@ -216,7 +207,6 @@
                 android:id="@+id/edit_text_condition"
                 android:layout_width="60dp"
                 android:layout_height="100dp"
-                android:layout_marginEnd="@dimen/_10sdp"
                 android:stepSize="5"
                 app:layout_constraintBottom_toBottomOf="@+id/text_view_condition"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -226,13 +216,12 @@
                 android:id="@+id/text_view_price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_20sdp"
                 android:layout_marginTop="@dimen/_40sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
                 android:fontFamily="@font/poppins_medium"
                 android:text="Price"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14ssp"
+                android:paddingStart="@dimen/_5sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_view_condition" />
 
@@ -240,12 +229,11 @@
                 android:id="@+id/edit_text_price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_10sdp"
                 android:fontFamily="@font/poppins_regular"
+                android:gravity="center"
                 android:hint="Item Price"
                 android:inputType="numberDecimal"
                 android:textSize="@dimen/_12ssp"
-                android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="@+id/text_view_price"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/text_view_price" />
@@ -255,9 +243,8 @@
                 android:id="@+id/text_view_image"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_20sdp"
                 android:layout_marginTop="@dimen/_20sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
+                android:paddingStart="@dimen/_5sdp"
                 android:fontFamily="@font/poppins_medium"
                 android:text="Image"
                 android:textColor="@color/black"
@@ -270,7 +257,7 @@
                 android:id="@+id/select_image"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_15sdp"
+
                 android:fontFamily="@font/poppins_regular"
                 android:text="No Image Selected"
                 android:textColor="@color/gray"
@@ -291,11 +278,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_view_image">
 
+
                 <ImageView
                     android:id="@+id/imageProduct"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:adjustViewBounds="true" />
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/sample"
+                    android:visibility="gone"/>
 
                 <ImageView
                     android:id="@+id/image_view_post"
@@ -304,16 +295,9 @@
                     android:layout_gravity="center"
                     android:background="@drawable/ic_camera"
                     android:clickable="true"
-                    android:contentDescription="clickIcon"
-                    android:onClick="onClickMyImageView" />
+                    android:contentDescription="clickIcon" />
 
             </FrameLayout>
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </ScrollView>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

@@ -57,11 +57,13 @@ public class CreatePostActivity extends AppCompatActivity {
     private static final int REQUEST_GALLERY = 1;
     private static final int REQUEST_CAMERA = 2;
     private PreferenceManager preferenceManager;
+
     private EditText title;
     private EditText description;
     private EditText price;
     private NumberPicker condition;
     private ImageView imageUploadClick;
+    private ImageView imageProduct;
     private Spinner locationSpinner;
     private Spinner categorySpinner;
     private ImageView sendButton;
@@ -71,6 +73,7 @@ public class CreatePostActivity extends AppCompatActivity {
     private TextView selectedImageText;
     private String currentPhotoPath;
     private String encodedImageString;
+
 
     private FirebaseFirestore database;
     private static final ProductDao productDao = new ProductDao();
@@ -95,6 +98,7 @@ public class CreatePostActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.send_post_btn);
         backButton = findViewById(R.id.back_btn);
         imageUploadClick = findViewById(R.id.image_view_post);
+        imageProduct = findViewById(R.id.imageProduct);
 
         title = findViewById(R.id.edit_text_title);
         description = findViewById(R.id.edit_text_description);
@@ -135,6 +139,8 @@ public class CreatePostActivity extends AppCompatActivity {
         });
         // back button
         backButton.setOnClickListener(v -> onBackPressed());
+
+
     }
 
     public void onClickMyImageView(View view) {
