@@ -12,8 +12,10 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -21,12 +23,11 @@
 
             <ImageView
                 android:id="@+id/photo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="156dp"
+                android:layout_width="430dp"
+                android:layout_height="283dp"
+                android:layout_marginTop="124dp"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -49,7 +50,8 @@
                 android:id="@+id/imageProfile"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/default_avatar"
                 android:scaleType="centerCrop"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -60,39 +62,48 @@
                 android:id="@+id/location"
                 android:layout_width="140dp"
                 android:layout_height="20dp"
-                android:layout_marginLeft="76dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginLeft="124dp"
+                android:layout_marginTop="20dp"
                 android:text="Seller location"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/product_name" />
 
             <TextView
                 android:id="@+id/thePriceOfProduct"
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageProfile"
-                 />
+                app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
 
             <TextView
-                android:id="@+id/productConditionView"
-                android:layout_width="393dp"
-                android:layout_height="252dp"
-                android:layout_margin="16dp"
+                android:id="@+id/productDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="56dp"
-                android:text="description here\ndescription here\ndescription here\ndescription here\ndescription here\ndescription here\ndescription here\ndescription here\ndescription here\ndescription here\ndescription here\ndescription here\ndescription here\ndescription here\ndescription "
+                android:layout_marginTop="4dp"
+                android:text="Description:"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/productCondition" />
+                app:layout_constraintTop_toBottomOf="@+id/category" />
+            <TextView
+                android:id="@+id/descriptionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="98dp"
+                android:layout_marginTop="4dp"
+                android:text="DescriptionText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/category"
+                />
 
             <TextView
                 android:id="@+id/productDetail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
                 android:text="Details:"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/thePriceOfProduct" />
@@ -102,10 +113,39 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 android:text="Condition:"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/productDetail" />
+
+            <TextView
+                android:id="@id/conditionRates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="98dp"
+                android:layout_marginTop="4dp"
+                android:text="New"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/productDetail"/>
+            <TextView
+                android:id="@id/category"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:text="Category:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/productCondition"
+                />
+            <TextView
+                android:id="@id/categoryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="98dp"
+                android:layout_marginTop="4dp"
+                android:text="categorytext"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/productCondition"/>
 
             <ImageView
                 android:id="@+id/bookmarkProductDetail"
@@ -117,9 +157,16 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/photo">
 
-
             </ImageView>
 
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="27dp"
+                android:layout_marginLeft="88dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/ic_outline_location_on_20"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/product_name"></ImageView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
@@ -162,7 +209,7 @@
         android:maxLines="1"
         android:text="Product Detail"
         android:textColor="@color/light_gray"
-        android:textSize="@dimen/_14ssp"
+        android:textSize="20dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/back_btn"
         app:layout_constraintEnd_toEndOf="parent"
@@ -177,9 +224,17 @@
         android:layout_marginStart="@dimen/_30sdp"
         android:layout_marginBottom="@dimen/_30sdp"
         android:background="@drawable/ic_send_message"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"  />
+
+    <TextView
+        android:layout_width="179dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="@dimen/_90sdp"
+        android:layout_marginBottom="@dimen/_30sdp"
+        android:text="Interested? Let's start to chat!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

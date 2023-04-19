@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="conditionRates" type="id" />
+    <item name="category" type="id" />
+    <item name="categoryText" type="id" />
+</resources>

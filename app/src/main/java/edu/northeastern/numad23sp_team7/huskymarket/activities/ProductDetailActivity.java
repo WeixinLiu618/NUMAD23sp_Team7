@@ -62,7 +62,9 @@ public class ProductDetailActivity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         product = documentSnapshot.toObject(Product.class);
                         binding.productName.setText(product.getTitle());
-                        binding.productConditionView.setText(String.valueOf(product.getCondition()));
+                        binding.conditionRates.setText(String.valueOf(product.getCondition()));
+                        binding.descriptionText.setText(String.valueOf(product.getDescription()));
+                        binding.categoryText.setText(String.valueOf(product.getCategory()));
                         binding.thePriceOfProduct.setText("$" + String.valueOf(product.getPrice()));
                         binding.location.setText(product.getLocation());
                         //TODO: get Image
