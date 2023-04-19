@@ -149,7 +149,7 @@ public class ProfileFragment extends Fragment {
                             InputStream inputStream = getActivity().getContentResolver().openInputStream(imageUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                             binding.imageProfile.setImageBitmap(bitmap);
-                            String encodedImage = ImageCodec.getEncodedImage(bitmap);
+                            String encodedImage = ImageCodec.getEncodedSmallImage(bitmap);
                             preferenceManager.putString(Constants.KEY_PROFILE_IMAGE, encodedImage);
                             userDao.updateUserProfileImage(preferenceManager.getString(Constants.KEY_USER_ID), encodedImage);
                             Log.d(TAG, "image: " + preferenceManager.getString(Constants.KEY_PROFILE_IMAGE));

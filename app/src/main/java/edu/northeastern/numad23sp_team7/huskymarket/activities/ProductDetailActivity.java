@@ -67,6 +67,10 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         productDao.getProductById(userId, productId, productObj -> {
             product = productObj;
+            userDao.getUserById(productObj.getPostUserId(),user -> {
+                binding.imageDetailSellerName.setText(user.getUsername());
+                binding.imageDetailSellerProfile.setImageBitmap(ImageCodec.getDecodedImage(user.getProfileImage()));
+            });
             updateView();
         });
 

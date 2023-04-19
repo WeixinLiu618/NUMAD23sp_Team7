@@ -22,6 +22,17 @@ public class ImageCodec {
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
 
+    public static String getEncodedSmallImage(Bitmap bitmap) {
+        int width = 300;
+        int height = bitmap.getHeight() * width / bitmap.getWidth();
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
+
+
     public static Bitmap getDecodedImage(String encodedImage) {
         byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);

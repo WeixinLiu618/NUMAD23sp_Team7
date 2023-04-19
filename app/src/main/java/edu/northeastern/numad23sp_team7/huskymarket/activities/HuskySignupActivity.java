@@ -134,7 +134,7 @@ public class HuskySignupActivity extends AppCompatActivity {
                             InputStream inputStream = getContentResolver().openInputStream(profileImageUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                             binding.imageProfile.setImageBitmap(bitmap);
-                            encodedImage = ImageCodec.getEncodedImage(bitmap);
+                            encodedImage = ImageCodec.getEncodedSmallImage(bitmap);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -149,7 +149,7 @@ public class HuskySignupActivity extends AppCompatActivity {
     private void setDefaultProfileImage() {
         Drawable drawable = getResources().getDrawableForDensity(R.drawable.default_avatar, DisplayMetrics.DENSITY_MEDIUM, null);
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-        encodedImage = ImageCodec.getEncodedImage(bitmap);
+        encodedImage = ImageCodec.getEncodedSmallImage(bitmap);
     }
 
 
