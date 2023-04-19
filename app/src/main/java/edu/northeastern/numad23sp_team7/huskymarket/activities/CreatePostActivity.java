@@ -8,8 +8,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,6 +27,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -36,11 +40,14 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 
 import edu.northeastern.numad23sp_team7.R;
+import edu.northeastern.numad23sp_team7.databinding.ActivityCreatePostBinding;
+import edu.northeastern.numad23sp_team7.databinding.ActivityHuskySignupBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.database.ProductDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
@@ -58,19 +65,10 @@ public class CreatePostActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA = 2;
     private PreferenceManager preferenceManager;
 
-    private EditText title;
-    private EditText description;
-    private EditText price;
-    private NumberPicker condition;
-    private ImageView imageUploadClick;
-    private ImageView imageProduct;
-    private Spinner locationSpinner;
-    private Spinner categorySpinner;
-    private ImageView sendButton;
-    private ImageView backButton;
+    private ActivityCreatePostBinding binding;
     private Uri imageUri;
     private String postUserId;
-    private TextView selectedImageText;
+
     private String currentPhotoPath;
     private String encodedImageString;
 
@@ -80,56 +78,41 @@ public class CreatePostActivity extends AppCompatActivity {
     private final static String TAG = "create post";
 
 
-
     @SuppressLint("DefaultLocale")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_post);
-
-        // Get a reference to the products collection and create a new document with a generated ID
+        binding = ActivityCreatePostBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         database = FirebaseFirestore.getInstance();
 
         // init
         preferenceManager = new PreferenceManager(getApplicationContext());
         postUserId = preferenceManager.getString(Constants.KEY_USER_ID);
-        selectedImageText = findViewById(R.id.select_image);
 
-        sendButton = findViewById(R.id.send_post_btn);
-        backButton = findViewById(R.id.back_btn);
-        imageUploadClick = findViewById(R.id.image_view_post);
-        imageProduct = findViewById(R.id.imageProduct);
-
-        title = findViewById(R.id.edit_text_title);
-        description = findViewById(R.id.edit_text_description);
-        condition = findViewById(R.id.edit_text_condition);
-        condition.setMinValue(10);
-        condition.setMaxValue(100);
-        condition.setWrapSelectorWheel(false);
-//        condition.setFormatter(value -> String.format("%.1f", value / 10.0));
-        condition.setValue(100);
+        binding.editTextCondition.setMinValue(10);
+        binding.editTextCondition.setMaxValue(100);
+        binding.editTextCondition.setWrapSelectorWheel(false);
+        binding.editTextCondition.setValue(100);
 
         // Create the location spinner and set its options
-        locationSpinner = findViewById(R.id.spinner_location);
         ArrayAdapter<String> locationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, LOCATION_OPTIONS);
-        locationSpinner.setAdapter(locationAdapter);
+        binding.spinnerLocation.setAdapter(locationAdapter);
         // default location
-        locationSpinner.setSelection(0);
+        binding.spinnerLocation.setSelection(0);
 
         // Create the category spinner and set its options
-        categorySpinner = findViewById(R.id.spinner_category);
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, CATEGORY_OPTIONS);
-        categorySpinner.setAdapter(categoryAdapter);
+        binding.spinnerCategory.setAdapter(categoryAdapter);
         // default category
-        categorySpinner.setSelection(0);
+        binding.spinnerCategory.setSelection(0);
 
-        price = findViewById(R.id.edit_text_price);
 
         //send button
-        sendButton.setOnClickListener(new View.OnClickListener() {
+        binding.sendPostBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(uploadValidPostData()) {
+                if (uploadValidPostData()) {
                     showToast("Post Sent Successfully");
                     Intent intent = new Intent(getApplicationContext(), HuskyMainActivity.class);
                     startActivity(intent);
@@ -138,60 +121,74 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         });
         // back button
-        backButton.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
 
+        // pick product picture
+        binding.imageViewPost.setOnClickListener(this::onClickMyImageView);
+        binding.imageProduct.setOnClickListener(this::onClickMyImageView);
 
     }
 
     public void onClickMyImageView(View view) {
-        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add Photo");
         builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                if (options[item].equals("Take Photo")) {
-                    // Check camera permission
-                    if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        switch (item) {
+                            case 0:
+                                // Check camera permission
+                                if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 
-                        // Create a file to store the captured image
-                        File photoFile = null;
-                        try {
-                            photoFile = createImageFile();
-                        } catch (IOException ex) {
-                            // Error occurred while creating the File
-                            Log.e("TAG", "Error occurred while creating the file", ex);
-                            return;
+                                    // Create a file to store the captured image
+                                    File photoFile = null;
+                                    try {
+                                        photoFile = createImageFile();
+                                    } catch (IOException ex) {
+                                        // Error occurred while creating the File
+                                        Log.e("TAG", "Error occurred while creating the file", ex);
+                                        return;
+                                    }
+
+                                    // Create a Uri for the captured image
+                                    imageUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", photoFile);
+
+                                    // Launch the camera app
+                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                    startActivityForResult(intent, REQUEST_CAMERA);
+                                } else {
+                                    // Request camera permission
+                                    ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+                                }
+                                break;
+                            case 1:
+                                Log.d(TAG, "onClick: " + "来到这里");
+//                                if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                                    // Open gallery
+//                                    Log.d(TAG, "onClick: " + "来到这里");
+                                    Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                    galleryIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                    startActivityForResult(galleryIntent, REQUEST_GALLERY);
+//                                } else {
+                                    // Request storage permission
+//                                    ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+//                                }
+
+                                break;
                         }
 
-                        // Create a Uri for the captured image
-                        imageUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", photoFile);
 
-                        // Launch the camera app
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                        startActivityForResult(intent, REQUEST_CAMERA);
-                    } else {
-                        // Request camera permission
-                        ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
                     }
-                } else if (options[item].equals("Choose from Gallery")) {
-                    // Check storage permission
-                    if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                        // Open gallery
-                        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(galleryIntent, REQUEST_GALLERY);
-                    } else {
-                        // Request storage permission
-                        ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
                     }
-                } else if (options[item].equals("Cancel")) {
-                    dialog.dismiss();
-                }
-            }
-        });
-        builder.show();
+                })
+                .create().show();
     }
 
     @Override
@@ -200,59 +197,63 @@ public class CreatePostActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && data != null) {
             if (requestCode == REQUEST_CAMERA) {
                 encodedImageString = getEncodedImageFromUri(this, imageUri);
-                Picasso.get().load(imageUri).resize(600, 800)
-                        .centerCrop().into(imageUploadClick); // Set the new bitmap
-
-                selectedImageText.setText("Image selected");
+                Picasso.get().load(imageUri).into(binding.imageProduct); // Set the new bitmap
+                binding.imageProduct.setVisibility(View.VISIBLE);
+                binding.imageViewPost.setVisibility(View.GONE);
+                binding.selectImagePrompt.setText("Image selected");
             } else if (requestCode == REQUEST_GALLERY) {
                 imageUri = data.getData();
                 if (imageUri != null) {
                     encodedImageString = getEncodedImageFromUri(this, imageUri);
-                    Picasso.get().load(imageUri).into(imageUploadClick);
+                    Picasso.get().load(imageUri).into(binding.imageProduct);
                     Log.d("TAG", "selectedImageUri: " + imageUri);
-                    selectedImageText.setText("Image selected");
+                    binding.imageProduct.setVisibility(View.VISIBLE);
+                    binding.imageViewPost.setVisibility(View.GONE);
+                    binding.selectImagePrompt.setText("Image selected");
                 }
             }
         } else {
-            selectedImageText.setText("No image selected");
+            if (encodedImageString == null) {
+                binding.selectImagePrompt.setText("No image selected");
+            }
         }
     }
 
 
     private boolean uploadValidPostData() {
-        String itemTitle = title.getText().toString().trim();
-        String itemDescription = description.getText().toString().trim();
-        String itemLocation = locationSpinner.getSelectedItem().toString();
-        String itemCategory = categorySpinner.getSelectedItem().toString();
-        float itemCondition = condition.getValue() / 10.0f;
-        String priceString = price.getText().toString();
+        String itemTitle = binding.editTextTitle.getText().toString().trim();
+        String itemDescription = binding.editTextDescription.getText().toString().trim();
+        String itemLocation = binding.spinnerLocation.getSelectedItem().toString();
+        String itemCategory = binding.spinnerCategory.getSelectedItem().toString();
+        float itemCondition = binding.editTextCondition.getValue() / 10.0f;
+        String priceString = binding.editTextPrice.getText().toString();
         Float itemPrice = null;
 
         if (itemTitle.isEmpty()) {
-            title.setError("Title is required");
-            title.requestFocus();
+            binding.editTextTitle.setError("Title is required");
+            binding.editTextTitle.requestFocus();
             return false;
         }
 
         if (itemDescription.isEmpty()) {
-            description.setError("Description is required");
-            description.requestFocus();
+            binding.editTextDescription.setError("Description is required");
+            binding.editTextDescription.requestFocus();
             return false;
         }
 
         if (priceString.isEmpty()) {
-            price.setError("Price is required");
-            price.requestFocus();
+            binding.editTextPrice.setError("Price is required");
+            binding.editTextPrice.requestFocus();
             return false;
         } else {
             itemPrice = Float.parseFloat(priceString);
             if (itemPrice < 0) {
-                price.setError("Price is invalid");
-                price.requestFocus();
+                binding.editTextPrice.setError("Price is invalid");
+                binding.editTextPrice.requestFocus();
                 return false;
             }
         }
-        if(encodedImageString == null) {
+        if (encodedImageString == null) {
             setDefaultProductImage();
         }
 

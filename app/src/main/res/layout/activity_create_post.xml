@@ -71,8 +71,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/_15sdp"
-            android:paddingEnd="@dimen/_15sdp"
+            android:paddingStart="@dimen/_20sdp"
+            android:paddingEnd="@dimen/_20sdp"
             android:paddingTop="@dimen/_5sdp"
             android:paddingBottom="@dimen/_20sdp">
             <!-- Post Title -->
@@ -254,7 +254,7 @@
 
 
             <TextView
-                android:id="@+id/select_image"
+                android:id="@+id/selectImagePrompt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
 
