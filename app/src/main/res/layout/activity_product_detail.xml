@@ -132,11 +132,10 @@
                 android:fontFamily="@font/poppins_medium"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textViewHuskyDetailProductTitle"
-                app:layout_constraintEnd_toStartOf="@+id/layoutHuskyDetailLocationContainer"
-                />
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@id/layoutHuskyDetailLocationContainer"
+                android:id="@+id/layoutHuskyDetailLocationContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -229,6 +228,7 @@
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
                 android:background="@drawable/ic_send_message"
+                android:visibility="invisible"
                 app:layout_constraintTop_toTopOf="@id/layoutHuskyDetailSellerInfoContainer"
                 app:layout_constraintBottom_toBottomOf="@id/layoutHuskyDetailSellerInfoContainer"
                 app:layout_constraintEnd_toEndOf="parent" />

@@ -1,35 +1,20 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-
+import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.squareup.picasso.Picasso;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ActivityProductDetailBinding;
-import edu.northeastern.numad23sp_team7.huskymarket.adapter.SearchResultAdapter;
 import edu.northeastern.numad23sp_team7.huskymarket.database.ProductDao;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
-import edu.northeastern.numad23sp_team7.huskymarket.model.ChatMessage;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
@@ -47,6 +32,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private ProductDao productDao = new ProductDao();
     private int bookmarkIcon;
     private PreferenceManager preferenceManager;
+    private boolean isFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +46,14 @@ public class ProductDetailActivity extends AppCompatActivity {
         Intent intentFromFormer = getIntent();
         productId = intentFromFormer.getStringExtra(Constants.KEY_PRODUCT_ID);
         String userId = preferenceManager.getString(Constants.KEY_USER_ID);
+        if (userId == null || userId.isEmpty()) {
+            Intent intent = new Intent(this, HuskyLoginActivity.class);
+            startActivity(intent);
+        }
         userDao.getUserById(userId, user -> {
             loggedInUser = user;
+            isFavorite = user.getFavorites().contains(productId);
+            setBookmarkIcon();
         });
 
 
@@ -74,33 +66,32 @@ public class ProductDetailActivity extends AppCompatActivity {
             updateView();
         });
 
-//        binding.bookmarkProductDetail.setOnClickListener(view -> {
-//            if (saved.get() == 1) {
-//                saved.set(0);
-//                loggedInUser.getFavorites().remove(productId);
-//                userDao.removeItemFromFavorites(loggedInUser.getId(), productId);
-//                bookmarkIcon = R.drawable.ic_bookmarked_not;
-//            } else if (saved.get() == 0) {
-//                saved.set(1);
-//                loggedInUser.getFavorites().add(productId);
-//                userDao.addItemToFavorites(loggedInUser.getId(), productId);
-//                bookmarkIcon = R.drawable.ic_bookmarked;
-//            }
-//            binding.bookmarkProductDetail.setBackground(
-//                    ContextCompat.getDrawable(binding.bookmarkProductDetail.getContext(),bookmarkIcon));
-//        });
-//
-//        binding.layoutSendMessage.setOnClickListener(v -> {
-//            //start chat with seller
-//            UserDao userDao = new UserDao();
-//            userDao.getUserById(product.getPostUserId(), receiver -> {
-//                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-//                intent.putExtra(Constants.KEY_USER, receiver);
-//                startActivity(intent);
-//            });
-//        });
-//        // back button
-//        binding.backBtn.setOnClickListener(v -> onBackPressed());
+        // Bookmark click listener
+        binding.iconHuskyDetailBookmark.setOnClickListener(view -> {
+            if (isFavorite) {
+                isFavorite = false;
+                loggedInUser.getFavorites().remove(productId);
+                userDao.removeItemFromFavorites(userId, productId);
+                setNotBookmarkedIcon();
+            } else {
+                isFavorite = true;
+                loggedInUser.getFavorites().add(productId);
+                userDao.addItemToFavorites(userId, productId);
+                setBookmarkedIcon();
+            }
+        });
+
+        //start chat with seller
+        binding.iconHuskyDetailSendMessage.setOnClickListener(v -> {
+            userDao.getUserById(product.getPostUserId(), receiver -> {
+                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                intent.putExtra(Constants.KEY_USER, receiver);
+                startActivity(intent);
+            });
+        });
+
+        // back button
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
     }
 
     private void updateView() {
@@ -121,13 +112,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         binding.textViewHuskyDetailStatusValue.setText(status);
         binding.textViewHuskyDetailListingTimeValue.setText(getSimpleDate(product.getTimestamp()));
         binding.textViewHuskyDetailDescription.setText(product.getDescription());
+        setChatIcon();
     }
 
     private int isFavorite(String productId) {
-        // Saved status
-        // 0: not saved
-        // 1: saved
-        // 2: not looged-in™
         if (loggedInUser == null) {
             return 2;
         }
@@ -142,5 +130,27 @@ public class ProductDetailActivity extends AppCompatActivity {
     private String getSimpleDate(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
         return sdf.format(date);
+    }
+
+    private void setBookmarkIcon() {
+        if (isFavorite) {
+            setBookmarkedIcon();
+        } else {
+            setNotBookmarkedIcon();
+        }
+    }
+
+    private void setBookmarkedIcon() {
+        binding.iconHuskyDetailBookmark.setBackground(getDrawable(R.drawable.ic_favorite_solid_22));
+    }
+
+    private void setNotBookmarkedIcon() {
+        binding.iconHuskyDetailBookmark.setBackground(getDrawable(R.drawable.ic_favorite_hollow_22));
+    }
+
+    private void setChatIcon() {
+        if (!loggedInUser.getId().equals(product.getPostUserId())) {
+            binding.iconHuskyDetailSendMessage.setVisibility(View.VISIBLE);
+        }
     }
 }
