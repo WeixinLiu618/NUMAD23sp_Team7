@@ -33,7 +33,6 @@ public class ProductDetailActivity extends AppCompatActivity {
     private AtomicInteger saved;
     private UserDao userDao = new UserDao();
     private ProductDao productDao = new ProductDao();
-    private int bookmarkIcon;
     private PreferenceManager preferenceManager;
     private boolean isFavorite;
 
@@ -44,6 +43,8 @@ public class ProductDetailActivity extends AppCompatActivity {
         binding = ActivityProductDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         preferenceManager = new PreferenceManager(this);
+        binding.progressBarHuskyDetail.setVisibility(View.VISIBLE);
+        binding.scrollViewHuskyDetail.setVisibility(View.INVISIBLE);
 
         // Get product Id
         Intent intentFromFormer = getIntent();
@@ -53,12 +54,12 @@ public class ProductDetailActivity extends AppCompatActivity {
             Intent intent = new Intent(this, HuskyLoginActivity.class);
             startActivity(intent);
         }
+
         userDao.getUserById(userId, user -> {
             loggedInUser = user;
             isFavorite = user.getFavorites().contains(productId);
             setBookmarkIcon();
         });
-
 
         productDao.getProductById(userId, productId, productObj -> {
             product = productObj;
@@ -116,18 +117,8 @@ public class ProductDetailActivity extends AppCompatActivity {
         binding.textViewHuskyDetailListingTimeValue.setText(getSimpleDate(product.getTimestamp()));
         binding.textViewHuskyDetailDescription.setText(product.getDescription());
         setChatIcon();
-    }
-
-    private int isFavorite(String productId) {
-        if (loggedInUser == null) {
-            return 2;
-        }
-
-        if (loggedInUser.getFavorites().contains(productId)) {
-            return 1;
-        }
-
-        return 0;
+        binding.progressBarHuskyDetail.setVisibility(View.INVISIBLE);
+        binding.scrollViewHuskyDetail.setVisibility(View.VISIBLE);
     }
 
     private String getSimpleDate(Date date) {

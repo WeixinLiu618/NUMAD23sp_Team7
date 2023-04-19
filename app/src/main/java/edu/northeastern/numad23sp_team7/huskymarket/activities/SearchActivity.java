@@ -49,14 +49,9 @@ public class SearchActivity extends AppCompatActivity {
         binding.recyclerViewHuskySearchResult.setAdapter(searchResultAdapter);
         preferenceManager = new PreferenceManager(this);
 
-        // Initialize products
-//        getProducts();
-//        initializeData();
-//        dbClient.addProducts(products);
-
         userId = preferenceManager.getString(Constants.KEY_USER_ID);
         userDao = new UserDao();
-        userDao.getUserById("D9gtlUubrMYR9UZyCQlc18uAr7r2", user -> {
+        userDao.getUserById(userId, user -> {
             searchResultAdapter.updateLoggedInUser(user);
             searchResultAdapter.notifyDataSetChanged();
         });
