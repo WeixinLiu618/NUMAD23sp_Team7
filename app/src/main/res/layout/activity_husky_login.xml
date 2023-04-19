@@ -141,12 +141,21 @@
 
                 </FrameLayout>
 
+                <TextView
+                    android:id="@+id/forgetPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Forget Password"
+                    android:textColor="@color/primary_dark"
+                    android:textSize="@dimen/_8ssp"
+                    android:layout_marginTop="@dimen/_5sdp"/>
+
 
                 <TextView
                     android:id="@+id/textCreateNewAccountPrompt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_15sdp"
                     android:fontFamily="@font/poppins_regular"
                     android:text="Do not have an account?"
                     android:textColor="@color/tertiary"

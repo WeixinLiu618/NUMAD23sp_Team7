@@ -1,13 +1,16 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,6 +23,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ActivityHuskyLoginBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
@@ -78,6 +82,33 @@ public class HuskyLoginActivity extends AppCompatActivity {
                             }
                         });
             }
+        });
+
+        // forget password
+        binding.forgetPassword.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(HuskyLoginActivity.this);
+            View dialogView = getLayoutInflater().inflate(R.layout.dialog_forget_password, null);
+            builder.setView(dialogView);
+            EditText editTextEmail = dialogView.findViewById(R.id.editTextEmail);
+
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String inputEmail = editTextEmail.getText().toString().trim();
+                            if (inputEmail.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(inputEmail).matches()) {
+                                showToast("Please enter valid email.");
+                            }
+
+
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .show();
 
 
         });
