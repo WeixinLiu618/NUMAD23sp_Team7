@@ -38,7 +38,9 @@ public class Constants {
     public static final String KEY_PRODUCT_LOCATION = "location";
     public static final String KEY_PRODUCT_CATEGORY = "category";
     public static final String KEY_PRODUCT_LOCATION_ARRAY = "locations";
+    public static final String KEY_PRODUCT_LOCATION_ARRAY_WITHOUT_TITLE = "locations_without_title";
     public static final String KEY_PRODUCT_CATEGORY_ARRAY = "categories";
+    public static final String KEY_PRODUCT_CATEGORY_ARRAY_WITHOUT_TITLE = "categories_without_title";
     public static final String KEY_PRODUCT_TIMESTAMP = "timestamp";
     public static final String KEY_PRODUCT_STATUS = "status";
     public static final String KEY_POST_USER_ID = "postUserId";

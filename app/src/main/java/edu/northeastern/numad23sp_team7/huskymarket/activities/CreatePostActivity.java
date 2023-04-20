@@ -85,13 +85,14 @@ public class CreatePostActivity extends AppCompatActivity {
         binding.editTextCondition.setValue(100);
 
         // Create the location spinner and set its options
-        ArrayAdapter<String> locationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, LOCATION_OPTIONS);
+        ArrayAdapter locationAdapter = ArrayAdapter.createFromResource(this, R.array.locations_without_title, android.R.layout.simple_spinner_dropdown_item);
+
         binding.spinnerLocation.setAdapter(locationAdapter);
         // default location
         binding.spinnerLocation.setSelection(0);
 
         // Create the category spinner and set its options
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, CATEGORY_OPTIONS);
+        ArrayAdapter categoryAdapter = ArrayAdapter.createFromResource(this, R.array.categories_without_title, android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerCategory.setAdapter(categoryAdapter);
         // default category
         binding.spinnerCategory.setSelection(0);

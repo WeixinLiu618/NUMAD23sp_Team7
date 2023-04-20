@@ -29,6 +29,17 @@
         <item>Others</item>
     </string-array>
 
+    <string-array name="categories_without_title">
+<!--        <item>Category</item>-->
+        <item>Electronics</item>
+        <item>Books</item>
+        <item>Furniture</item>
+        <item>Clothing</item>
+        <item>Stationery</item>
+        <item>Electronics</item>
+        <item>Others</item>
+    </string-array>
+
     <string-array name="locations">
         <item>Location</item>
         <item>Seattle</item>
@@ -37,8 +48,8 @@
         <item>Vancouver</item>
     </string-array>
 
-    <string-array name="locations2">
-        <item>Location</item>
+    <string-array name="locations_without_title">
+<!--        <item>Location</item>-->
         <item>Seattle</item>
         <item>Boston</item>
         <item>San Jose</item>

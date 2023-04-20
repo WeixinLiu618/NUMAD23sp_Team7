@@ -63,7 +63,7 @@ public class SearchActivity extends AppCompatActivity {
             location = userLocation;
             Resources resources = binding.getRoot().getContext().getResources();
             String packageName = binding.getRoot().getContext().getPackageName();
-            String[] locations = resources.getStringArray(resources.getIdentifier("locations2", "array", packageName));
+            String[] locations = resources.getStringArray(resources.getIdentifier(Constants.KEY_PRODUCT_LOCATION, "array", packageName));
             binding.spinnerHuskySearchFilterLocation.setSelection(Arrays.asList(locations).indexOf(location));
 
         }
@@ -165,9 +165,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void initializeFilters() {
         binding.spinnerHuskySearchFilterCategory.setSelection(0);
-//        binding.spinnerHuskySearchFilterLocation.setSelection(0);
         category = CATEGORY_FILTER;
-//        location = LOCATION_FILTER;
     }
 
     @Override
