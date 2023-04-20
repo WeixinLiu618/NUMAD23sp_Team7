@@ -169,8 +169,10 @@ public class HuskySignupActivity extends AppCompatActivity {
             return false;
         } else if (binding.inputPassword.getText().toString().length() < 6) {
             showToast("Password must be at least 6 characters");
+            return false;
         } else if (binding.inputConfirmPassword.getText().toString().isEmpty()) {
             showToast("Please confirm your password.");
+            return false;
         } else if (!binding.inputConfirmPassword.getText().toString().equals(binding.inputPassword.getText().toString())) {
             showToast("Password and confirm password must be same.");
             return false;
