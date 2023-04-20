@@ -76,15 +76,6 @@ public class MessagesFragment extends Fragment implements RecentMessageCardClick
                 .addSnapshotListener(eventListener);
 
 
-        // TODO, hard code, need to delete later
-        binding.buttonChat.setOnClickListener(v -> {
-            userDao.getUserById("D9gtlUubrMYR9UZyCQlc18uAr7r2", receiver -> {
-                Intent intent = new Intent(getActivity(), ChatActivity.class);
-                intent.putExtra(Constants.KEY_USER, receiver);
-                startActivity(intent);
-            });
-
-        });
 
         // search
         binding.searchPlate.requestFocus();
