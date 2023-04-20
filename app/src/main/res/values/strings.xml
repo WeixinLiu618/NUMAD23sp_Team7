@@ -46,6 +46,7 @@
         <item>Boston</item>
         <item>San Jose</item>
         <item>Vancouver</item>
+        <item>Others</item>
     </string-array>
 
     <string-array name="locations_without_title">
@@ -54,6 +55,7 @@
         <item>Boston</item>
         <item>San Jose</item>
         <item>Vancouver</item>
+        <item>Others</item>
     </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
