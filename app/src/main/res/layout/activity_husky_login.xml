@@ -147,7 +147,7 @@
                     android:layout_height="wrap_content"
                     android:text="Forget Password"
                     android:textColor="@color/primary_dark"
-                    android:textSize="@dimen/_8ssp"
+                    android:textSize="@dimen/_9ssp"
                     android:layout_marginTop="@dimen/_5sdp"/>
 
 

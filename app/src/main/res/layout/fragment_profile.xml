@@ -207,26 +207,22 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:layout_marginBottom="@dimen/_10sdp"
-                    android:gravity="center_horizontal"
-                    android:orientation="horizontal"
+
+                    android:orientation="vertical"
                     android:padding="@dimen/_10sdp">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/_30sdp"
-                        android:gravity="center_vertical"
-                        android:paddingRight="@dimen/_10sdp"
-                        android:src="@drawable/ic_email" />
 
                     <TextView
                         android:id="@+id/textEmail"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_30sdp"
                         android:layout_weight="1"
+                        android:drawablePadding="@dimen/_10sdp"
                         android:fontFamily="@font/poppins_bold"
                         android:gravity="center_vertical"
-                        android:text="Email"
-                        android:textSize="@dimen/_12ssp" />
+                        android:text="Email : "
+                        android:textSize="@dimen/_12ssp"
+                        app:drawableStartCompat="@drawable/ic_email" />
 
                     <TextView
                         android:id="@+id/email"
@@ -238,7 +234,8 @@
                         android:gravity="center_vertical|end"
                         android:maxLines="1"
                         android:text="test1@gmail.com"
-                        android:textSize="@dimen/_12ssp" />
+                        android:textSize="@dimen/_12ssp"
+                        android:layout_marginStart="@dimen/_27sdp"/>
 
                 </LinearLayout>
 
@@ -246,29 +243,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:layout_marginBottom="@dimen/_10sdp"
-                    android:gravity="center_horizontal"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:padding="@dimen/_10sdp">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/_30sdp"
-                        android:gravity="center_vertical"
-                        android:paddingRight="@dimen/_10sdp"
-                        android:src="@drawable/ic_profile" />
 
                     <TextView
                         android:id="@+id/textUsername1"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_30sdp"
                         android:layout_weight="1"
+                        android:drawablePadding="@dimen/_10sdp"
                         android:fontFamily="@font/poppins_bold"
                         android:gravity="center_vertical"
-                        android:text="Username"
-                        android:textSize="@dimen/_12ssp" />
+                        android:text="Username :"
+                        android:textSize="@dimen/_12ssp"
+                        app:drawableStartCompat="@drawable/ic_profile" />
 
                     <TextView
                         android:id="@+id/editableUsername"
@@ -280,7 +271,8 @@
                         android:gravity="center_vertical|end"
                         android:maxLines="1"
                         android:text="test1"
-                        android:textSize="@dimen/_13ssp" />
+                        android:textSize="@dimen/_13ssp"
+                        android:layout_marginStart="@dimen/_27sdp"/>
 
 
                 </LinearLayout>

@@ -1,5 +1,6 @@
 package edu.northeastern.numad23sp_team7.huskymarket.activities;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import edu.northeastern.numad23sp_team7.R;
+import edu.northeastern.numad23sp_team7.TestActivity;
 import edu.northeastern.numad23sp_team7.databinding.ActivityHuskyLoginBinding;
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
@@ -90,25 +93,42 @@ public class HuskyLoginActivity extends AppCompatActivity {
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_forget_password, null);
             builder.setView(dialogView);
             EditText editTextEmail = dialogView.findViewById(R.id.editTextEmail);
+            TextView buttonResetCancel = dialogView.findViewById(R.id.buttonResetCancel);
+            TextView buttonResetOk = dialogView.findViewById(R.id.buttonResetOk);
 
-            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            AlertDialog alertDialog = builder.create();
+
+            // dismiss dialog
+            buttonResetCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+
+            // reset
+            buttonResetOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String inputEmail = editTextEmail.getText().toString().trim();
+                    if (inputEmail.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(inputEmail).matches()) {
+                        showToast("Please enter valid email.");
+                    }
+                    mAuth.sendPasswordResetEmail(inputEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String inputEmail = editTextEmail.getText().toString().trim();
-                            if (inputEmail.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(inputEmail).matches()) {
-                                showToast("Please enter valid email.");
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()) {
+                                showToast("Please check your email.");
+                                alertDialog.dismiss();
+                            }else {
+                                showToast("Unable to access this email.");
                             }
-
-
                         }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    })
-                    .show();
+                    });
+
+                }
+            });
+            alertDialog.show();
 
 
         });

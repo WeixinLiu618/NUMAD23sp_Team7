@@ -142,7 +142,7 @@ public class ChatActivity extends AppCompatActivity {
                 sendNotification(messageBody.toString());
 
             } catch (Exception e) {
-                showToast(e.getMessage());
+                Log.d(TAG, "sendMessage: " + e.getMessage());
             }
         }
 
@@ -151,9 +151,6 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void showToast(String message) { // can delete later
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
 
     private void sendNotification(String messageBody) {
         HashMap<String, String> headers = new HashMap<>();
@@ -167,15 +164,15 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
                         if (response.isSuccessful()) {
-                            showToast("Notification sent successful");
+                            Log.d(TAG, "onResponse: " + "Notification sent successful");
                         } else {
-                            showToast("Error: " + response.code());
+                            Log.d(TAG, "onResponse: " + "Error: " + response.code());
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                        showToast(t.getMessage());
+                        Log.d(TAG, "onFailure: " + t.getMessage());
                     }
                 });
     }
