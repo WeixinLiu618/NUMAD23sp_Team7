@@ -292,7 +292,7 @@
                 />
             <TextView
                 android:id="@+id/textViewHuskyDetailConditionValue"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:textSize="@dimen/_13sdp"
@@ -315,7 +315,7 @@
                 />
             <TextView
                 android:id="@+id/textViewHuskyDetailCategoryValue"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:textSize="@dimen/_13sdp"
@@ -338,7 +338,7 @@
                 />
             <TextView
                 android:id="@+id/textViewHuskyDetailStatusValue"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:textSize="@dimen/_13sdp"
@@ -361,7 +361,7 @@
                 />
             <TextView
                 android:id="@+id/textViewHuskyDetailListingTimeValue"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:textSize="@dimen/_13sdp"
