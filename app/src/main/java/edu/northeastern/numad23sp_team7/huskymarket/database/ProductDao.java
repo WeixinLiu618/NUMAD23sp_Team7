@@ -196,6 +196,7 @@ public class ProductDao {
         ArrayList<Product> products = new ArrayList<>();
         Query productsQuery = productsRef
                 .whereEqualTo(Constants.KEY_POST_USER_ID, currentUserId);
+        productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
 
         productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -207,7 +208,6 @@ public class ProductDao {
                             products.add(product);
                         }
                     }
-                    Collections.sort(products, (p1, p2) -> p2.getTimestamp().compareTo(p1.getTimestamp()));
                     Log.d(TAG, "onComplete: " + products.size());
 
                     callback.accept(products);
