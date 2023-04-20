@@ -18,6 +18,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
@@ -120,7 +121,7 @@ public class ProductDao {
         });
     }
 
-    public void getProductById (String currentUserId, String productId, final Consumer<Product> callback) {
+    public void getProductById(String currentUserId, String productId, final Consumer<Product> callback) {
         Query productQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_ID, productId);
         productQuery.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -206,6 +207,7 @@ public class ProductDao {
                             products.add(product);
                         }
                     }
+                    Collections.sort(products, (p1, p2) -> p2.getTimestamp().compareTo(p1.getTimestamp()));
                     Log.d(TAG, "onComplete: " + products.size());
 
                     callback.accept(products);
@@ -232,14 +234,14 @@ public class ProductDao {
                             products.add(product);
                         }
                     }
-                        callback.accept(products);
-                    } else{
-                        Log.d(TAG, "Error getting documents: ", task.getException());
-                    }
+                    callback.accept(products);
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
                 }
+            }
 
-            });
-        }
+        });
+    }
 
     public void addProducts(ArrayList<Product> products) {
         for (Product product : products) {
