@@ -516,7 +516,7 @@ public class HomeFragment extends Fragment {
                 startSearchPage();
             }
         });
-
+        filterResultAdapter.setupLoggedInUser();
     }
 
     private void startSearchPage() {

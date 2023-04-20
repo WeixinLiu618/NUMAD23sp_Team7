@@ -169,4 +169,10 @@ public class SearchActivity extends AppCompatActivity {
         category = CATEGORY_FILTER;
 //        location = LOCATION_FILTER;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        searchResultAdapter.setupLoggedInUser();
+    }
 }

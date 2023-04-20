@@ -1,20 +1,17 @@
 package edu.northeastern.numad23sp_team7.huskymarket.adapter;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.northeastern.numad23sp_team7.R;
 import edu.northeastern.numad23sp_team7.databinding.ItemSearchResultCardBinding;
@@ -22,9 +19,9 @@ import edu.northeastern.numad23sp_team7.huskymarket.activities.ProductDetailActi
 import edu.northeastern.numad23sp_team7.huskymarket.database.UserDao;
 import edu.northeastern.numad23sp_team7.huskymarket.model.Product;
 import edu.northeastern.numad23sp_team7.huskymarket.model.User;
-import edu.northeastern.numad23sp_team7.huskymarket.activities.HuskyMainActivity;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.Constants;
 import edu.northeastern.numad23sp_team7.huskymarket.utils.ImageCodec;
+import edu.northeastern.numad23sp_team7.huskymarket.utils.PreferenceManager;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.SearchResultViewHolder> {
 
@@ -32,11 +29,13 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     private User loggedInUser;
     private Context context;
     private UserDao userDao;
+    private PreferenceManager preferenceManager;
 
     public SearchResultAdapter(ArrayList<Product> arr, Context context) {
         this.products = arr;
         this.context = context;
         this.userDao = new UserDao();
+        preferenceManager = new PreferenceManager(context);
     }
 
     @NonNull
@@ -63,32 +62,27 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         holder.binding.layoutHuskySearchResultContainer.setOnClickListener(view -> {
             Intent intent = new Intent(context, ProductDetailActivity.class);
             intent.putExtra(Constants.KEY_PRODUCT_ID, products.get(position).getProductId());
-            //zili added (for product detail bookmark)
-            intent.putExtra(Constants.KEY_USER, loggedInUser);
             context.startActivity(intent);
         });
 
         // Set bookmark icon
         String productId = products.get(position).getProductId();
-        AtomicInteger saved = new AtomicInteger(isFavorite(productId));
-        if (saved.get() == 1) {
+        if (loggedInUser.getFavorites().contains(productId)) {
             setBookmarkedIcon(holder);
         } else {
             setNotBookmarkedIcon(holder);
         }
 
-        // Set bookmark icon click event listener
+        // Bookmark click listener
         holder.binding.iconHuskySearchResultBookmark.setOnClickListener(view -> {
-            if (saved.get() == 1) {
-                saved.set(0);
+            if (loggedInUser.getFavorites().contains(productId)) {
+                setNotBookmarkedIcon(holder);
                 loggedInUser.getFavorites().remove(productId);
                 userDao.removeItemFromFavorites(loggedInUser.getId(), productId);
-                setNotBookmarkedIcon(holder);
-            } else if (saved.get() == 0) {
-                saved.set(1);
+            } else {
+                setBookmarkedIcon(holder);
                 loggedInUser.getFavorites().add(productId);
                 userDao.addItemToFavorites(loggedInUser.getId(), productId);
-                setBookmarkedIcon(holder);
             }
         });
     }
@@ -115,20 +109,12 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         this.loggedInUser = user;
     }
 
-    private int isFavorite(String productId) {
-        // Saved status
-        // 0: not saved
-        // 1: saved
-        // 2: not logged-in™
-        if (loggedInUser == null) {
-            return 2;
-        }
-
-        if (loggedInUser.getFavorites().contains(productId)) {
-            return 1;
-        }
-
-        return 0;
+    public void setupLoggedInUser() {
+        String userId = preferenceManager.getString(Constants.KEY_USER_ID);
+        userDao.getUserById(userId, user -> {
+            loggedInUser = user;
+            this.notifyDataSetChanged();
+        });
     }
 
     private void setBookmarkedIcon(SearchResultViewHolder holder) {
