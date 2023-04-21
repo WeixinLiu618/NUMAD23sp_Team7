@@ -146,6 +146,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
                                     // Launch the camera app
                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                                     startActivityForResult(intent, REQUEST_CAMERA);
 //                                }
