@@ -32,6 +32,7 @@
             android:exported="false" />
         <activity
             android:name=".huskymarket.activities.HuskySignupActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -39,6 +40,7 @@
         </activity>
         <activity
             android:name=".huskymarket.activities.HuskyLoginActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -47,6 +49,7 @@
         <activity
             android:name=".huskymarket.activities.HuskyMainActivity"
             android:exported="false"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.app.lib_name"
@@ -62,6 +65,7 @@
         </activity>
         <activity
             android:name=".huskymarket.activities.CreatePostActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -69,6 +73,7 @@
         </activity>
         <activity
             android:name=".huskymarket.activities.ChatActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
             android:windowSoftInputMode="adjustResize">
             <meta-data
@@ -77,6 +82,7 @@
         </activity>
         <activity
             android:name=".AboutUsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -91,6 +97,7 @@
         </activity>
         <activity
             android:name=".FireBaseModel.LogInActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
