@@ -151,7 +151,7 @@ public class ProfileFragment extends Fragment {
                         try {
                             InputStream inputStream = getActivity().getContentResolver().openInputStream(imageUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                            Bitmap rotatedBitmap = rotateImage(bitmap, imageUri);
+                            Bitmap rotatedBitmap = ImageCodec.rotateImage(bitmap, imageUri, getContext());
                             binding.imageProfile.setImageBitmap(rotatedBitmap);
                             String encodedImage = ImageCodec.getEncodedSmallImage(rotatedBitmap);
                             preferenceManager.putString(Constants.KEY_PROFILE_IMAGE, encodedImage);
@@ -168,34 +168,6 @@ public class ProfileFragment extends Fragment {
                 }
             }
     );
-
-    private Bitmap rotateImage(Bitmap bitmap, Uri imageUri) {
-        ExifInterface exifInterface = null;
-        try {
-            exifInterface = new ExifInterface(getActivity().getContentResolver().openInputStream(imageUri));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-
-        Matrix matrix = new Matrix();
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                matrix.setRotate(90);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                matrix.setRotate(180);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                matrix.setRotate(270);
-                break;
-            default:
-                return bitmap;
-        }
-
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-    }
 
     private void showToast(String text) {
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();

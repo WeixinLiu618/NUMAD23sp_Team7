@@ -176,7 +176,7 @@ public class CreatePostActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
                 Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
-                Bitmap rotatedBitmap = rotateImage(bitmap, imageUri);
+                Bitmap rotatedBitmap = ImageCodec.rotateImage(bitmap, imageUri, this);
                 encodedImageString = ImageCodec.getEncodedImage(rotatedBitmap);
                 binding.imageProduct.setImageBitmap(rotatedBitmap);
                 binding.imageProduct.setVisibility(View.VISIBLE);
@@ -189,7 +189,7 @@ public class CreatePostActivity extends AppCompatActivity {
                         try {
                             InputStream inputStream = getContentResolver().openInputStream(imageUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                            Bitmap rotatedBitmap = rotateImage(bitmap, imageUri);
+                            Bitmap rotatedBitmap = ImageCodec.rotateImage(bitmap, imageUri, this);
                             encodedImageString = ImageCodec.getEncodedImage(rotatedBitmap);
                             binding.imageProduct.setImageBitmap(rotatedBitmap);
                             binding.imageProduct.setVisibility(View.VISIBLE);
@@ -296,34 +296,6 @@ public class CreatePostActivity extends AppCompatActivity {
 
     private void showToast(String text) {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-    }
-
-    private Bitmap rotateImage(Bitmap bitmap, Uri imageUri) {
-        ExifInterface exifInterface = null;
-        try {
-            exifInterface = new ExifInterface(getContentResolver().openInputStream(imageUri));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-
-        Matrix matrix = new Matrix();
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                matrix.setRotate(90);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                matrix.setRotate(180);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                matrix.setRotate(270);
-                break;
-            default:
-                return bitmap;
-        }
-
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 
     private void takePicture() {
