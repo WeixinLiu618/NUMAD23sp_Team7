@@ -184,23 +184,28 @@ public class CreatePostActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && data != null) {
+        Log.d(TAG, "onActivityResult: " + resultCode + " " + (data == null));
+        if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
                 encodedImageString = getEncodedImageFromUri(this, imageUri);
                 Picasso.get().load(imageUri).into(binding.imageProduct); // Set the new bitmap
+                Log.d("TAG", "selectedImageUri: " + imageUri);
                 binding.imageProduct.setVisibility(View.VISIBLE);
                 binding.imageViewPost.setVisibility(View.GONE);
                 binding.selectImagePrompt.setText("Image selected");
             } else if (requestCode == REQUEST_GALLERY) {
-                imageUri = data.getData();
-                if (imageUri != null) {
-                    encodedImageString = getEncodedImageFromUri(this, imageUri);
-                    Picasso.get().load(imageUri).into(binding.imageProduct);
-                    Log.d("TAG", "selectedImageUri: " + imageUri);
-                    binding.imageProduct.setVisibility(View.VISIBLE);
-                    binding.imageViewPost.setVisibility(View.GONE);
-                    binding.selectImagePrompt.setText("Image selected");
+                if (data != null) {
+                    imageUri = data.getData();
+                    if (imageUri != null) {
+                        encodedImageString = getEncodedImageFromUri(this, imageUri);
+                        Picasso.get().load(imageUri).into(binding.imageProduct);
+                        Log.d("TAG", "selectedImageUri: " + imageUri);
+                        binding.imageProduct.setVisibility(View.VISIBLE);
+                        binding.imageViewPost.setVisibility(View.GONE);
+                        binding.selectImagePrompt.setText("Image selected");
+                    }
                 }
+
             }
         } else {
             if (encodedImageString == null) {
