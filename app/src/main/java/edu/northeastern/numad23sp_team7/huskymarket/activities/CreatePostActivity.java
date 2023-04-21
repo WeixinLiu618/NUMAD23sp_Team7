@@ -8,12 +8,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -30,7 +34,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -130,26 +136,8 @@ public class CreatePostActivity extends AppCompatActivity {
                             case 0:
                                 // Check camera permission
                                 if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-
-                                    // Create a file to store the captured image
-                                    File photoFile = null;
-                                    try {
-                                        photoFile = createImageFile();
-                                    } catch (IOException ex) {
-                                        // Error occurred while creating the File
-                                        Log.e("TAG", "Error occurred while creating the file", ex);
-                                        return;
-                                    }
-
-                                    // Create a Uri for the captured image
-                                    imageUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", photoFile);
-
-                                    // Launch the camera app
-                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                                    startActivityForResult(intent, REQUEST_CAMERA);
+                                    takePicture();
                                 } else {
-
                                     // Request camera permission
                                     ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
                                 }
@@ -187,9 +175,10 @@ public class CreatePostActivity extends AppCompatActivity {
         Log.d(TAG, "onActivityResult: " + resultCode + " " + (data == null));
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
-                encodedImageString = getEncodedImageFromUri(this, imageUri);
-                Picasso.get().load(imageUri).into(binding.imageProduct); // Set the new bitmap
-                Log.d("TAG", "selectedImageUri: " + imageUri);
+                Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
+                Bitmap rotatedBitmap = rotateImage(bitmap, imageUri);
+                encodedImageString = ImageCodec.getEncodedImage(rotatedBitmap);
+                binding.imageProduct.setImageBitmap(rotatedBitmap);
                 binding.imageProduct.setVisibility(View.VISIBLE);
                 binding.imageViewPost.setVisibility(View.GONE);
                 binding.selectImagePrompt.setText("Image selected");
@@ -197,12 +186,18 @@ public class CreatePostActivity extends AppCompatActivity {
                 if (data != null) {
                     imageUri = data.getData();
                     if (imageUri != null) {
-                        encodedImageString = getEncodedImageFromUri(this, imageUri);
-                        Picasso.get().load(imageUri).into(binding.imageProduct);
-                        Log.d("TAG", "selectedImageUri: " + imageUri);
-                        binding.imageProduct.setVisibility(View.VISIBLE);
-                        binding.imageViewPost.setVisibility(View.GONE);
-                        binding.selectImagePrompt.setText("Image selected");
+                        try {
+                            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                            Bitmap rotatedBitmap = rotateImage(bitmap, imageUri);
+                            encodedImageString = ImageCodec.getEncodedImage(rotatedBitmap);
+                            binding.imageProduct.setImageBitmap(rotatedBitmap);
+                            binding.imageProduct.setVisibility(View.VISIBLE);
+                            binding.imageViewPost.setVisibility(View.GONE);
+                            binding.selectImagePrompt.setText("Image selected");
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 
@@ -302,4 +297,66 @@ public class CreatePostActivity extends AppCompatActivity {
     private void showToast(String text) {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
     }
+
+    private Bitmap rotateImage(Bitmap bitmap, Uri imageUri) {
+        ExifInterface exifInterface = null;
+        try {
+            exifInterface = new ExifInterface(getContentResolver().openInputStream(imageUri));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(270);
+                break;
+            default:
+                return bitmap;
+        }
+
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    private void takePicture() {
+        // Create a file to store the captured image
+        File photoFile = null;
+        try {
+            photoFile = createImageFile();
+        } catch (IOException ex) {
+            // Error occurred while creating the File
+            Log.e("TAG", "Error occurred while creating the file", ex);
+            return;
+        }
+
+        // Create a Uri for the captured image
+        imageUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", photoFile);
+
+        // Launch the camera app
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                takePicture();
+            } else {
+                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 }
