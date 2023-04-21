@@ -78,7 +78,9 @@
     <string name="upload_profile_image">Upload Profile Image</string>
     <string name="sign_up">Sign up</string>
     <string name="email_">Email:</string>
-    <string name="you_has_not_posted_any_items_yet">You has not posted any items yet.</string>
+    <string name="you_do_not_have_any_favorites_yet">You do not have any favorites yet.</string>
+    <string name="there_is_no_post_at_this_location_yet">There is no post at this location yet.</string>
+    <string name="you_have_not_posted_any_items_yet">You have not posted any items yet.</string>
     <string name="my_posts">My Posts</string>
 
 </resources>

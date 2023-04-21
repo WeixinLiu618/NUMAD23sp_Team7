@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,11 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -79,13 +77,16 @@ public class HomeFragment extends Fragment {
 
     private static final ProductDao productDao = new ProductDao();
 
-    private static final long LATEST_INTERVAL_IN_SECONDS = 360000000;
+    //24 hours
+    private static final long LATEST_INTERVAL_IN_SECONDS = 86400;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final CollectionReference productsRef = db.collection(Constants.KEY_COLLECTION_PRODUCTS);
     private final CollectionReference usersRef = db.collection(Constants.KEY_COLLECTION_USERS);
 
     private final static String TAG = "Database Client";
+
+    private Integer mLastClickedButtonId = null;
 
 
     private static String ABOUT_US = "Find preloved deals within NEU community today!\n" +
@@ -136,11 +137,9 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.fragment_home, container, false);
 
+        // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(getLayoutInflater());
-//        this.context.setContentView(binding.getRoot());
 
         // filter result adapter
         filterResultAdapter = new SearchResultAdapter(products, binding.getRoot().getContext());
@@ -190,15 +189,15 @@ public class HomeFragment extends Fragment {
         });
 
         // direct search bar to search page
-        binding.searchPlate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (hasFocus) {
-                    Intent intent = new Intent(getActivity(), SearchActivity.class);
-                    startActivity(intent);
-                }
-            }
-        });
+        binding.searchPlate.setOnClickListener(v -> startSearchPage());
+//        binding.searchPlate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View view, boolean hasFocus) {
+//                if (hasFocus) {
+//                    startSearchPage();
+//                }
+//            }
+//        });
 
         // Filters
         binding.forYouFilter.setOnClickListener(new View.OnClickListener() {
@@ -209,11 +208,15 @@ public class HomeFragment extends Fragment {
                 binding.myFavoritesFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 binding.localFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 binding.latestFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+                mLastClickedButtonId = R.id.forYouFilter;
             }
         });
-        // Home screen launched with For You button clicked by default.
-        //Todo:not working
-        binding.forYouFilter.performClick();
+
+        // Home screen launched with For You button clicked by default.8ì
+        if (savedInstanceState == null) {
+            binding.forYouFilter.performClick();
+        }
+
 
         binding.latestFilter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,6 +226,7 @@ public class HomeFragment extends Fragment {
                 binding.myFavoritesFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 binding.forYouFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 binding.localFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+                mLastClickedButtonId = R.id.latestFilter;
             }
         });
 
@@ -234,6 +238,7 @@ public class HomeFragment extends Fragment {
                 binding.myFavoritesFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 binding.forYouFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 binding.latestFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+                mLastClickedButtonId = R.id.localFilter;
             }
         });
 
@@ -245,6 +250,7 @@ public class HomeFragment extends Fragment {
                 binding.localFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 binding.forYouFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 binding.latestFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+                mLastClickedButtonId = R.id.myFavoritesFilter;
             }
         });
 
@@ -268,6 +274,19 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+
+        // Check savedInstanceState
+        if (savedInstanceState != null) {
+            mLastClickedButtonId = savedInstanceState.getInt("last_clicked_button_id");
+            selectedLocation = savedInstanceState.getString("selected_location");
+            currentUserId = savedInstanceState.getString("logged_in_user_id");
+
+            // Perform the click action for the last clicked button
+            if (mLastClickedButtonId != null) {
+                View lastClickedButton = binding.getRoot().findViewById(mLastClickedButtonId);
+                lastClickedButton.performClick();
+            }
+        }
 
         return binding.getRoot();
     }
@@ -324,13 +343,17 @@ public class HomeFragment extends Fragment {
                             }
                             productDao.getForYouProductsForUser(currentUserId, myFavoriteCategoryList, productsList -> {
                                 if (productsList != null) {
-                                    filterResultAdapter.setProducts(productsList);
+                                    products = productsList;
+                                    filterResultAdapter.setProducts(products);
                                     filterResultAdapter.notifyDataSetChanged();
+                                    loading(false, products);
                                 }
                             });
                         })
                         .exceptionally(ex -> {
                             // Handle the exception here
+                            System.err.println("Exception occurred: " + ex.getMessage());
+//                            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "An error occurred", ex);
                             return null;
                         });
             }
@@ -341,17 +364,21 @@ public class HomeFragment extends Fragment {
         Date currentTimestamp = new Date();
         Date latestTimestamp = new Date(currentTimestamp.getTime() - LATEST_INTERVAL_IN_SECONDS * 1000);
 
-        productDao.getLatestProductsForUser(currentUserId, currentTimestamp, latestTimestamp, productsList -> {
-            filterResultAdapter.setProducts(productsList);
+        productDao.getLatestProductsForUser(currentUserId, LATEST_INTERVAL_IN_SECONDS, productsList -> {
+            products = productsList;
+            filterResultAdapter.setProducts(products);
             filterResultAdapter.notifyDataSetChanged();
+            loading(false, products);
         });
 
     }
 
     public void localFilterTapped(View view) {
         productDao.getLocalProductsForUser(currentUserId, selectedLocation, productsList -> {
-            filterResultAdapter.setProducts(productsList);
+            products = productsList;
+            filterResultAdapter.setProducts(products);
             filterResultAdapter.notifyDataSetChanged();
+            loading(false, products);
         });
     }
 
@@ -366,23 +393,18 @@ public class HomeFragment extends Fragment {
                 for (String productId: user.getFavorites()) {
                     productDao.getProductById(currentUserId, productId, product -> {
                         myFavorites.add(product);
-                        filterResultAdapter.setProducts(myFavorites);
+                        products = myFavorites;
+                        filterResultAdapter.setProducts(products);
                         filterResultAdapter.notifyDataSetChanged();
+                        loading(false, products);
                     });
                 }
-            }
-        });
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                filterResultAdapter.setProducts(myFavorites);
-                filterResultAdapter.notifyDataSetChanged();
             }
         });
     }
 
     private void showAboutUs() {
-        binding.aboutUs.setOnClickListener(new View.OnClickListener() {
+        binding.info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -403,108 +425,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void listenOnProductChanges() {
-        productsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot snapshots, FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.e(TAG, "Listen failed: ", error);
-                    return;
-                }
-
-//                ArrayList<Product> myProductList = new ArrayList<>();
-//                for (QueryDocumentSnapshot document : snapshots) {
-//                    Product myProduct = document.toObject(Product.class);
-//                    if (myProduct.getLocation().equals(selectedLocation)) {
-//                        myProductList.add(myProduct);
-//                        filterResultAdapter.setProducts(myProductList);
-//                        filterResultAdapter.notifyDataSetChanged();
-//                    }
-//                }
-                if (binding.localFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
-                    localFilterTapped(getView());
-                } else if (binding.forYouFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
-                    forYouFilterTapped(getView());
-                } else if (binding.latestFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
-                    latestFilterTapped(getView());
-                } else if (binding.myFavoritesFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
-                    myFavoritesFilterTapped(getView());
-                }
-
-
-//                getActivity().runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        // Update the UI with the new data
-//                        filterResultAdapter.setProducts(myProductList);
-//                        filterResultAdapter.notifyDataSetChanged();
-//                    }
-//                });
-//            }
-//        });
-            }
-        });
-    }
-
-    public void listenOnUserChanges() {
-        usersRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot snapshots, FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.e(TAG, "Listen failed: ", error);
-                    return;
-                }
-                for (QueryDocumentSnapshot document : snapshots) {
-                    User myUser = document.toObject(User.class);
-                    if (myUser.getId().equals(currentUserId)) {
-                        if (binding.localFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
-                            localFilterTapped(getView());
-                        } else if (binding.forYouFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
-                            forYouFilterTapped(getView());
-                        } else if (binding.latestFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
-                            latestFilterTapped(getView());
-                        } else if (binding.myFavoritesFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
-                            myFavoritesFilterTapped(getView());
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    public void listenOnCurrentUserFavoritesChanges() {
-        usersRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot snapshots, FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.e(TAG, "Listen failed: ", error);
-                    return;
-                }
-                ArrayList<Product> myFavorites = new ArrayList<>();
-                for (QueryDocumentSnapshot document : snapshots) {
-                    User myUser = document.toObject(User.class);
-                    if (myUser.getId().equals(currentUserId)) {
-                        for (String productId: myUser.getFavorites()) {
-                            productDao.getProductById(currentUserId, productId, product -> {
-                                myFavorites.add(product);
-                                filterResultAdapter.setProducts(myFavorites);
-                                filterResultAdapter.notifyDataSetChanged();
-                            });
-                        }
-                    }
-                }
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Update the UI with the new data
-                        filterResultAdapter.setProducts(myFavorites);
-                        filterResultAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        });
-    }
 
     @Override
     public void onResume() {
@@ -517,12 +437,51 @@ public class HomeFragment extends Fragment {
             }
         });
         filterResultAdapter.setupLoggedInUser();
+
+        if (binding.myFavoritesFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
+            myFavoritesFilterTapped(binding.getRoot());
+        }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+//        outState.putParcelableArrayList("filter_result_list", products);
+        outState.putString("selected_location", selectedLocation);
+        outState.putInt("last_clicked_button_id", mLastClickedButtonId);
+        outState.putString("logged_in_user_id", currentUserId);
+
+    }
+
 
     private void startSearchPage() {
         Intent intent = new Intent(getActivity(), SearchActivity.class);
         intent.putExtra(Constants.KEY_PRODUCT_LOCATION, selectedLocation);
         startActivity(intent);
+    }
+
+    private void loading(boolean isLoading, ArrayList myProductList) {
+        if (isLoading) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.recyclerViewHuskyFilterResult.setVisibility(View.GONE);
+            binding.noFavoritessPrompt.setVisibility(View.GONE);
+            binding.noLocalPrompt.setVisibility(View.GONE);
+        } else {
+            binding.progressBar.setVisibility(View.GONE);
+            if (myProductList.size() == 0 && binding.localFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
+                binding.noFavoritessPrompt.setVisibility(View.GONE);
+                binding.noLocalPrompt.setVisibility(View.VISIBLE);
+            } else if (myProductList.size() == 0 && binding.myFavoritesFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
+                binding.noFavoritessPrompt.setVisibility(View.VISIBLE);
+                binding.noLocalPrompt.setVisibility(View.GONE);
+            } else {
+                binding.recyclerViewHuskyFilterResult.smoothScrollToPosition(0);
+                Log.d(TAG, "loading: " + "来到这里");
+                binding.recyclerViewHuskyFilterResult.setVisibility(View.VISIBLE);
+                binding.noFavoritessPrompt.setVisibility(View.GONE);
+                binding.noLocalPrompt.setVisibility(View.GONE);
+            }
+        }
     }
 
 }

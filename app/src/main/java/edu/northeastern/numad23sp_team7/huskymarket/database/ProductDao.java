@@ -8,6 +8,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -69,31 +74,45 @@ public class ProductDao {
         });
     }
 
-    public void getLatestProductsForUser(String currentUserId, Date currentTimestamp, Date latestTimeStamp, final Consumer<ArrayList<Product>> callback) {
+    public void getLatestProductsForUser(String currentUserId, long intervalInSeconds, final Consumer<ArrayList<Product>> callback) {
         ArrayList<Product> products = new ArrayList<>();
-        Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
-
-        productsQuery = productsQuery.whereLessThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, currentTimestamp);
-        productsQuery = productsQuery.whereGreaterThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, latestTimeStamp);
-
-        productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
-        productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        productsRef.orderBy("timestamp", Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        Product product = document.toObject(Product.class);
-                        if (!currentUserId.isEmpty()) {
-                            products.add(product);
-                        }
-                    }
+                        Date latestTimestampEnd = document.getDate("timestamp");
+                        Date latestTimestampStart = new Date(latestTimestampEnd.getTime() - intervalInSeconds * 1000);
 
-                    callback.accept(products);
+                        Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
+                        productsQuery = productsQuery.whereLessThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, latestTimestampEnd);
+                        productsQuery = productsQuery.whereGreaterThanOrEqualTo(Constants.KEY_PRODUCT_TIMESTAMP, latestTimestampStart);
+
+                        productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
+                        productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Product product = document.toObject(Product.class);
+                                        if (!currentUserId.isEmpty()) {
+                                            products.add(product);
+                                        }
+                                    }
+
+                                    callback.accept(products);
+                                } else {
+                                    Log.d(TAG, "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
+                    }
                 } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
+                    System.out.println("Error: " + task.getException().getMessage());
                 }
             }
         });
+
     }
 
     public void getLocalProductsForUser(String currentUserId, String selectedLocation, final Consumer<ArrayList<Product>> callback) {
@@ -147,6 +166,7 @@ public class ProductDao {
 
         if (myFavoriteCategoryList.isEmpty()) {
             Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
+            productsQuery = productsQuery.whereNotEqualTo(Constants.KEY_POST_USER_ID, currentUserId);
             productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
 
             productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

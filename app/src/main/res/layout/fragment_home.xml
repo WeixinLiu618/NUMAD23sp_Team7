@@ -12,70 +12,62 @@
             android:id="@+id/homePage_top"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
             <LinearLayout
                 android:id="@+id/homePage_top_1"
                 android:layout_width="match_parent"
-                android:layout_height="85dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/about_us"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="0.22"
-                    android:clickable="true"
-                    android:text="About Us"
-                    android:textColor="@color/black"
-                    />
-
+                android:layout_height="85dp">
 
                 <ImageView
-                    android:id="@+id/husky_logo"
-                    android:layout_width="0dp"
+                    android:id="@+id/info"
+                    android:layout_width="40dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/husky"
-                    android:layout_weight="0.1"
-                     />
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="55dp"
+                    android:clickable="true"
+                    android:src="@drawable/baseline_info_24"
+                    />
 
-                <TextView
-                    android:id="@+id/titleMessage"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="Husky Market"
-                    android:textColor="@color/light_gray"
-                    android:textSize="@dimen/_14ssp"
-                    android:layout_weight="0.4"
-                     />
+                <LinearLayout
+                    android:id="@+id/homePage_top_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:layout_marginRight="12dp"
+                    android:orientation="horizontal">
 
-<!--                <ImageView-->
-<!--                    android:id="@+id/location_icon"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center_vertical"-->
-<!--                    android:layout_weight="0.05"-->
-<!--                    android:src="@drawable/ic_outline_location_on_20"-->
-<!--                    app:layout_constraintVertical_bias="0.0"-->
-<!--                    app:srcCompat="@drawable/ic_outline_location_on_20" />-->
+                    <ImageView
+                        android:id="@+id/husky_logo"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:src="@drawable/husky"
+                         />
+
+                    <TextView
+                        android:id="@+id/titleMessage"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Husky Market"
+                        android:textColor="@color/light_gray"
+                        android:textSize="@dimen/_14ssp" />
+                </LinearLayout>
+
 
                 <Spinner
                     android:id="@+id/locationSpinner"
-                    android:layout_width="0dp"
+                    android:layout_width="110dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="0.28"
                     android:autoSizeTextType="none"
                     android:entries="@array/locations"
-                    android:gravity="left"
-                    android:spinnerMode="dropdown"
-                     />
+                    android:spinnerMode="dialog" />
 
             </LinearLayout>
 
@@ -171,11 +163,6 @@
 
 
             </LinearLayout>
-            <!--        <ProgressBar-->
-            <!--            android:id="@+id/progressBar"-->
-            <!--            android:layout_width="@dimen/_25sdp"-->
-            <!--            android:layout_height="@dimen/_25sdp"-->
-            <!--            android:layout_gravity="center" />-->
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -202,8 +189,36 @@
                     android:scrollbars="vertical"
                     tools:layout_editor_absoluteX="16dp"
                     tools:listitem="@layout/item_search_result_card" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="@dimen/_25sdp"
+                        android:layout_height="@dimen/_25sdp"
+                        android:layout_gravity="center" />
+
+                    <TextView
+                        android:id="@+id/noFavoritessPrompt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/you_do_not_have_any_favorites_yet"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/noLocalPrompt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/there_is_no_post_at_this_location_yet"
+                        android:visibility="gone" />
+
                 </LinearLayout>
+
             </androidx.core.widget.NestedScrollView>
+
+
+
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

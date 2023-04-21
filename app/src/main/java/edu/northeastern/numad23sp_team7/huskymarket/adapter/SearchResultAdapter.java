@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -67,7 +68,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
         // Set bookmark icon
         String productId = products.get(position).getProductId();
-        if (loggedInUser.getFavorites().contains(productId)) {
+        if (loggedInUser.getFavorites() != null && loggedInUser.getFavorites().contains(productId)) {
             setBookmarkedIcon(holder);
         } else {
             setNotBookmarkedIcon(holder);
@@ -85,6 +86,9 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
                 userDao.addItemToFavorites(loggedInUser.getId(), productId);
             }
         });
+
+        // Set sold out background
+        setSoldOut(holder, products.get(position));
     }
 
     @Override
@@ -127,5 +131,13 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         int drawableId = R.drawable.ic_bookmarked_not;
         holder.binding.iconHuskySearchResultBookmark.setBackground(
                 ContextCompat.getDrawable(holder.binding.iconHuskySearchResultBookmark.getContext(), drawableId));
+    }
+
+    private void setSoldOut(SearchResultViewHolder holder, Product product) {
+        if (product.getStatus().equals(Constants.VALUE_PRODUCT_STATUS_SOLD)) {
+            holder.binding.imageSold.setVisibility(View.VISIBLE);
+        } else {
+            holder.binding.imageSold.setVisibility(View.GONE);
+        }
     }
 }

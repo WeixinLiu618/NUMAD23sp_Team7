@@ -1,11 +1,17 @@
 package edu.northeastern.numad23sp_team7.huskymarket.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import com.google.firebase.firestore.ServerTimestamp;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Product {
+public class Product implements Parcelable {
     private String productId;
     private String title;
     private String description;
@@ -123,4 +129,50 @@ public class Product {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    protected Product(Parcel in) {
+        productId = in.readString();
+        title = in.readString();
+        description = in.readString();
+        postUserId = in.readString();
+        location = in.readString();
+        condition = in.readFloat();
+        category = in.readString();
+        images = new ArrayList<String>();
+        in.readList(images, String.class.getClassLoader());
+        status = in.readString();
+        price = in.readFloat();
+    }
+
+    public static final Creator<Product> CREATOR = new Creator<Product>() {
+        @Override
+        public Product createFromParcel(Parcel in) {
+            return new Product(in);
+        }
+
+        @Override
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(productId);
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(postUserId);
+        dest.writeString(location);
+        dest.writeFloat(condition);
+        dest.writeString(category);
+        dest.writeList(images);
+        dest.writeString(status);
+        dest.writeFloat(price);
+    }
+
 }

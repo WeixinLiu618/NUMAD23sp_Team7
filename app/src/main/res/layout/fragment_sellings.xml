@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/you_has_not_posted_any_items_yet"
+            android:text="@string/you_have_not_posted_any_items_yet"
             android:visibility="gone" />
     </FrameLayout>
 
