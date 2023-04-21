@@ -129,7 +129,7 @@ public class CreatePostActivity extends AppCompatActivity {
                         switch (item) {
                             case 0:
                                 // Check camera permission
-                                if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+//                                if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 
                                     // Create a file to store the captured image
                                     File photoFile = null;
@@ -148,10 +148,11 @@ public class CreatePostActivity extends AppCompatActivity {
                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                     intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                                     startActivityForResult(intent, REQUEST_CAMERA);
-                                } else {
+//                                }
+
                                     // Request camera permission
-                                    ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-                                }
+//                                    ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+//                                }
                                 break;
                             case 1:
 //                                if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
