@@ -137,7 +137,7 @@ public class HuskySignupActivity extends AppCompatActivity {
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                             Bitmap rotatedBitmap = rotateImage(bitmap, profileImageUri);
                             binding.imageProfile.setImageBitmap(rotatedBitmap);
-                            encodedImage = ImageCodec.getEncodedSmallImage(bitmap);
+                            encodedImage = ImageCodec.getEncodedSmallImage(rotatedBitmap);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
