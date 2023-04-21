@@ -129,7 +129,7 @@ public class CreatePostActivity extends AppCompatActivity {
                         switch (item) {
                             case 0:
                                 // Check camera permission
-//                                if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                                if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 
                                     // Create a file to store the captured image
                                     File photoFile = null;
@@ -146,24 +146,23 @@ public class CreatePostActivity extends AppCompatActivity {
 
                                     // Launch the camera app
                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                                     startActivityForResult(intent, REQUEST_CAMERA);
-//                                }
+                                } else {
 
                                     // Request camera permission
-//                                    ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-//                                }
+                                    ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+                                }
                                 break;
                             case 1:
 //                                if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                                    // Open gallery
+                                // Open gallery
 //                                    Log.d(TAG, "onClick: " + "来到这里");
-                                    Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                    galleryIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                    startActivityForResult(galleryIntent, REQUEST_GALLERY);
+                                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                galleryIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                startActivityForResult(galleryIntent, REQUEST_GALLERY);
 //                                } else {
-                                    // Request storage permission
+                                // Request storage permission
 //                                    ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
 //                                }
 
