@@ -155,16 +155,17 @@ public class CreatePostActivity extends AppCompatActivity {
                                 }
                                 break;
                             case 1:
-                                if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                                    // Open gallery
-                                    // Log.d(TAG, "onClick: " + "来到这里");
-                                    Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                    galleryIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                    startActivityForResult(galleryIntent, REQUEST_GALLERY);
-                                } else {
-                                    //Request storage permission
-                                    ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
-                                }
+//                                if (ContextCompat.checkSelfPermission(CreatePostActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                                // Open gallery
+//                                    Log.d(TAG, "onClick: " + "来到这里");
+                                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                galleryIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                startActivityForResult(galleryIntent, REQUEST_GALLERY);
+//                                } else {
+                                // Request storage permission
+//                                    ActivityCompat.requestPermissions(CreatePostActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+//                                }
+
                                 break;
                         }
 
@@ -184,7 +185,6 @@ public class CreatePostActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: " + resultCode + " " + (data == null));
-
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
                 encodedImageString = getEncodedImageFromUri(this, imageUri);
