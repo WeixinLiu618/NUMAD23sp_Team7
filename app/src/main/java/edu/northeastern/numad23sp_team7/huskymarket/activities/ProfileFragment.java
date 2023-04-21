@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import edu.northeastern.numad23sp_team7.databinding.FragmentProfileBinding;
@@ -148,7 +151,8 @@ public class ProfileFragment extends Fragment {
                         try {
                             InputStream inputStream = getActivity().getContentResolver().openInputStream(imageUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                            binding.imageProfile.setImageBitmap(bitmap);
+                            Bitmap rotatedBitmap = rotateImage(bitmap, imageUri);
+                            binding.imageProfile.setImageBitmap(rotatedBitmap);
                             String encodedImage = ImageCodec.getEncodedSmallImage(bitmap);
                             preferenceManager.putString(Constants.KEY_PROFILE_IMAGE, encodedImage);
                             userDao.updateUserProfileImage(preferenceManager.getString(Constants.KEY_USER_ID), encodedImage);
@@ -165,6 +169,33 @@ public class ProfileFragment extends Fragment {
             }
     );
 
+    private Bitmap rotateImage(Bitmap bitmap, Uri imageUri) {
+        ExifInterface exifInterface = null;
+        try {
+            exifInterface = new ExifInterface(getActivity().getContentResolver().openInputStream(imageUri));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(270);
+                break;
+            default:
+                return bitmap;
+        }
+
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
 
     private void showToast(String text) {
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
