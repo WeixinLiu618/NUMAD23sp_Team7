@@ -3,8 +3,10 @@ package edu.northeastern.numad23sp_team7.huskymarket.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -133,17 +135,16 @@ public class HuskySignupActivity extends AppCompatActivity {
                         try {
                             InputStream inputStream = getContentResolver().openInputStream(profileImageUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                            binding.imageProfile.setImageBitmap(bitmap);
-                            encodedImage = ImageCodec.getEncodedSmallImage(bitmap);
+                            Bitmap rotatedBitmap = ImageCodec.rotateImage(bitmap, profileImageUri, this);
+                            binding.imageProfile.setImageBitmap(rotatedBitmap);
+                            encodedImage = ImageCodec.getEncodedSmallImage(rotatedBitmap);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }
             }
     );
-
 
     // allow user not upload profile image, and set the default image for them
     private void setDefaultProfileImage() {
