@@ -176,12 +176,7 @@ public class CreatePostActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
                 Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
-                Bitmap rotatedBitmap = ImageCodec.rotateImage(bitmap, imageUri, this);
-                encodedImageString = ImageCodec.getEncodedImage(rotatedBitmap);
-                binding.imageProduct.setImageBitmap(rotatedBitmap);
-                binding.imageProduct.setVisibility(View.VISIBLE);
-                binding.imageViewPost.setVisibility(View.GONE);
-                binding.selectImagePrompt.setText("Image selected");
+                loadImage(bitmap);
             } else if (requestCode == REQUEST_GALLERY) {
                 if (data != null) {
                     imageUri = data.getData();
@@ -189,12 +184,7 @@ public class CreatePostActivity extends AppCompatActivity {
                         try {
                             InputStream inputStream = getContentResolver().openInputStream(imageUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                            Bitmap rotatedBitmap = ImageCodec.rotateImage(bitmap, imageUri, this);
-                            encodedImageString = ImageCodec.getEncodedImage(rotatedBitmap);
-                            binding.imageProduct.setImageBitmap(rotatedBitmap);
-                            binding.imageProduct.setVisibility(View.VISIBLE);
-                            binding.imageViewPost.setVisibility(View.GONE);
-                            binding.selectImagePrompt.setText("Image selected");
+                            loadImage(bitmap);
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -331,4 +321,12 @@ public class CreatePostActivity extends AppCompatActivity {
         }
     }
 
+    private void loadImage(Bitmap bitmap) {
+        Bitmap rotatedBitmap = ImageCodec.rotateImage(bitmap, imageUri, this);
+        encodedImageString = ImageCodec.getEncodedImage(rotatedBitmap);
+        binding.imageProduct.setImageBitmap(rotatedBitmap);
+        binding.imageProduct.setVisibility(View.VISIBLE);
+        binding.imageViewPost.setVisibility(View.GONE);
+        binding.selectImagePrompt.setText("Image selected");
+    }
 }
