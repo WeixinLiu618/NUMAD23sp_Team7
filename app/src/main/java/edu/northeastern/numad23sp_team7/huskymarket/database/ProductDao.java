@@ -167,6 +167,7 @@ public class ProductDao {
 
             Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
             productsQuery = productsQuery.whereNotEqualTo(Constants.KEY_POST_USER_ID, currentUserId);
+            productsQuery = productsQuery.orderBy(Constants.KEY_POST_USER_ID).orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
 
             Log.d(TAG, "Before executing query");
             productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

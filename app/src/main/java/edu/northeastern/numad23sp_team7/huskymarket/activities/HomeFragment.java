@@ -362,7 +362,7 @@ public class HomeFragment extends Fragment {
 //                            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "An error occurred", ex);
                                 return null;
                             });
-                    
+
                 } else if (user != null){
                     productDao.getAllProductsExcludeCurrentUser(currentUserId, productsList -> {
                         if (productsList != null) {
