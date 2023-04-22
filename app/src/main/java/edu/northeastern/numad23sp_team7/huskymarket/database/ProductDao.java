@@ -189,37 +189,8 @@ public class ProductDao {
         }
         public void getForYouProductsForUser(String currentUserId, ArrayList<String> myFavoriteCategoryList,
                                          Consumer<ArrayList<Product>> callback) {
-        ArrayList<Product> products = new ArrayList<>();
+            ArrayList<Product> products = new ArrayList<>();
 
-        if (myFavoriteCategoryList.isEmpty()) {
-//            Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
-//            productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
-//            productsQuery = productsQuery.orderBy(Constants.KEY_POST_USER_ID).whereNotEqualTo(Constants.KEY_POST_USER_ID, currentUserId);
-
-            Query productsQuery = productsRef
-                    .whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE)
-                    .orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING)
-                    .orderBy(Constants.KEY_POST_USER_ID)
-                    .startAt(currentUserId)
-                    .endAt(currentUserId);
-
-            productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Product product = document.toObject(Product.class);
-                            if (!currentUserId.isEmpty()) {
-                                products.add(product);
-                            }
-                        }
-                        callback.accept(products);
-                    } else {
-                        Log.d(TAG, "Error getting documents: ", task.getException());
-                    }
-                }
-            });
-        } else {
             for (String category : myFavoriteCategoryList) {
                 Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
                 productsQuery = productsQuery.whereEqualTo(Constants.KEY_PRODUCT_CATEGORY, category);
@@ -243,7 +214,7 @@ public class ProductDao {
                 });
             }
         }
-    }
+
 
 
     public void getMyPostsProductsForUser(String currentUserId, final Consumer<ArrayList<Product>> callback) {

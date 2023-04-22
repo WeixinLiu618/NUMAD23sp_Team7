@@ -302,19 +302,21 @@ public class HomeFragment extends Fragment {
 
         ArrayList<Product> myFavorites = new ArrayList<>();
         userDao.getUserById(currentUserId, user -> {
-            if (user != null && user.getFavorites() != null && !user.getFavorites().isEmpty()) {
+            if (user != null && user.getFavorites() != null) {
                 List<CompletableFuture<Product>> futures = new ArrayList<>();
-                for (String productId: user.getFavorites()) {
-                    CompletableFuture<Product> future = new CompletableFuture<>();
-                    productDao.getProductById(currentUserId, productId, product -> {
-                        if (product != null) {
-                            future.complete(product);
-                        } else {
-                            future.completeExceptionally(new RuntimeException("Product not found"));
-                        }
-                    });
-                    futures.add(future);
-                }
+
+                if (!user.getFavorites().isEmpty()) {
+                    for (String productId : user.getFavorites()) {
+                        CompletableFuture<Product> future = new CompletableFuture<>();
+                        productDao.getProductById(currentUserId, productId, product -> {
+                            if (product != null) {
+                                future.complete(product);
+                            } else {
+                                future.completeExceptionally(new RuntimeException("Product not found"));
+                            }
+                        });
+                        futures.add(future);
+                    }
                     CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]))
                             .thenRun(() -> {
                                 futures.stream()
@@ -350,26 +352,40 @@ public class HomeFragment extends Fragment {
 
                                     }
                                 });
+
+
                             })
+
                             .exceptionally(ex -> {
                                 // Handle the exception here
                                 System.err.println("Exception occurred: " + ex.getMessage());
 //                            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "An error occurred", ex);
                                 return null;
                             });
+                    
+                } else if (user != null){
+                    productDao.getAllProductsExcludeCurrentUser(currentUserId, productsList -> {
+                        if (productsList != null) {
+                            products = productsList;
+                            filterResultAdapter.setProducts(products);
+                            filterResultAdapter.notifyDataSetChanged();
+                            loading(false, products);
+                        }
+                    });
+                }
 
             }
         });
-        if (myFavoriteCategoryList.isEmpty()) {
-            productDao.getAllProductsExcludeCurrentUser(currentUserId, productsList -> {
-                if (productsList != null) {
-                    products = productsList;
-                    filterResultAdapter.setProducts(products);
-                    filterResultAdapter.notifyDataSetChanged();
-                    loading(false, products);
-                }
-            });
-        }
+//        if (myFavoriteCategoryList.isEmpty() ) {
+//            productDao.getAllProductsExcludeCurrentUser(currentUserId, productsList -> {
+//                if (productsList != null) {
+//                    products = productsList;
+//                    filterResultAdapter.setProducts(products);
+//                    filterResultAdapter.notifyDataSetChanged();
+//                    loading(false, products);
+//                }
+//            });
+//        }
     }
 
     public void latestFilterTapped(View view) {
