@@ -315,49 +315,61 @@ public class HomeFragment extends Fragment {
                     });
                     futures.add(future);
                 }
-                CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]))
-                        .thenRun(() -> {
-                            futures.stream()
-                                    .map(CompletableFuture::join)
-                                    .forEach(myFavorites::add);
-                            // Use the myFavorites list here
-                            for (Product myFavorite: myFavorites) {
-                                String category = myFavorite.getCategory();
-                                if (myFavoriteCategoryMap.containsKey(category)) {
-                                    myFavoriteCategoryMap.put(category, myFavoriteCategoryMap.get(category) + 1);
+                    CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]))
+                            .thenRun(() -> {
+                                futures.stream()
+                                        .map(CompletableFuture::join)
+                                        .forEach(myFavorites::add);
+                                // Use the myFavorites list here
+                                for (Product myFavorite : myFavorites) {
+                                    String category = myFavorite.getCategory();
+                                    if (myFavoriteCategoryMap.containsKey(category)) {
+                                        myFavoriteCategoryMap.put(category, myFavoriteCategoryMap.get(category) + 1);
+                                    }
+                                    myFavoriteCategoryMap.put(category, 1);
                                 }
-                                myFavoriteCategoryMap.put(category, 1);
-                            }
 
-                            int maxValue = Integer.MIN_VALUE;
-                            for (int value : myFavoriteCategoryMap.values()) {
-                                if (value > maxValue) {
-                                    maxValue = value;
+                                int maxValue = Integer.MIN_VALUE;
+                                for (int value : myFavoriteCategoryMap.values()) {
+                                    if (value > maxValue) {
+                                        maxValue = value;
+                                    }
                                 }
-                            }
 
-                            for (Map.Entry<String, Integer> entry: myFavoriteCategoryMap.entrySet()) {
-                                if (entry.getValue() == maxValue) {
-                                    myFavoriteCategoryList.add(entry.getKey());
+                                for (Map.Entry<String, Integer> entry : myFavoriteCategoryMap.entrySet()) {
+                                    if (entry.getValue() == maxValue) {
+                                        myFavoriteCategoryList.add(entry.getKey());
+                                    }
                                 }
-                            }
-                            productDao.getForYouProductsForUser(currentUserId, myFavoriteCategoryList, productsList -> {
-                                if (productsList != null) {
-                                    products = productsList;
-                                    filterResultAdapter.setProducts(products);
-                                    filterResultAdapter.notifyDataSetChanged();
-                                    loading(false, products);
-                                }
-                            });
-                        })
-                        .exceptionally(ex -> {
-                            // Handle the exception here
-                            System.err.println("Exception occurred: " + ex.getMessage());
+                                productDao.getForYouProductsForUser(currentUserId, myFavoriteCategoryList, productsList -> {
+                                    if (productsList != null) {
+                                        products = productsList;
+                                        filterResultAdapter.setProducts(products);
+                                        filterResultAdapter.notifyDataSetChanged();
+                                        loading(false, products);
+
+                                    }
+                                });
+                            })
+                            .exceptionally(ex -> {
+                                // Handle the exception here
+                                System.err.println("Exception occurred: " + ex.getMessage());
 //                            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "An error occurred", ex);
-                            return null;
-                        });
+                                return null;
+                            });
+
             }
         });
+        if (myFavoriteCategoryList.isEmpty()) {
+            productDao.getAllProductsExcludeCurrentUser(currentUserId, productsList -> {
+                if (productsList != null) {
+                    products = productsList;
+                    filterResultAdapter.setProducts(products);
+                    filterResultAdapter.notifyDataSetChanged();
+                    loading(false, products);
+                }
+            });
+        }
     }
 
     public void latestFilterTapped(View view) {
@@ -399,6 +411,10 @@ public class HomeFragment extends Fragment {
                         loading(false, products);
                     });
                 }
+            } else {
+                loading(false, myFavorites);
+                filterResultAdapter.setProducts(myFavorites);
+                filterResultAdapter.notifyDataSetChanged();
             }
         });
     }

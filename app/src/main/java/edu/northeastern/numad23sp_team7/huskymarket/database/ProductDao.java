@@ -141,33 +141,67 @@ public class ProductDao {
     }
 
     public void getProductById(String currentUserId, String productId, final Consumer<Product> callback) {
-        Query productQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_ID, productId);
-        productQuery.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Product product = document.toObject(Product.class);
-                                if (!currentUserId.isEmpty()) {
-                                    callback.accept(product);
+        if (productId != null) {
+            Query productQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_ID, productId);
+            productQuery.get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Product product = document.toObject(Product.class);
+                                    if (!currentUserId.isEmpty()) {
+                                        callback.accept(product);
+                                    }
                                 }
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
                             }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
-                    }
-                });
+                    });
+        }
     }
 
-    public void getForYouProductsForUser(String currentUserId, ArrayList<String> myFavoriteCategoryList,
+    public void getAllProductsExcludeCurrentUser (String currentUserId, Consumer<ArrayList<Product>> callback) {
+        ArrayList<Product> products = new ArrayList<>();
+
+            Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
+            productsQuery = productsQuery.whereNotEqualTo(Constants.KEY_POST_USER_ID, currentUserId);
+
+            Log.d(TAG, "Before executing query");
+            productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Product product = document.toObject(Product.class);
+                            if (!currentUserId.isEmpty()) {
+                                products.add(product);
+                            }
+                        }
+                        callback.accept(products);
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                    }
+                }
+            });
+            Log.d(TAG, "After executing query");
+        }
+        public void getForYouProductsForUser(String currentUserId, ArrayList<String> myFavoriteCategoryList,
                                          Consumer<ArrayList<Product>> callback) {
         ArrayList<Product> products = new ArrayList<>();
 
         if (myFavoriteCategoryList.isEmpty()) {
-            Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
-            productsQuery = productsQuery.whereNotEqualTo(Constants.KEY_POST_USER_ID, currentUserId);
-            productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
+//            Query productsQuery = productsRef.whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE);
+//            productsQuery = productsQuery.orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING);
+//            productsQuery = productsQuery.orderBy(Constants.KEY_POST_USER_ID).whereNotEqualTo(Constants.KEY_POST_USER_ID, currentUserId);
+
+            Query productsQuery = productsRef
+                    .whereEqualTo(Constants.KEY_PRODUCT_STATUS, Constants.VALUE_PRODUCT_STATUS_AVAILABLE)
+                    .orderBy(Constants.KEY_PRODUCT_TIMESTAMP, Query.Direction.DESCENDING)
+                    .orderBy(Constants.KEY_POST_USER_ID)
+                    .startAt(currentUserId)
+                    .endAt(currentUserId);
 
             productsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
