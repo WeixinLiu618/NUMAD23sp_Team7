@@ -167,7 +167,7 @@ public class HomeFragment extends Fragment {
                 String location = String.valueOf(binding.locationSpinner.getSelectedItem());
                 selectedLocation = location;
                 if (binding.localFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
-                    localFilterTapped(view);
+                    localFilterTapped();
                 }
             }
             @Override
@@ -203,7 +203,7 @@ public class HomeFragment extends Fragment {
         binding.forYouFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                forYouFilterTapped(view);
+                forYouFilterTapped();
                 binding.forYouFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
                 binding.myFavoritesFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 binding.localFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
@@ -221,7 +221,7 @@ public class HomeFragment extends Fragment {
         binding.latestFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                latestFilterTapped(view);
+                latestFilterTapped();
                 binding.latestFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
                 binding.myFavoritesFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 binding.forYouFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
@@ -233,7 +233,7 @@ public class HomeFragment extends Fragment {
         binding.localFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                localFilterTapped(view);
+                localFilterTapped();
                 binding.localFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
                 binding.myFavoritesFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 binding.forYouFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
@@ -245,7 +245,7 @@ public class HomeFragment extends Fragment {
         binding.myFavoritesFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                myFavoritesFilterTapped(view);
+                myFavoritesFilterTapped();
                 binding.myFavoritesFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
                 binding.localFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 binding.forYouFilter.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
@@ -288,11 +288,28 @@ public class HomeFragment extends Fragment {
             }
         }
 
+        // Refresh recycler view by swiping down
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> {
+            binding.swipeRefreshLayout.setRefreshing(false);
+            switch (mLastClickedButtonId) {
+                case R.id.latestFilter:
+                    latestFilterTapped();
+                    break;
+                case R.id.localFilter:
+                    localFilterTapped();
+                    break;
+                case R.id.myFavoritesFilter:
+                    myFavoritesFilterTapped();
+                    break;
+                default:
+                    forYouFilterTapped();
+            }
+        });
         return binding.getRoot();
     }
 
 
-    public void forYouFilterTapped(View view) {
+    public void forYouFilterTapped() {
         getMyFavoriteCategoriesForUser();
     }
 
@@ -388,7 +405,7 @@ public class HomeFragment extends Fragment {
 //        }
     }
 
-    public void latestFilterTapped(View view) {
+    public void latestFilterTapped() {
         Date currentTimestamp = new Date();
         Date latestTimestamp = new Date(currentTimestamp.getTime() - LATEST_INTERVAL_IN_SECONDS * 1000);
 
@@ -401,7 +418,7 @@ public class HomeFragment extends Fragment {
 
     }
 
-    public void localFilterTapped(View view) {
+    public void localFilterTapped() {
         productDao.getLocalProductsForUser(currentUserId, selectedLocation, productsList -> {
             products = productsList;
             filterResultAdapter.setProducts(products);
@@ -410,7 +427,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void myFavoritesFilterTapped(View view) {
+    public void myFavoritesFilterTapped() {
         getMyFavorites();
     }
 
@@ -471,7 +488,7 @@ public class HomeFragment extends Fragment {
         filterResultAdapter.setupLoggedInUser();
 
         if (binding.myFavoritesFilter.getCurrentTextColor() == getResources().getColor(R.color.primary)) {
-            myFavoritesFilterTapped(binding.getRoot());
+            myFavoritesFilterTapped();
         }
     }
 
