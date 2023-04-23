@@ -25,7 +25,6 @@
         <item>Furniture</item>
         <item>Clothing</item>
         <item>Stationery</item>
-        <item>Electronics</item>
         <item>Others</item>
     </string-array>
 
@@ -36,7 +35,6 @@
         <item>Furniture</item>
         <item>Clothing</item>
         <item>Stationery</item>
-        <item>Electronics</item>
         <item>Others</item>
     </string-array>
 
