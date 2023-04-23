@@ -150,7 +150,9 @@ public class ProfileFragment extends Fragment {
                         Uri imageUri = result.getData().getData();
                         try {
                             InputStream inputStream = getActivity().getContentResolver().openInputStream(imageUri);
-                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                            BitmapFactory.Options options = new BitmapFactory.Options();
+                            options.inSampleSize = 2; // Scale down by a factor of 2
+                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, options);
                             Bitmap rotatedBitmap = ImageCodec.rotateImage(bitmap, imageUri, getContext());
                             binding.imageProfile.setImageBitmap(rotatedBitmap);
                             String encodedImage = ImageCodec.getEncodedSmallImage(rotatedBitmap);
